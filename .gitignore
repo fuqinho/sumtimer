@@ -31,3 +31,6 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+# API keys etc... stay in this file (using dotenv)
+.env
