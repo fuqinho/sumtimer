@@ -52,6 +52,7 @@ onSnapshot(categoriesQuery, (snapshot) => {
     <CategoryItem
       v-for="category in categories"
       :key="category.id"
+      :id="category.id"
       :name="category.data.name"
       :color="category.data.color"
     ></CategoryItem>
