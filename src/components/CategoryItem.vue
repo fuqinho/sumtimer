@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getFirestore, collection, deleteDoc, doc } from 'firebase/firestore';
+import { getFirestore, deleteDoc, doc } from 'firebase/firestore';
 
 interface Props {
   id: string;
