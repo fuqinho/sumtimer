@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CategoryItem from 'components/CategoryItem.vue';
 import { ref } from 'vue';
 import {
   getFirestore,
@@ -8,6 +7,7 @@ import {
   onSnapshot,
 } from 'firebase/firestore';
 import { CategoryDocumentData } from './models';
+import CategoryItem from './CategoryItem.vue';
 
 const categories = ref<{ id: string; data: CategoryDocumentData }[]>([]);
 
