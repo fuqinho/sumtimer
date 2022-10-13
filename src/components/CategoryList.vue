@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import CategoryItem from 'components/CategoryItem.vue';
 import { ref } from 'vue';
-import { getAuth } from 'firebase/auth';
 import {
   getFirestore,
   collection,
@@ -49,10 +48,12 @@ onSnapshot(categoriesQuery, (snapshot) => {
 </script>
 
 <template>
-  <CategoryItem
-    v-for="category in categories"
-    :key="category.id"
-    :name="category.data.name"
-    :color="category.data.color"
-  ></CategoryItem>
+  <div>
+    <CategoryItem
+      v-for="category in categories"
+      :key="category.id"
+      :name="category.data.name"
+      :color="category.data.color"
+    ></CategoryItem>
+  </div>
 </template>

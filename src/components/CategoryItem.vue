@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { getAuth } from 'firebase/auth';
-
 interface Props {
   name: string;
   color?: string;
