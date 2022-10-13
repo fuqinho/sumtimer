@@ -1,4 +1,4 @@
-# Sumtimer (sumtimer)
+# Sumtimer (sumtimer-web)
 
 A timer app to record daily activities.
 
