@@ -61,3 +61,34 @@ export const presetCategories: CategoryData[] = [
     color: '#bdbdbd',
   },
 ];
+
+export const presetActivities = [
+  {
+    cid: 'work',
+    label: 'General work',
+  },
+  {
+    cid: 'learning',
+    label: 'General learning',
+  },
+  {
+    cid: 'exercise',
+    label: 'Walking',
+  },
+  {
+    cid: 'entertainment',
+    label: 'Video game',
+  },
+  {
+    cid: 'rest',
+    label: 'Sleep',
+  },
+  {
+    cid: 'chore',
+    label: 'Room cleaning',
+  },
+  {
+    cid: 'chore',
+    label: 'Errands',
+  },
+];
