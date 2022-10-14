@@ -1,3 +1,5 @@
+import { CategoryData } from './models';
+
 export const defaultColorPalette = [
   '#EF5350',
   '#EC407A',
@@ -21,3 +23,41 @@ export const defaultColorPalette = [
 ];
 
 export const defaultCategoryColor = '#bdbdbd';
+
+export const presetCategories: CategoryData[] = [
+  {
+    id: 'work',
+    label: 'Work',
+    color: '#ef5350',
+  },
+  {
+    id: 'learning',
+    label: 'Learning',
+    color: '#29b6f6',
+  },
+  {
+    id: 'exercise',
+    label: 'Exercise',
+    color: '#9ccc65',
+  },
+  {
+    id: 'entertainment',
+    label: 'Entertainment',
+    color: '#ffa726',
+  },
+  {
+    id: 'rest',
+    label: 'Rest',
+    color: '#7e57c2',
+  },
+  {
+    id: 'chore',
+    label: 'Chore',
+    color: '#8d6e63',
+  },
+  {
+    id: 'others',
+    label: 'Others',
+    color: '#bdbdbd',
+  },
+];
