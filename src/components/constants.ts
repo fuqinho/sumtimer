@@ -1,4 +1,4 @@
-import { CategoryData } from './models';
+import { CategoryData, UserDocumentData } from './models';
 
 export const defaultColorPalette = [
   '#EF5350',
@@ -92,3 +92,7 @@ export const presetActivities = [
     label: 'Errands',
   },
 ];
+
+export const presetUserDocumentData: UserDocumentData = {
+  categories: presetCategories,
+};
