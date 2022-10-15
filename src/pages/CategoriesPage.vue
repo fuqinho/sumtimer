@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import NewCategoryForm from 'src/components/NewCategoryForm.vue';
+import CategoryForm from 'src/components/CategoryForm.vue';
 import CategoryList from 'src/components/CategoryList.vue';
 </script>
 
 <template>
-  <NewCategoryForm />
+  <CategoryForm />
   <CategoryList />
 </template>
