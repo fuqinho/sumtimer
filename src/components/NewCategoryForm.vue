@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { defaultColorPalette, defaultCategoryColor } from './constants';
+import { useUserDataStore } from 'stores/user-data-store';
 
 const name = ref('');
 const color = ref(defaultCategoryColor);
+const userStore = useUserDataStore();
 
 async function onSubmit() {
   try {
-    const user = getAuth().currentUser;
-    if (user && name.value) {
-      const document = {
-        owner: user.uid,
-        name: name.value,
-        color: color.value,
-      };
-      await addDoc(collection(getFirestore(), 'categories'), document);
+    if (userStore.uid && name.value) {
+      userStore.addCategory(name.value, color.value);
     }
   } catch (e) {
     console.error('Failed to add a category to the collection.', e);

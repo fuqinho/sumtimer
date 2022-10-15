@@ -48,6 +48,17 @@ export const useUserDataStore = defineStore('userData', () => {
     });
   }
 
+  function addCategory(label: string, color: string) {
+    // random generated id to the category.
+    const id = Math.random().toString(36).slice(2);
+
+    const newCategories = categories.value;
+    newCategories.push({ id: id, label: label, color: color });
+
+    const docRef = doc(getFirestore(), 'users', uid.value);
+    updateDoc(docRef, { categories: newCategories });
+  }
+
   function removeCategory(id: string) {
     const newCategories = categories.value.filter((category) => {
       return category.id != id;
@@ -56,5 +67,5 @@ export const useUserDataStore = defineStore('userData', () => {
     updateDoc(docRef, { categories: newCategories });
   }
 
-  return { categories, removeCategory };
+  return { uid, categories, addCategory, removeCategory };
 });
