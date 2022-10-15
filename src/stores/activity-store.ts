@@ -59,5 +59,14 @@ export const useActivityStore = defineStore('activities', () => {
     });
   }
 
-  return { activities };
+  function getActivityData(aid: string): ActivityDocumentData | null {
+    for (const activity of activities.value) {
+      if (activity.id === aid) {
+        return activity.data;
+      }
+    }
+    return null;
+  }
+
+  return { activities, getActivityData };
 });

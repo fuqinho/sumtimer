@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import RecordList from 'components/RecordList.vue';
+</script>
+
 <template>
-  <h1>Records</h1>
+  <RecordList />
 </template>

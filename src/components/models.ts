@@ -60,7 +60,7 @@ export interface RecordDocumentData extends DocumentData {
   aid?: string;
   start: Date;
   end: Date;
-  breaks: { start: Date; end: Date }[];
+  breaks?: { start: Date; end: Date }[];
   duration?: number;
   whats_done?: string;
   progress_from?: number;
