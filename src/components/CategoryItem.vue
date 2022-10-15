@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getFirestore, deleteDoc, doc } from 'firebase/firestore';
+import { useUserDataStore } from 'stores/user-data-store';
 
 interface Props {
   id: string;
@@ -9,37 +9,24 @@ interface Props {
 
 const props = defineProps<Props>();
 
-function categoryColor(): string {
-  return props.color || '#aaaaaa';
-}
-
-function categoryFgColor(): string {
-  const bgColor = categoryColor();
-  if (bgColor[1] >= 'c' && bgColor[3] >= 'c' && bgColor[5] >= 'c') {
-    console.log(bgColor);
-    return '#222222';
-  } else {
-    return '#ffffff';
-  }
-}
-
-function deleteCategory() {
-  const docRef = doc(getFirestore(), 'categories', props.id);
-  deleteDoc(docRef);
-}
+const userStore = useUserDataStore();
+const { removeCategory } = userStore;
 </script>
 
 <template>
   <q-card class="category-card">
     <q-card-section
-      :style="{ color: categoryFgColor(), 'background-color': categoryColor() }"
+      :style="{
+        color: '#ffffff',
+        'background-color': props.color || '#ededed',
+      }"
     >
       <div class="text-h6">{{ props.name }}</div>
     </q-card-section>
     <q-separator />
     <q-card-actions align="right">
       <q-btn flat>Edit</q-btn>
-      <q-btn @click="deleteCategory" flat>Delete</q-btn>
+      <q-btn @click="removeCategory(props.id)" flat>Delete</q-btn>
     </q-card-actions>
   </q-card>
 </template>

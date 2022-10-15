@@ -7,6 +7,7 @@ import {
   onSnapshot,
   Unsubscribe,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import { presetUserDocumentData } from 'src/components/constants';
 import { CategoryData, UserDocumentData } from 'src/components/models';
@@ -47,5 +48,13 @@ export const useUserDataStore = defineStore('userData', () => {
     });
   }
 
-  return { categories };
+  function removeCategory(id: string) {
+    const newCategories = categories.value.filter((category) => {
+      return category.id != id;
+    });
+    const docRef = doc(getFirestore(), 'users', uid.value);
+    updateDoc(docRef, { categories: newCategories });
+  }
+
+  return { categories, removeCategory };
 });
