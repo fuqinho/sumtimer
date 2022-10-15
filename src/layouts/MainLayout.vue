@@ -1,39 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-  onAuthStateChanged,
 } from 'firebase/auth';
+import { useAuthStore } from 'stores/auth-store';
 
-const isUserSignedIn = ref(false);
-const userDisplayName = ref('Anonymous');
-const userProfilePicUrl = ref('');
+const authStore = useAuthStore();
 
 function signInWithGoolge() {
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(getAuth(), provider);
+  signInWithPopup(getAuth(), new GoogleAuthProvider());
 }
 
 function signOutUser() {
   signOut(getAuth());
 }
-
-onAuthStateChanged(getAuth(), (user) => {
-  console.log(user);
-  const auth = getAuth();
-  isUserSignedIn.value = !!auth.currentUser;
-  if (auth && auth.currentUser) {
-    userDisplayName.value = auth.currentUser.displayName
-      ? auth.currentUser.displayName
-      : 'Anonymous';
-    userProfilePicUrl.value = auth.currentUser.photoURL
-      ? auth.currentUser.photoURL
-      : '';
-  }
-});
 </script>
 
 <template>
@@ -47,14 +29,11 @@ onAuthStateChanged(getAuth(), (user) => {
           Sumtimer
         </q-toolbar-title>
 
-        <q-item v-if="isUserSignedIn" clickable v-ripple>
-          <q-item-selection class="q-pr-md">
-            <q-avatar> <img :src="userProfilePicUrl" /> </q-avatar>
-          </q-item-selection>
-          <q-item-selection>
-            <q-item-label>{{ userDisplayName }}</q-item-label>
-            <q-item-label caption>Ready to record</q-item-label>
-          </q-item-selection>
+        <q-item v-if="authStore.isUserSignedIn" clickable v-ripple>
+          <q-item-section avatar>
+            <q-avatar> <img :src="authStore.userProfilePicUrl" /> </q-avatar>
+          </q-item-section>
+          <q-item-section>{{ authStore.userDisplayName }}</q-item-section>
           <q-menu>
             <q-list style="min-width: 100px">
               <q-item clickable v-close-popup>
