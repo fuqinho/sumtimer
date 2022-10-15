@@ -40,14 +40,14 @@ export const useUserDataStore = defineStore('userData', () => {
     console.log('updating uid to ', uid);
     const docRef = doc(getFirestore(), 'users', uid);
 
-    unsubscribe = onSnapshot(docRef, {}, (snapshot) => {
+    unsubscribe = onSnapshot(docRef, {}, async (snapshot) => {
       console.log('user doc onSnapshot callback invoked.');
       if (snapshot.exists()) {
         console.log('user doc snapshot exists.', snapshot.id);
         categories.value = (snapshot.data() as UserDocumentData).categories;
       } else {
         console.log('user doc snapshot DOES NOT exists.', snapshot.id);
-        setupPresetUserData(uid);
+        await setupPresetUserData(uid);
       }
     });
   }
