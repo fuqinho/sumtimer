@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import ActivityForm from 'components/ActivityForm.vue';
+import ActivityList from 'components/ActivityList.vue';
+</script>
 
 <template>
-  <h1>Activities</h1>
+  <ActivityForm />
+  <ActivityList />
 </template>

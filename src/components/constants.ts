@@ -62,7 +62,13 @@ export const presetCategories: CategoryData[] = [
   },
 ];
 
-export const presetActivities = [
+export interface PresetActivityData {
+  label: string;
+  cid?: string;
+  desc?: string;
+}
+
+export const presetActivities: PresetActivityData[] = [
   {
     cid: 'work',
     label: 'General work',

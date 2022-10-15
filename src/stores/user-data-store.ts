@@ -1,5 +1,5 @@
-import { defineStore, storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
+import { defineStore, storeToRefs } from 'pinia';
 import { useAuthStore } from 'stores/auth-store';
 import {
   getFirestore,
@@ -8,8 +8,13 @@ import {
   Unsubscribe,
   setDoc,
   updateDoc,
+  addDoc,
+  collection,
 } from 'firebase/firestore';
-import { presetUserDocumentData } from 'src/components/constants';
+import {
+  presetActivities,
+  presetUserDocumentData,
+} from 'src/components/constants';
 import { CategoryData, UserDocumentData } from 'src/components/models';
 
 export const useUserDataStore = defineStore('userData', () => {
@@ -42,10 +47,26 @@ export const useUserDataStore = defineStore('userData', () => {
         categories.value = (snapshot.data() as UserDocumentData).categories;
       } else {
         console.log('user doc snapshot DOES NOT exists.', snapshot.id);
-        console.log('creating the data...');
-        setDoc(docRef, presetUserDocumentData);
+        setupPresetUserData(uid);
       }
     });
+  }
+
+  async function setupPresetUserData(uid: string) {
+    console.log('creating the data...');
+
+    // Preset categories.
+    await setDoc(doc(getFirestore(), 'users', uid), presetUserDocumentData);
+    console.log('setDoc done');
+    // Preset activities.
+    for (const activity of presetActivities) {
+      console.log('adding activity', activity.label);
+      await addDoc(collection(getFirestore(), 'activities'), {
+        uid: uid,
+        label: activity.label,
+        cid: activity.cid,
+      });
+    }
   }
 
   function addCategory(label: string, color: string) {
@@ -67,5 +88,14 @@ export const useUserDataStore = defineStore('userData', () => {
     updateDoc(docRef, { categories: newCategories });
   }
 
-  return { uid, categories, addCategory, removeCategory };
+  function getCategoryData(id: string): CategoryData | null {
+    for (const category of categories.value) {
+      if (category.id === id) {
+        return category;
+      }
+    }
+    return null;
+  }
+
+  return { uid, categories, addCategory, removeCategory, getCategoryData };
 });
