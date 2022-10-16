@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
+import { useTimeUtil } from 'src/composables/time-util';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
 
+const timeUtil = useTimeUtil();
 const userStore = useUserDataStore();
 const { ongoing } = storeToRefs(userStore);
 const activityStore = useActivityStore();
@@ -13,10 +15,6 @@ const recordStore = useRecordStore();
 const elapsed_h = ref(0);
 const elapsed_m = ref(0);
 const elapsed_s = ref(0);
-
-const second_ms = 1000;
-const minute_ms = second_ms * 60;
-const hour_ms = minute_ms * 60;
 
 let timerId = 0;
 
@@ -42,13 +40,12 @@ onUnmounted(() => {
 
 function updateElapsedTime() {
   if (ongoing.value) {
-    console.log(ongoing.value);
     let elapsed = new Date().getTime() - ongoing.value.start.toMillis();
     elapsed = Math.max(elapsed, 0);
-    console.log(elapsed);
-    elapsed_h.value = Math.floor(elapsed / hour_ms);
-    elapsed_m.value = Math.floor((elapsed % hour_ms) / minute_ms);
-    elapsed_s.value = Math.floor((elapsed % minute_ms) / second_ms);
+    const [h, m, s] = timeUtil.millisToHMS(elapsed);
+    elapsed_h.value = h;
+    elapsed_m.value = m;
+    elapsed_s.value = s;
   }
 }
 
