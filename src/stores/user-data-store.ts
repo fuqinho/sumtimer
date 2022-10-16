@@ -6,12 +6,11 @@ import {
   doc,
   onSnapshot,
   Unsubscribe,
-  setDoc,
   updateDoc,
-  addDoc,
   collection,
   deleteField,
   Timestamp,
+  runTransaction,
 } from 'firebase/firestore';
 import {
   presetActivities,
@@ -25,56 +24,65 @@ import {
 
 export const useUserDataStore = defineStore('userData', () => {
   const authStore = useAuthStore();
-  const { uid } = storeToRefs(authStore);
+  const { user } = storeToRefs(authStore);
+  const uid = ref('');
 
   const categories = ref([] as CategoryData[]);
   const ongoing = ref(undefined as OngoingRecord | undefined);
-  let unsubscribe: Unsubscribe | null = null;
 
-  onUpdateUser(uid.value);
-  watch(uid, (uid) => {
-    onUpdateUser(uid);
+  let unsubscribe = null as Unsubscribe | null;
+  onUpdateUser(user.value ? user.value.uid : '');
+  watch(user, (user) => {
+    uid.value = user ? user.uid : '';
+    onUpdateUser(user ? user.uid : '');
   });
 
-  async function onUpdateUser(uid: string) {
-    if (unsubscribe) {
-      unsubscribe();
-      unsubscribe = null;
-    }
+  function onUpdateUser(uid: string) {
     if (!uid) {
-      return;
-    }
-    console.log('updating uid to ', uid);
-    const docRef = doc(getFirestore(), 'users', uid);
-
-    unsubscribe = onSnapshot(docRef, {}, async (snapshot) => {
-      console.log('user doc onSnapshot callback invoked.');
-      if (snapshot.exists()) {
-        console.log('user doc snapshot exists.', snapshot.id);
-        const userData = snapshot.data() as UserDocumentData;
-        categories.value = userData.categories;
-        ongoing.value = userData.ongoing;
-      } else {
-        console.log('user doc snapshot DOES NOT exists.', snapshot.id);
-        await setupPresetUserData(uid);
+      if (unsubscribe) {
+        unsubscribe();
+        unsubscribe = null;
+        categories.value = [];
+        ongoing.value = undefined;
       }
-    });
+    } else {
+      // Start watching user data in 'users' collection.
+      const docRef = doc(getFirestore(), 'users', uid);
+      unsubscribe = onSnapshot(docRef, {}, async (snapshot) => {
+        if (snapshot.exists()) {
+          const userData = snapshot.data() as UserDocumentData;
+          categories.value = userData.categories;
+          ongoing.value = userData.ongoing;
+        } else {
+          setupPresetUserData(uid);
+        }
+      });
+    }
   }
 
   async function setupPresetUserData(uid: string) {
-    console.log('creating the data...');
-
-    // Preset categories.
-    await setDoc(doc(getFirestore(), 'users', uid), presetUserDocumentData);
-    console.log('setDoc done');
-    // Preset activities.
-    for (const activity of presetActivities) {
-      console.log('adding activity', activity.label);
-      await addDoc(collection(getFirestore(), 'activities'), {
-        uid: uid,
-        label: activity.label,
-        cid: activity.cid,
+    console.log('Adding preset data...');
+    try {
+      // Run transactions to add preset data.
+      // - Preset categories: Entertanment, Chore, etc...
+      // - Preset activities: Minecraft, House cleaning, etc...
+      await runTransaction(getFirestore(), async (transaction) => {
+        await transaction.set(
+          doc(getFirestore(), 'users', uid),
+          presetUserDocumentData
+        );
+        for (const activity of presetActivities) {
+          const docData = {
+            uid: uid,
+            label: activity.label,
+            cid: activity.cid,
+          };
+          const docRef = doc(collection(getFirestore(), 'activities'));
+          await transaction.set(docRef, docData);
+        }
       });
+    } catch (e) {
+      console.error('Error in setting up user preset data.');
     }
   }
 
@@ -128,6 +136,7 @@ export const useUserDataStore = defineStore('userData', () => {
     uid,
     categories,
     ongoing,
+
     addCategory,
     removeCategory,
     getCategoryData,

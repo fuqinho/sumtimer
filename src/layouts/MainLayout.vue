@@ -5,9 +5,12 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from 'stores/auth-store';
 
 const authStore = useAuthStore();
+const { isSignedIn, userDisplayName, userProfilePicUrl } =
+  storeToRefs(authStore);
 
 function signInWithGoolge() {
   signInWithPopup(getAuth(), new GoogleAuthProvider());
@@ -29,11 +32,11 @@ function signOutUser() {
           Sumtimer
         </q-toolbar-title>
 
-        <q-item v-if="authStore.isUserSignedIn" clickable v-ripple>
-          <q-item-section avatar>
-            <q-avatar> <img :src="authStore.userProfilePicUrl" /> </q-avatar>
+        <q-item v-if="isSignedIn" clickable v-ripple>
+          <q-item-section v-if="!!userProfilePicUrl" avatar>
+            <q-avatar> <img :src="userProfilePicUrl" /> </q-avatar>
           </q-item-section>
-          <q-item-section>{{ authStore.userDisplayName }}</q-item-section>
+          <q-item-section>{{ userDisplayName }}</q-item-section>
           <q-menu>
             <q-list style="min-width: 100px">
               <q-item clickable v-close-popup>

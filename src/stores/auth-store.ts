@@ -1,28 +1,29 @@
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { User } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', () => {
-  const isUserSignedIn = ref(false);
-  const isAnonymous = ref(false);
-  const userDisplayName = ref('');
-  const userProfilePicUrl = ref('');
-  const uid = ref('');
-
-  onAuthStateChanged(getAuth(), (user) => {
-    isUserSignedIn.value = !!user;
-    if (user) {
-      isAnonymous.value = user.isAnonymous;
-      userDisplayName.value = user.displayName ? user.displayName : 'Anonymous';
-      userProfilePicUrl.value = user.photoURL ? user.photoURL : '';
-      uid.value = user.uid;
-    }
+  const user = ref(null as User | null);
+  const isSignedIn = ref(false);
+  const userDisplayName = computed(() => {
+    if (user.value && user.value.displayName) return user.value.displayName;
+    return undefined;
+  });
+  const userProfilePicUrl = computed(() => {
+    if (user.value && user.value.photoURL) return user.value.photoURL;
+    return undefined;
   });
 
+  function setCurrentUser(currentUser: User | null) {
+    user.value = currentUser;
+    isSignedIn.value = !!currentUser;
+  }
+
   return {
-    isUserSignedIn,
+    user,
+    isSignedIn,
     userDisplayName,
     userProfilePicUrl,
-    uid,
+    setCurrentUser,
   };
 });
