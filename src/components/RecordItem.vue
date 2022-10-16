@@ -4,9 +4,12 @@ import { RecordDocumentData } from './models';
 
 import { useActivityStore } from 'stores/activity-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
+import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
+import { useTimeUtil } from 'src/composables/time-util';
 
 const userStore = useUserDataStore();
 const activityStore = useActivityStore();
+const timeUtil = useTimeUtil();
 
 const activityName = computed(() => {
   console.log(props.record_data);
@@ -52,6 +55,18 @@ const categoryName = computed(() => {
   }
   return 'Unknown category';
 });
+
+async function deleteRecord() {
+  await deleteDoc(doc(getFirestore(), 'records', props.record_id));
+}
+
+const hours = computed(() => {
+  const duration_h = timeUtil.durationInHour(
+    props.record_data.start,
+    props.record_data.end
+  );
+  return (Math.ceil(duration_h * 100) / 100).toFixed(2);
+});
 </script>
 
 <template>
@@ -76,11 +91,12 @@ const categoryName = computed(() => {
         {{ props.record_data.end.toDate().toLocaleTimeString() }}
       </q-item-label>
     </q-item-section>
+    <q-item-section>{{ hours }}</q-item-section>
     <q-item-section side>
       <q-btn round color="gray" flat icon="edit" />
     </q-item-section>
     <q-item-section side>
-      <q-btn round color="gray" flat icon="delete" />
+      <q-btn @click="deleteRecord" round color="gray" flat icon="delete" />
     </q-item-section>
   </q-item>
 </template>

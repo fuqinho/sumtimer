@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export function useTimeUtil() {
   const second_ms = 1000;
   const minute_ms = second_ms * 60;
@@ -10,5 +12,9 @@ export function useTimeUtil() {
     return [h, m, s];
   }
 
-  return { second_ms, minute_ms, hour_ms, millisToHMS };
+  function durationInHour(start: Timestamp, end: Timestamp) {
+    return (end.toMillis() - start.toMillis()) / hour_ms;
+  }
+
+  return { second_ms, minute_ms, hour_ms, millisToHMS, durationInHour };
 }
