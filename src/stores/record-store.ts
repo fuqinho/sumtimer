@@ -4,6 +4,7 @@ import {
   getFirestore,
   onSnapshot,
   query,
+  Timestamp,
   where,
 } from 'firebase/firestore';
 import { defineStore, storeToRefs } from 'pinia';
@@ -18,7 +19,7 @@ interface RecordData {
 
 export const useRecordStore = defineStore('records', () => {
   const userStore = useUserDataStore();
-  const { uid } = storeToRefs(userStore);
+  const { uid, ongoing } = storeToRefs(userStore);
 
   const records = ref([] as RecordData[]);
 
@@ -51,7 +52,7 @@ export const useRecordStore = defineStore('records', () => {
     });
   }
 
-  async function addRecord(aid: string, start: Date, end: Date) {
+  async function addRecord(aid: string, start: Timestamp, end: Timestamp) {
     const docData: RecordDocumentData = {
       uid: uid.value,
       aid: aid,
@@ -61,5 +62,16 @@ export const useRecordStore = defineStore('records', () => {
     await addDoc(collection(getFirestore(), 'records'), docData);
   }
 
-  return { records, addRecord };
+  async function startRecording(aid: string) {
+    await userStore.startOngoingActivity(aid);
+  }
+
+  async function finishRecording() {
+    if (!ongoing.value) return;
+
+    await addRecord(ongoing.value.aid, ongoing.value.start, Timestamp.now());
+    await userStore.finishOngoingActivity();
+  }
+
+  return { records, addRecord, startRecording, finishRecording };
 });

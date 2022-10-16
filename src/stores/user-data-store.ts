@@ -10,7 +10,8 @@ import {
   updateDoc,
   addDoc,
   collection,
-  serverTimestamp,
+  deleteField,
+  Timestamp,
 } from 'firebase/firestore';
 import {
   presetActivities,
@@ -110,9 +111,17 @@ export const useUserDataStore = defineStore('userData', () => {
     const docRef = doc(getFirestore(), 'users', uid.value);
     const ongoing = {
       aid: aid,
-      start: serverTimestamp(),
+      start: Timestamp.now(),
     };
     await updateDoc(docRef, { ongoing: ongoing });
+  }
+
+  async function finishOngoingActivity() {
+    if (!ongoing.value) return;
+
+    console.log('finishOngoingActivity');
+    const docRef = doc(getFirestore(), 'users', uid.value);
+    await updateDoc(docRef, { ongoing: deleteField() });
   }
 
   return {
@@ -123,5 +132,6 @@ export const useUserDataStore = defineStore('userData', () => {
     removeCategory,
     getCategoryData,
     startOngoingActivity,
+    finishOngoingActivity,
   };
 });

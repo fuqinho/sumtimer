@@ -23,7 +23,7 @@ export interface CategoryData {
 export interface OngoingRecord {
   aid: string;
   start: Timestamp;
-  breaks?: { start: Date; end?: Date }[];
+  breaks?: { start: Timestamp; end?: Timestamp }[];
 }
 
 export interface UserDocumentData extends DocumentData {
@@ -45,8 +45,8 @@ export interface ActivityDocumentData extends DocumentData {
     progress_now?: number;
     elapsed_time?: number;
     recent_records?: {
-      start: Date;
-      end: Date;
+      start: Timestamp;
+      end: Timestamp;
       duration: number;
       whats_done?: string;
       progress_from?: number;
@@ -58,9 +58,9 @@ export interface ActivityDocumentData extends DocumentData {
 export interface RecordDocumentData extends DocumentData {
   uid: string;
   aid?: string;
-  start: Date;
-  end: Date;
-  breaks?: { start: Date; end: Date }[];
+  start: Timestamp;
+  end: Timestamp;
+  breaks?: { start: Timestamp; end: Timestamp }[];
   duration?: number;
   whats_done?: string;
   progress_from?: number;
@@ -70,6 +70,6 @@ export interface RecordDocumentData extends DocumentData {
 // This might be necesary to reduce document reads.
 export interface WeekCacheDocumentData extends DocumentData {
   uid: string;
-  start: Date;
+  start: Timestamp;
   cache: RecordDocumentData[];
 }
