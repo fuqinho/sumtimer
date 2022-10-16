@@ -8,10 +8,14 @@ const { records } = storeToRefs(recordStore);
 </script>
 
 <template>
-  <RecordItem
-    v-for="record in records"
-    :key="record.id"
-    :record_id="record.id"
-    :record_data="record.data"
-  ></RecordItem>
+  <div class="q-pa-md" q-pa-md>
+    <q-list bordered separator>
+      <RecordItem
+        v-for="record in records"
+        :key="record.id"
+        :record_id="record.id"
+        :record_data="record.data"
+      ></RecordItem>
+    </q-list>
+  </div>
 </template>
