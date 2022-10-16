@@ -33,6 +33,6 @@ const { removeCategory } = userStore;
 
 <style lang="scss" scoped>
 .category-card {
-  max-width: 250px;
+  max-width: 350px;
 }
 </style>

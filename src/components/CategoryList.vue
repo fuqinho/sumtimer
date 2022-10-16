@@ -8,7 +8,7 @@ const { categories } = storeToRefs(userStore);
 </script>
 
 <template>
-  <div>
+  <div class="q-pa-md col q-gutter-md">
     <CategoryItem
       v-for="category in categories"
       :key="category.id"
