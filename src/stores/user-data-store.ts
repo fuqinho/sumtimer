@@ -10,18 +10,24 @@ import {
   updateDoc,
   addDoc,
   collection,
+  serverTimestamp,
 } from 'firebase/firestore';
 import {
   presetActivities,
   presetUserDocumentData,
 } from 'src/components/constants';
-import { CategoryData, UserDocumentData } from 'src/components/models';
+import {
+  CategoryData,
+  OngoingRecord,
+  UserDocumentData,
+} from 'src/components/models';
 
 export const useUserDataStore = defineStore('userData', () => {
   const authStore = useAuthStore();
   const { uid } = storeToRefs(authStore);
 
   const categories = ref([] as CategoryData[]);
+  const ongoing = ref(undefined as OngoingRecord | undefined);
   let unsubscribe: Unsubscribe | null = null;
 
   onUpdateUser(uid.value);
@@ -44,7 +50,9 @@ export const useUserDataStore = defineStore('userData', () => {
       console.log('user doc onSnapshot callback invoked.');
       if (snapshot.exists()) {
         console.log('user doc snapshot exists.', snapshot.id);
-        categories.value = (snapshot.data() as UserDocumentData).categories;
+        const userData = snapshot.data() as UserDocumentData;
+        categories.value = userData.categories;
+        ongoing.value = userData.ongoing;
       } else {
         console.log('user doc snapshot DOES NOT exists.', snapshot.id);
         await setupPresetUserData(uid);
@@ -97,5 +105,23 @@ export const useUserDataStore = defineStore('userData', () => {
     return null;
   }
 
-  return { uid, categories, addCategory, removeCategory, getCategoryData };
+  async function startOngoingActivity(aid: string) {
+    console.log('startOngoingActivity', aid);
+    const docRef = doc(getFirestore(), 'users', uid.value);
+    const ongoing = {
+      aid: aid,
+      start: serverTimestamp(),
+    };
+    await updateDoc(docRef, { ongoing: ongoing });
+  }
+
+  return {
+    uid,
+    categories,
+    ongoing,
+    addCategory,
+    removeCategory,
+    getCategoryData,
+    startOngoingActivity,
+  };
 });

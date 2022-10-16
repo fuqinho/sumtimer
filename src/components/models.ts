@@ -1,4 +1,4 @@
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, Timestamp } from 'firebase/firestore';
 
 export interface Todo {
   id: number;
@@ -21,9 +21,9 @@ export interface CategoryData {
 }
 
 export interface OngoingRecord {
-  activity_id?: string;
-  start: Date;
-  breaks: { start: Date; end?: Date }[];
+  aid: string;
+  start: Timestamp;
+  breaks?: { start: Date; end?: Date }[];
 }
 
 export interface UserDocumentData extends DocumentData {

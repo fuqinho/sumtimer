@@ -53,14 +53,20 @@ function addRecordForTesting() {
     <div class="col-4">{{ props.activity_data.label }}</div>
     <div class="col">{{ props.activity_data.desc }}</div>
     <q-btn
-      @click="addRecordForTesting"
+      @click="userStore.startOngoingActivity(props.activity_id)"
       round
       color="primary"
       flat
       icon="play_arrow"
     />
     <q-btn round color="primary" flat icon="pause" />
-    <q-btn round color="primary" flat icon="stop" />
+    <q-btn
+      @click="addRecordForTesting"
+      round
+      color="primary"
+      flat
+      icon="stop"
+    />
     <q-btn round color="primary" flat icon="edit" />
     <q-btn round color="primary" flat icon="more_vert" />
   </div>
