@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { ActivityDocumentData } from './models';
 import { useUserDataStore } from 'stores/user-data-store';
 import { useRecordStore } from 'stores/record-store';
+import { Timestamp } from '@firebase/firestore';
 
 interface Props {
   activity_id: string;
@@ -32,9 +33,8 @@ const categoryColor = computed(() => {
 
 function addRecordForTesting() {
   console.log('addRecordForTesting');
-  const end = new Date();
-  const start = new Date();
-  start.setTime(end.getTime() - 30 * 60 * 1000);
+  const end = Timestamp.now();
+  const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
   recordStore.addRecord(props.activity_id, start, end);
 }
 </script>
