@@ -34,3 +34,6 @@ yarn-error.log*
 
 # API keys etc... stay in this file (using dotenv)
 .env
+
+# Firebase
+.firebaserc

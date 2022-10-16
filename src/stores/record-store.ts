@@ -2,7 +2,9 @@ import {
   addDoc,
   collection,
   getFirestore,
+  limit,
   onSnapshot,
+  orderBy,
   query,
   Timestamp,
   where,
@@ -29,7 +31,12 @@ export const useRecordStore = defineStore('records', () => {
   function startWatchRecords(uid: string) {
     if (!uid) return;
     const recordsCollection = collection(getFirestore(), 'records');
-    const q = query(recordsCollection, where('uid', '==', uid));
+    const q = query(
+      recordsCollection,
+      where('uid', '==', uid),
+      orderBy('start', 'desc'),
+      limit(50)
+    );
     onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
