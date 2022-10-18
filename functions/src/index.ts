@@ -138,5 +138,12 @@ async function onDeleteUser(user: UserRecord) {
   }
 }
 
-export const addPresetForNewUser = functions.auth.user().onCreate(onCreateUser);
-export const deleteDetaForUser = functions.auth.user().onDelete(onDeleteUser);
+const region = 'asia-northeast2'; // Osaka as default in dev.
+export const addPresetForNewUser = functions
+  .region(region)
+  .auth.user()
+  .onCreate(onCreateUser);
+export const deleteDetaForUser = functions
+  .region(region)
+  .auth.user()
+  .onDelete(onDeleteUser);
