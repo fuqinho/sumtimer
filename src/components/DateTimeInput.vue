@@ -22,7 +22,7 @@ const model = computed({
     <template v-slot:prepend>
       <q-icon name="event" class="cursor-pointer">
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
+          <q-date v-model="model" mask="YYYY-MM-DD HH:mm">
             <div class="row items-center justify-end">
               <q-btn v-close-popup label="Close" color="primary" flat />
             </div>

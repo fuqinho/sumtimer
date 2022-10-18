@@ -1,12 +1,14 @@
 import {
   addDoc,
   collection,
+  doc,
   getFirestore,
   limit,
   onSnapshot,
   orderBy,
   query,
   Timestamp,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { defineStore, storeToRefs } from 'pinia';
@@ -69,6 +71,10 @@ export const useRecordStore = defineStore('records', () => {
     await addDoc(collection(getFirestore(), 'records'), docData);
   }
 
+  async function updateRecord(id: string, data: RecordDocumentData) {
+    await updateDoc(doc(getFirestore(), 'records', id), data);
+  }
+
   async function startRecording(aid: string) {
     await userStore.startOngoingActivity(aid);
   }
@@ -80,5 +86,5 @@ export const useRecordStore = defineStore('records', () => {
     await userStore.finishOngoingActivity();
   }
 
-  return { records, addRecord, startRecording, finishRecording };
+  return { records, addRecord, updateRecord, startRecording, finishRecording };
 });

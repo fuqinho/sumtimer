@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { RecordDocumentData } from './models';
 
 import { useActivityStore } from 'stores/activity-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
 import { useTimeUtil } from 'src/composables/time-util';
+import RecordForm from 'src/components/RecordForm.vue';
 
 const userStore = useUserDataStore();
 const activityStore = useActivityStore();
@@ -56,6 +57,8 @@ const categoryName = computed(() => {
   return 'Unknown category';
 });
 
+const editing = ref(false);
+
 async function deleteRecord() {
   await deleteDoc(doc(getFirestore(), 'records', props.record_id));
 }
@@ -93,10 +96,17 @@ const hours = computed(() => {
     </q-item-section>
     <q-item-section>{{ hours }}</q-item-section>
     <q-item-section side>
-      <q-btn round color="gray" flat icon="edit" />
+      <q-btn @click="editing = true" round color="gray" flat icon="edit" />
     </q-item-section>
     <q-item-section side>
       <q-btn @click="deleteRecord" round color="gray" flat icon="delete" />
     </q-item-section>
   </q-item>
+  <q-dialog v-model="editing">
+    <RecordForm
+      :record_id="props.record_id"
+      :record_data="props.record_data"
+      @on-saved="editing = false"
+    />
+  </q-dialog>
 </template>
