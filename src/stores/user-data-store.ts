@@ -16,7 +16,6 @@ import {
   OngoingRecord,
   UserDocumentData,
 } from 'src/common/types';
-import { presetActivities, presetUserDocumentData } from 'src/common/constants';
 import { useAuthStore } from 'src/stores/auth-store';
 
 export const useUserDataStore = defineStore('userData', () => {
@@ -50,36 +49,8 @@ export const useUserDataStore = defineStore('userData', () => {
           const userData = snapshot.data() as UserDocumentData;
           categories.value = userData.categories;
           ongoing.value = userData.ongoing;
-        } else {
-          setupPresetUserData(uid);
         }
       });
-    }
-  }
-
-  async function setupPresetUserData(uid: string) {
-    console.log('Adding preset data...');
-    try {
-      // Run transactions to add preset data.
-      // - Preset categories: Entertanment, Chore, etc...
-      // - Preset activities: Minecraft, House cleaning, etc...
-      await runTransaction(getFirestore(), async (transaction) => {
-        await transaction.set(
-          doc(getFirestore(), 'users', uid),
-          presetUserDocumentData
-        );
-        for (const activity of presetActivities) {
-          const docData = {
-            uid: uid,
-            label: activity.label,
-            cid: activity.cid,
-          };
-          const docRef = doc(collection(getFirestore(), 'activities'));
-          await transaction.set(docRef, docData);
-        }
-      });
-    } catch (e) {
-      console.error('Error in setting up user preset data.');
     }
   }
 
