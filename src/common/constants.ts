@@ -1,4 +1,4 @@
-import { CategoryData, UserDocumentData } from './models';
+import { CategoryData, UserDocumentData } from 'src/common/types';
 
 export const defaultColorPalette = [
   '#EF5350',

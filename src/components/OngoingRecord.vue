@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useTimeUtil } from 'src/composables/time-util';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
-import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
 
 const timeUtil = useTimeUtil();
 const userStore = useUserDataStore();

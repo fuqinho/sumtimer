@@ -7,8 +7,8 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { useUserDataStore } from './user-data-store';
-import { ActivityDocumentData } from 'src/components/models';
+import { ActivityDocumentData } from 'src/common/types';
+import { useUserDataStore } from 'src/stores/user-data-store';
 
 export interface ActivityData {
   id: string;

@@ -1,3 +1,5 @@
+import { ref, watch } from 'vue';
+import { defineStore, storeToRefs } from 'pinia';
 import {
   addDoc,
   collection,
@@ -11,10 +13,8 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { defineStore, storeToRefs } from 'pinia';
-import { RecordDocumentData } from 'src/components/models';
-import { ref, watch } from 'vue';
-import { useUserDataStore } from './user-data-store';
+import { RecordDocumentData } from 'src/common/types';
+import { useUserDataStore } from 'src/stores/user-data-store';
 
 interface RecordData {
   id: string;

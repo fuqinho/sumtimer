@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted } from 'vue';
 import { getAuth, onAuthStateChanged, Unsubscribe } from '@firebase/auth';
-import { useAuthStore } from './stores/auth-store';
+import { useAuthStore } from 'src/stores/auth-store';
 
 const authStore = useAuthStore();
 let unsubscribe = null as Unsubscribe | null;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useRecordStore } from 'src/stores/record-store';
-import RecordItem from './RecordItem.vue';
+import RecordItem from 'src/components/RecordItem.vue';
 
 const recordStore = useRecordStore();
 const { records } = storeToRefs(recordStore);

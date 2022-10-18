@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { Timestamp } from '@firebase/firestore';
-import { RecordDocumentData } from './models';
+import { RecordDocumentData } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import DateTimeInput from 'src/components/DateTimeInput.vue';

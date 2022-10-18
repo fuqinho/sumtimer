@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useUserDataStore } from 'stores/user-data-store';
-import CategoryItem from './CategoryItem.vue';
+import { useUserDataStore } from 'src/stores/user-data-store';
+import CategoryItem from 'src/components/CategoryItem.vue';
 
 const userStore = useUserDataStore();
 const { categories } = storeToRefs(userStore);

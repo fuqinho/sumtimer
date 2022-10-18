@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { defaultColorPalette, defaultCategoryColor } from './constants';
-import { useUserDataStore } from 'stores/user-data-store';
+import {
+  defaultColorPalette,
+  defaultCategoryColor,
+} from 'src/common/constants';
+import { useUserDataStore } from 'src/stores/user-data-store';
 
 const name = ref('');
 const color = ref(defaultCategoryColor);

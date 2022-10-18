@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { RecordDocumentData } from './models';
-
-import { useActivityStore } from 'stores/activity-store';
-import { useUserDataStore } from 'src/stores/user-data-store';
 import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
+import { RecordDocumentData } from 'src/common/types';
 import { useTimeUtil } from 'src/composables/time-util';
+import { useActivityStore } from 'src/stores/activity-store';
+import { useUserDataStore } from 'src/stores/user-data-store';
 import RecordForm from 'src/components/RecordForm.vue';
 
 const userStore = useUserDataStore();

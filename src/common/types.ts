@@ -1,4 +1,4 @@
-import { DocumentData, Timestamp } from 'firebase/firestore';
+import { DocumentData, Timestamp } from '@firebase/firestore';
 
 export interface Todo {
   id: number;

@@ -1,6 +1,5 @@
 import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
-import { useAuthStore } from 'stores/auth-store';
 import {
   getFirestore,
   doc,
@@ -13,14 +12,12 @@ import {
   runTransaction,
 } from 'firebase/firestore';
 import {
-  presetActivities,
-  presetUserDocumentData,
-} from 'src/components/constants';
-import {
   CategoryData,
   OngoingRecord,
   UserDocumentData,
-} from 'src/components/models';
+} from 'src/common/types';
+import { presetActivities, presetUserDocumentData } from 'src/common/constants';
+import { useAuthStore } from 'src/stores/auth-store';
 
 export const useUserDataStore = defineStore('userData', () => {
   const authStore = useAuthStore();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RecordList from 'components/RecordList.vue';
+import RecordList from 'src/components/RecordList.vue';
 </script>
 
 <template>

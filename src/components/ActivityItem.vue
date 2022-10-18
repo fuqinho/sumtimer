@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { ActivityDocumentData } from './models';
-import { useUserDataStore } from 'stores/user-data-store';
-import { useRecordStore } from 'stores/record-store';
 import { Timestamp } from '@firebase/firestore';
+import { ActivityDocumentData } from 'src/common/types';
+import { useUserDataStore } from 'src/stores/user-data-store';
+import { useRecordStore } from 'src/stores/record-store';
 
 interface Props {
   activity_id: string;

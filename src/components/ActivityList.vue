@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useActivityStore } from 'stores/activity-store';
-import ActivityItem from './ActivityItem.vue';
+import { useActivityStore } from 'src/stores/activity-store';
+import ActivityItem from 'src/components/ActivityItem.vue';
 
 const activityStore = useActivityStore();
 const { activities } = storeToRefs(activityStore);

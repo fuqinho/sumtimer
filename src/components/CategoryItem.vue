@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUserDataStore } from 'stores/user-data-store';
+import { useUserDataStore } from 'src/stores/user-data-store';
 
 interface Props {
   id: string;
