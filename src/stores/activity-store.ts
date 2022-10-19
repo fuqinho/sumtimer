@@ -31,12 +31,6 @@ export const useActivityStore = defineStore('activities', () => {
     onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
-          console.log(
-            'added called. ID is ',
-            change.doc.id,
-            ' and data is ',
-            change.doc.data()
-          );
           activities.value.push({
             id: change.doc.id,
             data: change.doc.data() as ActivityDocumentData,
