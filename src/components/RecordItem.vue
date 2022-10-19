@@ -93,6 +93,9 @@ const hours = computed(() => {
         {{ props.record_data.end.toDate().toLocaleTimeString() }}
       </q-item-label>
     </q-item-section>
+    <q-item-section>
+      {{ props.record_data.memo }}
+    </q-item-section>
     <q-item-section>{{ hours }}</q-item-section>
     <q-item-section side>
       <q-btn @click="editing = true" round color="gray" flat icon="edit" />

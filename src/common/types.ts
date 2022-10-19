@@ -63,7 +63,7 @@ export interface RecordDocumentData extends DocumentData {
   end: Timestamp;
   breaks?: { start: Timestamp; end: Timestamp }[];
   duration?: number;
-  whats_done?: string;
+  memo?: string;
   progress_from?: number;
   progress_to?: number;
 }
