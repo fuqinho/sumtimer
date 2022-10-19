@@ -7,13 +7,8 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { ActivityDocumentData } from 'src/common/types';
+import { ActivityDocumentData, ActivityData } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
-
-export interface ActivityData {
-  id: string;
-  data: ActivityDocumentData;
-}
 
 export const useActivityStore = defineStore('activities', () => {
   const userStore = useUserDataStore();

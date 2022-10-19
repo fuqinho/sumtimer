@@ -56,6 +56,11 @@ export interface ActivityDocumentData extends DocumentData {
   };
 }
 
+export interface ActivityData {
+  id: string;
+  data: ActivityDocumentData;
+}
+
 export interface RecordDocumentData extends DocumentData {
   uid: string;
   aid?: string;
@@ -66,6 +71,11 @@ export interface RecordDocumentData extends DocumentData {
   memo?: string;
   progress_from?: number;
   progress_to?: number;
+}
+
+export interface RecordData {
+  id: string;
+  data: RecordDocumentData;
 }
 
 // This might be necesary to reduce document reads.

@@ -13,13 +13,8 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { RecordDocumentData } from 'src/common/types';
+import { RecordDocumentData, RecordData } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
-
-interface RecordData {
-  id: string;
-  data: RecordDocumentData;
-}
 
 export const useRecordStore = defineStore('records', () => {
   const userStore = useUserDataStore();
