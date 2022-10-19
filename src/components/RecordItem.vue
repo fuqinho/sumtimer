@@ -12,10 +12,8 @@ const activityStore = useActivityStore();
 const timeUtil = useTimeUtil();
 
 const activityName = computed(() => {
-  console.log(props.record_data);
   if (props.record_data.aid) {
     const doc = activityStore.getActivityData(props.record_data.aid);
-    if (doc) console.log('returning', doc.label);
     return doc ? doc.label : '';
   }
   return '';

@@ -81,7 +81,6 @@ export const useUserDataStore = defineStore('userData', () => {
   }
 
   async function startOngoingActivity(aid: string) {
-    console.log('startOngoingActivity', aid);
     const docRef = doc(getFirestore(), 'users', uid.value);
     const ongoing = {
       aid: aid,
@@ -100,7 +99,6 @@ export const useUserDataStore = defineStore('userData', () => {
   async function finishOngoingActivity() {
     if (!ongoing.value) return;
 
-    console.log('finishOngoingActivity');
     const docRef = doc(getFirestore(), 'users', uid.value);
     await updateDoc(docRef, { ongoing: deleteField() });
   }
