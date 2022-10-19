@@ -42,20 +42,23 @@ export const useRecordStore = defineStore('records', () => {
     onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
-          records.value.push({
+          records.value.splice(change.newIndex, 0, {
             id: change.doc.id,
             data: change.doc.data() as RecordDocumentData,
           });
         } else if (change.type === 'removed') {
-          records.value.forEach((item, index) => {
-            if (item.id === change.doc.id) {
-              records.value.splice(index, 1);
-            }
-          });
+          records.value.splice(change.oldIndex, 1);
         } else {
-          records.value.forEach((item, index) => {
-            records.value[index] = item;
-          });
+          const newItem = {
+            id: change.doc.id,
+            data: change.doc.data() as RecordDocumentData,
+          };
+          if (change.newIndex != change.oldIndex) {
+            records.value.splice(change.oldIndex, 1);
+            records.value.splice(change.newIndex, 0, newItem);
+          } else {
+            records.value[change.newIndex] = newItem;
+          }
         }
       });
     });
@@ -72,8 +75,8 @@ export const useRecordStore = defineStore('records', () => {
       aid: aid,
       start: start,
       end: end,
-      memo: memo,
     };
+    if (memo) docData.memo = memo;
     await addDoc(collection(getFirestore(), 'records'), docData);
   }
 
