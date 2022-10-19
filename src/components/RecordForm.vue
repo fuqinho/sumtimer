@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
 import { RecordDocumentData } from 'src/common/types';
 import { ActivityData, useActivityStore } from 'src/stores/activity-store';
@@ -24,25 +24,6 @@ const endTime = ref(
   props.record_data ? props.record_data.end.toDate() : new Date()
 );
 
-const is_new = computed(() => {
-  return !props.record_id;
-});
-
-const title = computed(() => {
-  return is_new.value ? 'Create a record' : activityName;
-});
-
-const activityData = computed(() => {
-  if (props.record_data && props.record_data.aid) {
-    return activityStore.getActivityData(props.record_data.aid) || null;
-  }
-  return null;
-});
-
-const activityName = computed(() => {
-  return activityData.value ? activityData.value.label : 'Unknown activity';
-});
-
 async function updateRecord() {
   if (props.record_id && props.record_data) {
     const newData = props.record_data;
@@ -51,6 +32,7 @@ async function updateRecord() {
     newData.aid = selectedActivity.value
       ? selectedActivity.value.aid
       : undefined;
+    newData.memo = memo.value ? memo.value : undefined;
     await recordStore.updateRecord(props.record_id, newData);
     emit('onSaved');
   }
@@ -84,15 +66,18 @@ if (props.record_data) {
     }
   }
 }
+const memo = ref(
+  props.record_data && props.record_data.memo ? props.record_data.memo : ''
+);
 </script>
 
 <template>
   <q-card>
-    <q-card-section>{{ title }}</q-card-section>
+    <q-card-section>Edit record</q-card-section>
+    <q-separator />
     <q-card-section>
-      <date-time-input v-model:time="startTime" />
-      <date-time-input v-model:time="endTime" />
       <q-select
+        filled
         v-model="selectedActivity"
         :options="activityOptions"
         label="Activity"
@@ -110,6 +95,15 @@ if (props.record_data) {
           </q-item>
         </template>
       </q-select>
+    </q-card-section>
+    <q-card-section>
+      <date-time-input label="Start" v-model:time="startTime" />
+    </q-card-section>
+    <q-card-section>
+      <date-time-input label="End" v-model:time="endTime" />
+    </q-card-section>
+    <q-card-section>
+      <q-input v-model="memo" label="Memo" filled autogrow></q-input>
     </q-card-section>
     <q-card-actions align="right">
       <q-btn label="Cancel" flat v-close-popup></q-btn>
