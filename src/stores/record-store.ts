@@ -61,12 +61,18 @@ export const useRecordStore = defineStore('records', () => {
     });
   }
 
-  async function addRecord(aid: string, start: Timestamp, end: Timestamp) {
+  async function addRecord(
+    aid: string,
+    start: Timestamp,
+    end: Timestamp,
+    memo?: string
+  ) {
     const docData: RecordDocumentData = {
       uid: uid.value,
       aid: aid,
       start: start,
       end: end,
+      memo: memo,
     };
     await addDoc(collection(getFirestore(), 'records'), docData);
   }
@@ -82,7 +88,12 @@ export const useRecordStore = defineStore('records', () => {
   async function finishRecording() {
     if (!ongoing.value) return;
 
-    await addRecord(ongoing.value.aid, ongoing.value.start, Timestamp.now());
+    await addRecord(
+      ongoing.value.aid,
+      ongoing.value.start,
+      Timestamp.now(),
+      ongoing.value.memo
+    );
     await userStore.finishOngoingActivity();
   }
 

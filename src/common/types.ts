@@ -23,6 +23,7 @@ export interface CategoryData {
 export interface OngoingRecord {
   aid: string;
   start: Timestamp;
+  memo?: string;
   breaks?: { start: Timestamp; end?: Timestamp }[];
 }
 

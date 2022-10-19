@@ -6,10 +6,8 @@ import {
   onSnapshot,
   Unsubscribe,
   updateDoc,
-  collection,
   deleteField,
   Timestamp,
-  runTransaction,
 } from 'firebase/firestore';
 import {
   CategoryData,
@@ -92,6 +90,13 @@ export const useUserDataStore = defineStore('userData', () => {
     await updateDoc(docRef, { ongoing: ongoing });
   }
 
+  async function updateOngoingMemo(memo: string) {
+    if (!ongoing.value) return;
+
+    const docRef = doc(getFirestore(), 'users', uid.value);
+    await updateDoc(docRef, { 'ongoing.memo': memo });
+  }
+
   async function finishOngoingActivity() {
     if (!ongoing.value) return;
 
@@ -110,5 +115,6 @@ export const useUserDataStore = defineStore('userData', () => {
     getCategoryData,
     startOngoingActivity,
     finishOngoingActivity,
+    updateOngoingMemo,
   };
 });

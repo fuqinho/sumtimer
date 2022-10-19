@@ -50,6 +50,12 @@ function finishRecording() {
 function pauseRecording() {
   console.log('pauseRecording');
 }
+
+async function recordMemo() {
+  await userStore.updateOngoingMemo(memo.value);
+}
+
+const memo = ref('');
 </script>
 
 <template>
@@ -60,6 +66,15 @@ function pauseRecording() {
     <q-separator />
     <q-card-section class="row justify-end">
       <time-display :time="elapsed_ms"></time-display>
+    </q-card-section>
+    <q-card-section>
+      <q-input
+        v-model="memo"
+        label="Memo"
+        filled
+        autogrow
+        @blur="recordMemo"
+      ></q-input>
     </q-card-section>
     <q-separator dark />
     <q-card-actions align="right">
