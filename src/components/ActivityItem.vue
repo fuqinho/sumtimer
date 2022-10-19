@@ -32,7 +32,6 @@ const categoryColor = computed(() => {
 });
 
 function addRecordForTesting() {
-  console.log('addRecordForTesting');
   const end = Timestamp.now();
   const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
   recordStore.addRecord(props.activity_id, start, end);
