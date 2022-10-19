@@ -36,7 +36,7 @@ export const useRecordStore = defineStore('records', () => {
     const q = query(
       recordsCollection,
       where('uid', '==', uid),
-      orderBy('start', 'desc'),
+      orderBy('end', 'desc'),
       limit(50)
     );
     onSnapshot(q, (snapshot) => {

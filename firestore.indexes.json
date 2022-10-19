@@ -9,7 +9,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "start",
+          "fieldPath": "end",
           "order": "DESCENDING"
         }
       ]
