@@ -6,12 +6,20 @@ import {
   collection,
   query,
   where,
+  updateDoc,
+  doc,
 } from 'firebase/firestore';
-import { ActivityDocumentData, ActivityData } from 'src/common/types';
+import {
+  ActivityDocumentData,
+  ActivityData,
+  RecordDocumentData,
+} from 'src/common/types';
+import { useUtil } from 'src/composables/util';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 export const useActivityStore = defineStore('activities', () => {
   const userStore = useUserDataStore();
+  const util = useUtil();
   const { uid } = storeToRefs(userStore);
   const activities = ref([] as ActivityData[]);
 
@@ -57,5 +65,25 @@ export const useActivityStore = defineStore('activities', () => {
     return null;
   }
 
-  return { activities, getActivityData };
+  async function onRecordAdded(recordData: RecordDocumentData) {
+    const aid = recordData.aid;
+    if (!aid) return;
+
+    const activityData = getActivityData(aid);
+    if (!activityData) return;
+
+    let prevNumRecords = 0;
+    if (activityData.cache && activityData.cache.numRecords)
+      prevNumRecords = activityData.cache.numRecords;
+    let prevElapsedTime = 0;
+    if (activityData.cache && activityData.cache.elapsedTime)
+      prevElapsedTime = activityData.cache.elapsedTime;
+
+    await updateDoc(doc(getFirestore(), 'activities', aid), {
+      'cache.numRecords': prevNumRecords + 1,
+      'cache.elapsedTime': prevElapsedTime + util.computeDuration(recordData),
+    });
+  }
+
+  return { activities, getActivityData, onRecordAdded };
 });

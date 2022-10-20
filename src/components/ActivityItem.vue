@@ -36,6 +36,22 @@ function addRecordForTesting() {
   const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
   recordStore.addRecord(props.activity_id, start, end);
 }
+
+const numRecords = computed(() => {
+  const cache = props.activity_data.cache;
+  if (cache && cache.numRecords) {
+    return cache.numRecords;
+  }
+  return -1;
+});
+
+const totalHours = computed(() => {
+  const cache = props.activity_data.cache;
+  if (cache && cache.elapsedTime) {
+    return (cache.elapsedTime / (60 * 60 * 1000)).toFixed(1);
+  }
+  return '0';
+});
 </script>
 
 <template>
@@ -63,11 +79,11 @@ function addRecordForTesting() {
     </q-item-section>
     <q-item-section side>
       <q-item-label caption>Times</q-item-label>
-      <q-item-label class="records-num">3</q-item-label>
+      <q-item-label class="records-num">{{ numRecords }}</q-item-label>
     </q-item-section>
     <q-item-section side>
       <q-item-label caption>Hours</q-item-label>
-      <q-item-label class="total-hours">23.3</q-item-label>
+      <q-item-label class="total-hours">{{ totalHours }}</q-item-label>
     </q-item-section>
     <q-item-section side>
       <div class="text-grey-7 q-gutter-xs">

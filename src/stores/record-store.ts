@@ -15,9 +15,11 @@ import {
 } from 'firebase/firestore';
 import { RecordDocumentData, RecordData } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
+import { useActivityStore } from 'src/stores/activity-store';
 
 export const useRecordStore = defineStore('records', () => {
   const userStore = useUserDataStore();
+  const activityStore = useActivityStore();
   const { uid, ongoing } = storeToRefs(userStore);
 
   const records = ref([] as RecordData[]);
@@ -73,6 +75,7 @@ export const useRecordStore = defineStore('records', () => {
     };
     if (memo) docData.memo = memo;
     await addDoc(collection(getFirestore(), 'records'), docData);
+    activityStore.onRecordAdded(docData);
   }
 
   async function updateRecord(id: string, data: RecordDocumentData) {

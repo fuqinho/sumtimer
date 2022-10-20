@@ -39,19 +39,20 @@ export interface ActivityDocumentData extends DocumentData {
   color?: string;
   desc?: string;
   progress?: {
-    progress_max?: number;
-    progress_unit?: string;
+    progressMax?: number;
+    progressUnit?: string;
   };
   cache?: {
-    progress_now?: number;
-    elapsed_time?: number;
-    recent_records?: {
+    progressNow?: number;
+    elapsedTime?: number;
+    numRecords?: number;
+    recentRecords?: {
       start: Timestamp;
       end: Timestamp;
       duration: number;
-      whats_done?: string;
-      progress_from?: number;
-      progress_to?: number;
+      whatsDone?: string;
+      progressFrom?: number;
+      progressTo?: number;
     }[];
   };
 }
@@ -69,8 +70,8 @@ export interface RecordDocumentData extends DocumentData {
   breaks?: { start: Timestamp; end: Timestamp }[];
   duration?: number;
   memo?: string;
-  progress_from?: number;
-  progress_to?: number;
+  progressFrom?: number;
+  progressTo?: number;
 }
 
 export interface RecordData {
