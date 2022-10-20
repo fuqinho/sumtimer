@@ -42,7 +42,7 @@ const numRecords = computed(() => {
   if (cache && cache.numRecords) {
     return cache.numRecords;
   }
-  return -1;
+  return 0;
 });
 
 const totalHours = computed(() => {
