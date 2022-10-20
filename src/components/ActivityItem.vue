@@ -4,6 +4,7 @@ import { Timestamp } from '@firebase/firestore';
 import { ActivityDocumentData } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { useRecordStore } from 'src/stores/record-store';
+import { useRouter } from 'vue-router';
 
 interface Props {
   activity_id: string;
@@ -14,6 +15,7 @@ const props = defineProps<Props>();
 
 const userStore = useUserDataStore();
 const recordStore = useRecordStore();
+const router = useRouter();
 
 const categoryName = computed(() => {
   if (!props.activity_data.cid) return 'Uncategorized';
@@ -52,6 +54,11 @@ const totalHours = computed(() => {
   }
   return '0';
 });
+
+async function startActivity() {
+  await userStore.startOngoingActivity(props.activity_id);
+  router.push('/');
+}
 </script>
 
 <template>
@@ -63,7 +70,7 @@ const totalHours = computed(() => {
       }"
     ></div>
     <q-btn
-      @click="userStore.startOngoingActivity(props.activity_id)"
+      @click="startActivity"
       round
       :style="{ color: categoryColor }"
       flat
