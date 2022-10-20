@@ -39,34 +39,65 @@ function addRecordForTesting() {
 </script>
 
 <template>
-  <div class="activity row items-center">
-    <div class="col">
-      <q-badge
-        :style="{
-          'background-color': categoryColor,
-        }"
-        >{{ categoryName }}</q-badge
-      >
-      <div class="row text-h6">{{ props.activity_data.label }}</div>
-    </div>
-    <div class="col-4">{{ props.activity_data.label }}</div>
-    <div class="col">{{ props.activity_data.desc }}</div>
+  <q-item class="activity" dense>
+    <div
+      class="color-label"
+      :style="{
+        'background-color': categoryColor,
+      }"
+    ></div>
     <q-btn
       @click="userStore.startOngoingActivity(props.activity_id)"
       round
-      color="primary"
+      :style="{ color: categoryColor }"
       flat
       icon="play_arrow"
     />
-    <q-btn round color="primary" flat icon="pause" />
-    <q-btn
-      @click="addRecordForTesting"
-      round
-      color="primary"
-      flat
-      icon="stop"
-    />
-    <q-btn round color="primary" flat icon="edit" />
-    <q-btn round color="primary" flat icon="more_vert" />
-  </div>
+    <q-item-section>
+      <q-item-label caption :style="{ color: categoryColor }">{{
+        categoryName
+      }}</q-item-label>
+      <q-item-label class="activity-name">
+        {{ props.activity_data.label }}
+      </q-item-label>
+    </q-item-section>
+    <q-item-section side>
+      <q-item-label caption>Times</q-item-label>
+      <q-item-label class="records-num">3</q-item-label>
+    </q-item-section>
+    <q-item-section side>
+      <q-item-label caption>Hours</q-item-label>
+      <q-item-label class="total-hours">23.3</q-item-label>
+    </q-item-section>
+    <q-item-section side>
+      <div class="text-grey-7 q-gutter-xs">
+        <q-btn size="sm" round flat icon="edit" />
+        <q-btn size="sm" @click="addRecordForTesting" round flat icon="stop" />
+      </div>
+    </q-item-section>
+  </q-item>
 </template>
+
+<style>
+.activity {
+  padding: 0 !important;
+}
+
+.color-label {
+  width: 8px;
+  height: 42px;
+  background-color: red;
+}
+
+.activity-name,
+.records-num,
+.total-hours {
+  font-size: 16px;
+  margin-top: 0 !important;
+}
+
+.records-num,
+.total-hours {
+  color: #444;
+}
+</style>

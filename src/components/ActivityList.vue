@@ -9,13 +9,13 @@ const { activities } = storeToRefs(activityStore);
 
 <template>
   <div class="q-pa-md">
-    <div class="col">
+    <q-list bordered separator>
       <ActivityItem
         v-for="activity in activities"
         :key="activity.id"
         :activity_id="activity.id"
         :activity_data="activity.data"
       ></ActivityItem>
-    </div>
+    </q-list>
   </div>
 </template>
