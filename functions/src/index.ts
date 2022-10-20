@@ -96,6 +96,7 @@ async function onCreateUser(user: UserRecord) {
         uid: user.uid,
         label: activity.label,
         cid: activity.cid,
+        updated: admin.firestore.FieldValue.serverTimestamp(),
       };
       await admin.firestore().collection('activities').add(docData);
     }

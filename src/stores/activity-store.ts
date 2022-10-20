@@ -8,6 +8,8 @@ import {
   where,
   updateDoc,
   doc,
+  orderBy,
+  serverTimestamp,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
@@ -30,27 +32,31 @@ export const useActivityStore = defineStore('activities', () => {
     if (!uid) return;
 
     const activitiesCollection = collection(getFirestore(), 'activities');
-    const q = query(activitiesCollection, where('uid', '==', userStore.uid));
+    const q = query(
+      activitiesCollection,
+      where('uid', '==', userStore.uid),
+      orderBy('updated', 'desc')
+    );
     onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
-          activities.value.push({
+          activities.value.splice(change.newIndex, 0, {
             id: change.doc.id,
             data: change.doc.data() as ActivityDocumentData,
           });
         } else if (change.type == 'removed') {
-          activities.value.forEach((item, index) => {
-            if (item.id === change.doc.id) {
-              activities.value.splice(index, 1);
-            }
-          });
+          activities.value.splice(change.oldIndex, 1);
         } else {
-          activities.value.forEach((item, index) => {
-            if (item.id === change.doc.id) {
-              activities.value[index].data =
-                change.doc.data() as ActivityDocumentData;
-            }
-          });
+          const data = {
+            id: change.doc.id,
+            data: change.doc.data() as ActivityDocumentData,
+          };
+          if (change.newIndex != change.oldIndex) {
+            activities.value.splice(change.oldIndex, 1);
+            activities.value.splice(change.newIndex, 0, data);
+          } else {
+            activities.value[change.newIndex] = data;
+          }
         }
       });
     });
@@ -82,6 +88,7 @@ export const useActivityStore = defineStore('activities', () => {
     await updateDoc(doc(getFirestore(), 'activities', aid), {
       'cache.numRecords': prevNumRecords + 1,
       'cache.elapsedTime': prevElapsedTime + util.computeDuration(recordData),
+      updated: serverTimestamp(),
     });
   }
 

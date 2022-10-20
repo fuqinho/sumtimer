@@ -42,6 +42,7 @@ export interface ActivityDocumentData extends DocumentData {
     progressMax?: number;
     progressUnit?: string;
   };
+  updated?: Timestamp;
   cache?: {
     progressNow?: number;
     elapsedTime?: number;
