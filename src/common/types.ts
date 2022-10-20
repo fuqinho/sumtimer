@@ -17,7 +17,7 @@ export interface CategoryDocumentData extends DocumentData {
 export interface CategoryData {
   id: string;
   label: string;
-  color?: string;
+  color: string;
 }
 
 export interface OngoingRecord {
@@ -36,13 +36,11 @@ export interface ActivityDocumentData extends DocumentData {
   uid: string;
   label: string;
   cid?: string;
-  color?: string;
-  desc?: string;
   progress?: {
     progressMax?: number;
     progressUnit?: string;
   };
-  updated?: Timestamp;
+  updated: Timestamp;
   cache?: {
     progressNow?: number;
     elapsedTime?: number;

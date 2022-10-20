@@ -10,6 +10,8 @@ import {
   doc,
   orderBy,
   serverTimestamp,
+  addDoc,
+  Timestamp,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
@@ -92,5 +94,17 @@ export const useActivityStore = defineStore('activities', () => {
     });
   }
 
-  return { activities, getActivityData, onRecordAdded };
+  async function addActivity(label: string, cid?: string) {
+    const data: ActivityDocumentData = {
+      uid: uid.value,
+      label: label,
+      updated: Timestamp.now(),
+    };
+    if (cid) {
+      data.cid = cid;
+    }
+    await addDoc(collection(getFirestore(), 'activities'), data);
+  }
+
+  return { activities, getActivityData, addActivity, onRecordAdded };
 });
