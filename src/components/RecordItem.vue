@@ -4,15 +4,19 @@ import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
 import { RecordDoc } from 'src/common/types';
 import { useTimeUtil } from 'src/composables/time-util';
 import { useActivityStore } from 'src/stores/activity-store';
-import { useUserDataStore } from 'src/stores/user-data-store';
 import RecordForm from 'src/components/RecordForm.vue';
+import { useCategoryStore } from 'src/stores/category-store';
+import {
+  defaultCategoryColor,
+  defaultCategoryName,
+} from 'src/common/constants';
 
 interface Props {
   doc: RecordDoc;
 }
 const props = defineProps<Props>();
 
-const userStore = useUserDataStore();
+const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const timeUtil = useTimeUtil();
 
@@ -31,13 +35,13 @@ const categoryColor = computed(() => {
   if (aid) {
     const activity = activityStore.getActivityData(aid);
     if (activity && activity.cid) {
-      const category = userStore.getCategoryData(activity.cid);
+      const category = categoryStore.docData(activity.cid);
       if (category) {
         return category.color;
       }
     }
   }
-  return '#234365';
+  return defaultCategoryColor;
 });
 
 const categoryName = computed(() => {
@@ -45,13 +49,13 @@ const categoryName = computed(() => {
   if (aid) {
     const activity = activityStore.getActivityData(aid);
     if (activity && activity.cid) {
-      const category = userStore.getCategoryData(activity.cid);
+      const category = categoryStore.docData(activity.cid);
       if (category) {
         return category.label;
       }
     }
   }
-  return 'Unknown category';
+  return defaultCategoryName;
 });
 
 const hours = computed(() => {

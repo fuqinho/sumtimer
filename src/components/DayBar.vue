@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { date } from 'quasar';
 import { RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useCategoryStore } from 'src/stores/category-store';
 
 interface Props {
   start: Date;
@@ -11,8 +11,8 @@ interface Props {
 }
 const props = defineProps<Props>();
 
+const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
-const userStore = useUserDataStore();
 
 interface BarData {
   rid: string;
@@ -48,7 +48,7 @@ const bars = computed(() => {
       if (record.data.aid) {
         const activityData = activityStore.getActivityData(record.data.aid);
         if (activityData && activityData.cid) {
-          const categoryData = userStore.getCategoryData(activityData.cid);
+          const categoryData = categoryStore.docData(activityData.cid);
           if (categoryData && categoryData.color) {
             data.style.backgroundColor = categoryData.color;
           }

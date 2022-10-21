@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { ActivityDoc, ActivityChange } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useCategoryStore } from 'src/stores/category-store';
 
 // ======= Properties/Emitters =======
 interface Props {
@@ -13,11 +13,11 @@ const props = defineProps<Props>();
 const emit = defineEmits(['onCreated', 'onUpdated']);
 
 // ======= Use stores/composables =======
-const userStore = useUserDataStore();
+const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 
 // ======= Refs =======
-const { categories } = storeToRefs(userStore);
+const { categories } = storeToRefs(categoryStore);
 const selectedCategory = ref(
   null as { cid: string; label: string; color: string } | null
 );
@@ -28,8 +28,8 @@ const categoryOptions = computed(() => {
   return categories.value.map((category) => {
     return {
       cid: category.id,
-      label: category.label,
-      color: category.color,
+      label: category.data.label,
+      color: category.data.color,
     };
   });
 });
@@ -57,7 +57,6 @@ async function addActivity() {
 }
 
 async function updateActivity() {
-  console.log('updateActivity');
   if (!props.doc) {
     console.error('updateActivity is called without document data.');
     return;

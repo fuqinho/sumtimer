@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { CategoryDoc } from 'src/common/types';
+import { useCategoryStore } from 'src/stores/category-store';
+import { ref } from 'vue';
+import CategoryForm from './CategoryForm.vue';
 
 interface Props {
-  id: string;
-  name: string;
-  color?: string;
+  doc: CategoryDoc;
 }
-
 const props = defineProps<Props>();
 
-const userStore = useUserDataStore();
-const { removeCategory } = userStore;
+const editing = ref(false);
+
+const categoryStore = useCategoryStore();
 </script>
 
 <template>
@@ -18,17 +19,27 @@ const { removeCategory } = userStore;
     <q-card-section
       :style="{
         color: '#ffffff',
-        'background-color': props.color || '#ededed',
+        'background-color': props.doc.data.color,
       }"
     >
-      <div class="text-h6">{{ props.name }}</div>
+      <div class="text-h6">{{ props.doc.data.label }}</div>
     </q-card-section>
     <q-separator />
-    <q-card-actions align="right">
-      <q-btn flat>Edit</q-btn>
-      <q-btn @click="removeCategory(props.id)" flat>Delete</q-btn>
+    <q-card-actions align="right" class="text-grey-8">
+      <q-btn @click="editing = true" flat round icon="edit" />
+      <q-btn
+        @click="categoryStore.deleteCategory(props.doc.id)"
+        round
+        flat
+        icon="delete"
+      />
     </q-card-actions>
   </q-card>
+
+  <q-dialog v-model="editing">
+    <CategoryForm :doc="props.doc" @on-updated="editing = false"></CategoryForm
+    >>
+  </q-dialog>
 </template>
 
 <style lang="scss" scoped>

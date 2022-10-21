@@ -5,7 +5,7 @@ import { ActivityDoc, RecordDoc, RecordChange } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import DateTimeInput from 'src/components/DateTimeInput.vue';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useCategoryStore } from 'src/stores/category-store';
 
 interface Props {
   doc?: RecordDoc;
@@ -13,7 +13,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['onSaved']);
 
-const userStore = useUserDataStore();
+const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
 const activityStore = useActivityStore();
 
@@ -49,7 +49,7 @@ async function updateRecord() {
 
 function categoryName(activity: ActivityDoc) {
   if (activity.data.cid) {
-    const data = userStore.getCategoryData(activity.data.cid);
+    const data = categoryStore.docData(activity.data.cid);
     if (data && data.label) {
       return data.label;
     }
@@ -66,6 +66,7 @@ const activityOptions = ref(
     };
   })
 );
+
 const selectedActivity = ref(null as { aid: string; label: string } | null);
 if (props.doc) {
   for (const option of activityOptions.value) {

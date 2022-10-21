@@ -9,11 +9,7 @@ import {
   deleteField,
   Timestamp,
 } from 'firebase/firestore';
-import {
-  CategoryData,
-  OngoingRecord,
-  UserDocumentData,
-} from 'src/common/types';
+import { CategoryDoc, OngoingRecord, UserDocumentData } from 'src/common/types';
 import { useAuthStore } from 'src/stores/auth-store';
 
 export const useUserDataStore = defineStore('userData', () => {
@@ -21,7 +17,7 @@ export const useUserDataStore = defineStore('userData', () => {
   const { user } = storeToRefs(authStore);
   const uid = ref('');
 
-  const categories = ref([] as CategoryData[]);
+  const categories = ref([] as CategoryDoc[]);
   const ongoing = ref(undefined as OngoingRecord | undefined);
 
   let unsubscribe = null as Unsubscribe | null;
@@ -52,34 +48,6 @@ export const useUserDataStore = defineStore('userData', () => {
     }
   }
 
-  function addCategory(label: string, color: string) {
-    // random generated id to the category.
-    const id = Math.random().toString(36).slice(2);
-
-    const newCategories = categories.value;
-    newCategories.push({ id: id, label: label, color: color });
-
-    const docRef = doc(getFirestore(), 'users', uid.value);
-    updateDoc(docRef, { categories: newCategories });
-  }
-
-  function removeCategory(id: string) {
-    const newCategories = categories.value.filter((category) => {
-      return category.id != id;
-    });
-    const docRef = doc(getFirestore(), 'users', uid.value);
-    updateDoc(docRef, { categories: newCategories });
-  }
-
-  function getCategoryData(id: string): CategoryData | null {
-    for (const category of categories.value) {
-      if (category.id === id) {
-        return category;
-      }
-    }
-    return null;
-  }
-
   async function startOngoingActivity(aid: string) {
     const docRef = doc(getFirestore(), 'users', uid.value);
     const ongoing = {
@@ -107,10 +75,6 @@ export const useUserDataStore = defineStore('userData', () => {
     uid,
     categories,
     ongoing,
-
-    addCategory,
-    removeCategory,
-    getCategoryData,
     startOngoingActivity,
     finishOngoingActivity,
     updateOngoingMemo,

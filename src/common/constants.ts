@@ -1,5 +1,3 @@
-import { CategoryData, UserDocumentData } from 'src/common/types';
-
 export const defaultColorPalette = [
   '#EF5350',
   '#EC407A',
@@ -23,82 +21,4 @@ export const defaultColorPalette = [
 ];
 
 export const defaultCategoryColor = '#bdbdbd';
-
-export const presetCategories: CategoryData[] = [
-  {
-    id: 'work',
-    label: 'Work',
-    color: '#ef5350',
-  },
-  {
-    id: 'learning',
-    label: 'Learning',
-    color: '#29b6f6',
-  },
-  {
-    id: 'exercise',
-    label: 'Exercise',
-    color: '#9ccc65',
-  },
-  {
-    id: 'entertainment',
-    label: 'Entertainment',
-    color: '#ffa726',
-  },
-  {
-    id: 'rest',
-    label: 'Rest',
-    color: '#7e57c2',
-  },
-  {
-    id: 'chore',
-    label: 'Chore',
-    color: '#8d6e63',
-  },
-  {
-    id: 'others',
-    label: 'Others',
-    color: '#bdbdbd',
-  },
-];
-
-export interface PresetActivityData {
-  label: string;
-  cid?: string;
-  desc?: string;
-}
-
-export const presetActivities: PresetActivityData[] = [
-  {
-    cid: 'work',
-    label: 'General work',
-  },
-  {
-    cid: 'learning',
-    label: 'General learning',
-  },
-  {
-    cid: 'exercise',
-    label: 'Walking',
-  },
-  {
-    cid: 'entertainment',
-    label: 'Video game',
-  },
-  {
-    cid: 'rest',
-    label: 'Sleep',
-  },
-  {
-    cid: 'chore',
-    label: 'Room cleaning',
-  },
-  {
-    cid: 'chore',
-    label: 'Errands',
-  },
-];
-
-export const presetUserDocumentData: UserDocumentData = {
-  categories: presetCategories,
-};
+export const defaultCategoryName = 'Uncategorized';

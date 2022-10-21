@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useCategoryStore } from 'src/stores/category-store';
 import CategoryItem from 'src/components/CategoryItem.vue';
 
-const userStore = useUserDataStore();
-const { categories } = storeToRefs(userStore);
+const categoryStore = useCategoryStore();
+const { categories } = storeToRefs(categoryStore);
 </script>
 
 <template>
@@ -12,9 +12,7 @@ const { categories } = storeToRefs(userStore);
     <CategoryItem
       v-for="category in categories"
       :key="category.id"
-      :id="category.id"
-      :name="category.label"
-      :color="category.color"
+      :doc="category"
     ></CategoryItem>
   </div>
 </template>

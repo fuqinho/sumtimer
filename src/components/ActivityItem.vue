@@ -6,6 +6,11 @@ import { useUserDataStore } from 'src/stores/user-data-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useRouter } from 'vue-router';
 import ActivityForm from 'src/components/ActivityForm.vue';
+import { useCategoryStore } from 'src/stores/category-store';
+import {
+  defaultCategoryColor,
+  defaultCategoryName,
+} from 'src/common/constants';
 
 interface Props {
   doc: ActivityDoc;
@@ -14,32 +19,29 @@ interface Props {
 const props = defineProps<Props>();
 
 const userStore = useUserDataStore();
+const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
 const router = useRouter();
 
 const editing = ref(false);
 
 const categoryName = computed(() => {
-  if (!props.doc.data.cid) return 'Uncategorized';
-
-  const data = userStore.getCategoryData(props.doc.data.cid);
-  if (data && data.label) return data.label;
-  return 'Uncategorized';
+  const cid = props.doc.data.cid;
+  if (cid) {
+    const data = categoryStore.docData(cid);
+    if (data) return data.label;
+  }
+  return defaultCategoryName;
 });
 
 const categoryColor = computed(() => {
-  if (!props.doc.data.cid) return '#bdbdbd';
-
-  const data = userStore.getCategoryData(props.doc.data.cid);
-  if (data && data.color) return data.color;
-  return '#ff0000';
+  const cid = props.doc.data.cid;
+  if (cid) {
+    const data = categoryStore.docData(cid);
+    if (data) return data.color;
+  }
+  return defaultCategoryColor;
 });
-
-function addRecordForTesting() {
-  const end = Timestamp.now();
-  const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
-  recordStore.addRecord(props.doc.id, start, end);
-}
 
 const numRecords = computed(() => {
   const cache = props.doc.data.cache;
@@ -60,6 +62,12 @@ const totalHours = computed(() => {
 async function startActivity() {
   await userStore.startOngoingActivity(props.doc.id);
   router.push('/');
+}
+
+function addRecordForTesting() {
+  const end = Timestamp.now();
+  const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
+  recordStore.addRecord(props.doc.id, start, end);
 }
 </script>
 

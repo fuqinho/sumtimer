@@ -10,14 +10,14 @@ export interface Meta {
 }
 
 export interface CategoryDocumentData extends DocumentData {
-  name: string;
+  uid: string;
+  label: string;
   color: string;
 }
 
-export interface CategoryData {
+export interface CategoryDoc {
   id: string;
-  label: string;
-  color: string;
+  data: CategoryDocumentData;
 }
 
 export interface OngoingRecord {
@@ -28,7 +28,8 @@ export interface OngoingRecord {
 }
 
 export interface UserDocumentData extends DocumentData {
-  categories: CategoryData[];
+  displayName: string;
+  email: string;
   ongoing?: OngoingRecord;
 }
 
