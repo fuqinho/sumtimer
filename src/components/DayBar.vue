@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { date } from 'quasar';
-import { RecordData } from 'src/common/types';
+import { RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 interface Props {
   start: Date;
-  records: RecordData[];
+  records: RecordDoc[];
 }
 const props = defineProps<Props>();
 
