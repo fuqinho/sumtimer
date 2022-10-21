@@ -12,6 +12,7 @@ import {
   defaultCategoryName,
 } from 'src/common/constants';
 import { storeToRefs } from 'pinia';
+import { useActivityStore } from 'src/stores/activity-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -22,6 +23,7 @@ const props = defineProps<Props>();
 // =========================== Use stores/composables ==========================
 const userStore = useUserDataStore();
 const categoryStore = useCategoryStore();
+const activityStore = useActivityStore();
 const recordStore = useRecordStore();
 const router = useRouter();
 
@@ -75,6 +77,10 @@ function addRecordForTesting() {
   const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
   recordStore.addRecord(props.doc.id, start, end);
 }
+
+async function deleteActivity() {
+  activityStore.deleteActivity(props.doc.id);
+}
 </script>
 
 <template>
@@ -112,6 +118,7 @@ function addRecordForTesting() {
       <div class="text-grey-7 q-gutter-xs">
         <q-btn size="sm" @click="editing = true" round flat icon="edit" />
         <q-btn size="sm" @click="addRecordForTesting" round flat icon="stop" />
+        <q-btn size="sm" @click="deleteActivity" round flat icon="delete" />
       </div>
     </q-item-section>
   </q-item>

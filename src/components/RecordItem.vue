@@ -11,6 +11,7 @@ import {
   defaultCategoryName,
 } from 'src/common/constants';
 import { storeToRefs } from 'pinia';
+import { useRecordStore } from 'src/stores/record-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -21,6 +22,7 @@ const props = defineProps<Props>();
 // =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
+const recordStore = useRecordStore();
 const timeUtil = useTimeUtil();
 
 // =========================== Computed properties =============================
@@ -75,7 +77,7 @@ const editing = ref(false);
 
 // =========================== Methods =========================================
 async function deleteRecord() {
-  await deleteDoc(doc(getFirestore(), 'records', props.doc.id));
+  await recordStore.deleteRecord(props.doc.id);
 }
 
 // =========================== Additional setup ================================

@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getFirestore,
   limit,
@@ -82,6 +83,10 @@ export const useRecordStore = defineStore('records', () => {
     await updateDoc(doc(getFirestore(), 'records', id), change);
   }
 
+  async function deleteRecord(id: string) {
+    await deleteDoc(doc(getFirestore(), 'records', id));
+  }
+
   async function startRecording(aid: string) {
     await userStore.startOngoingActivity(aid);
   }
@@ -98,5 +103,12 @@ export const useRecordStore = defineStore('records', () => {
     await userStore.finishOngoingActivity();
   }
 
-  return { records, addRecord, updateRecord, startRecording, finishRecording };
+  return {
+    records,
+    addRecord,
+    updateRecord,
+    deleteRecord,
+    startRecording,
+    finishRecording,
+  };
 });
