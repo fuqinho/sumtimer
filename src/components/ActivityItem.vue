@@ -118,8 +118,13 @@ async function deleteActivity() {
       </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <q-item-label caption>Times</q-item-label>
-      <q-item-label class="records-num">{{ numRecords }}</q-item-label>
+      <q-item-label caption>Records</q-item-label>
+      <q-item-label class="records-num"
+        ><router-link
+          :to="{ name: 'ActivityRecords', params: { aid: props.doc.id } }"
+          >{{ numRecords }}</router-link
+        ></q-item-label
+      >
     </q-item-section>
     <q-item-section side>
       <q-item-label caption>Hours</q-item-label>

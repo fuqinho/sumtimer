@@ -17,6 +17,13 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'records',
         component: () => import('pages/RecordsPage.vue'),
+        children: [
+          {
+            name: 'ActivityRecords',
+            path: 'a/:aid',
+            component: () => import('pages/RecordsPage.vue'),
+          },
+        ],
       },
     ],
   },
