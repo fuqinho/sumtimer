@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
 import { RecordDoc } from 'src/common/types';
 import { useTimeUtil } from 'src/composables/time-util';
 import { useActivityStore } from 'src/stores/activity-store';
