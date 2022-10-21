@@ -13,8 +13,7 @@ const { activities } = storeToRefs(activityStore);
       <ActivityItem
         v-for="activity in activities"
         :key="activity.id"
-        :activity_id="activity.id"
-        :activity_data="activity.data"
+        :doc="activity"
       ></ActivityItem>
     </q-list>
   </div>

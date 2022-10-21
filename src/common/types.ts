@@ -56,9 +56,15 @@ export interface ActivityDocumentData extends DocumentData {
   };
 }
 
-export interface ActivityData {
+export interface ActivityDoc {
   id: string;
   data: ActivityDocumentData;
+}
+
+export interface ActivityChange {
+  label?: string;
+  cid?: string;
+  updated?: Timestamp;
 }
 
 export interface RecordDocumentData extends DocumentData {
@@ -73,9 +79,16 @@ export interface RecordDocumentData extends DocumentData {
   progressTo?: number;
 }
 
-export interface RecordData {
+export interface RecordDoc {
   id: string;
   data: RecordDocumentData;
+}
+
+export interface RecordChange {
+  aid?: string;
+  start?: Timestamp;
+  end?: Timestamp;
+  memo?: string;
 }
 
 // This might be necesary to reduce document reads.

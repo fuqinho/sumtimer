@@ -15,7 +15,7 @@ import {
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
-  ActivityData,
+  ActivityDoc,
   RecordDocumentData,
 } from 'src/common/types';
 import { useUtil } from 'src/composables/util';
@@ -25,7 +25,7 @@ export const useActivityStore = defineStore('activities', () => {
   const userStore = useUserDataStore();
   const util = useUtil();
   const { uid } = storeToRefs(userStore);
-  const activities = ref([] as ActivityData[]);
+  const activities = ref([] as ActivityDoc[]);
 
   startWatchActivities(uid.value);
   watch(uid, startWatchActivities);
@@ -106,8 +106,8 @@ export const useActivityStore = defineStore('activities', () => {
     await addDoc(collection(getFirestore(), 'activities'), data);
   }
 
-  async function updateActivity(id: string, data: ActivityDocumentData) {
-    await updateDoc(doc(getFirestore(), 'activities', id), data);
+  async function updateActivity(id: string, change: object) {
+    await updateDoc(doc(getFirestore(), 'activities', id), change);
   }
 
   return {

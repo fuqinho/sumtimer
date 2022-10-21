@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { ActivityDoc, ActivityChange } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 // ======= Properties/Emitters =======
 interface Props {
-  activityId?: string;
+  doc?: ActivityDoc;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onCreated', 'onUpdated']);
@@ -34,8 +35,8 @@ const categoryOptions = computed(() => {
 });
 
 // ======= Other setup =======
-if (props.activityId) {
-  const data = activityStore.getActivityData(props.activityId);
+if (props.doc) {
+  const data = activityStore.getActivityData(props.doc.id);
   if (data) {
     for (const option of categoryOptions.value) {
       if (option.cid == data.cid) {
@@ -57,26 +58,29 @@ async function addActivity() {
 
 async function updateActivity() {
   console.log('updateActivity');
-  if (!props.activityId) {
-    console.error('updateActivity is called without activityId.');
+  if (!props.doc) {
+    console.error('updateActivity is called without document data.');
     return;
   }
-  const data = activityStore.getActivityData(props.activityId);
-  if (!data) {
-    console.error('updateActivity is called without activityData.');
-    return;
+  const change = {} as ActivityChange;
+  if (
+    selectedCategory.value &&
+    selectedCategory.value.cid &&
+    selectedCategory.value.cid !== props.doc.data.cid
+  ) {
+    change.cid = selectedCategory.value.cid;
   }
-  if (selectedCategory.value) data.cid = selectedCategory.value.cid;
-  data.label = activityName.value;
-
-  await activityStore.updateActivity(props.activityId, data);
+  if (activityName.value !== props.doc.data.label) {
+    change.label = activityName.value;
+  }
+  await activityStore.updateActivity(props.doc.id, change);
   emit('onUpdated');
 }
 </script>
 
 <template>
   <q-card>
-    <q-card-section v-if="!!props.activityId">Modify activity</q-card-section>
+    <q-card-section v-if="!!props.doc">Modify activity</q-card-section>
     <q-card-section v-else>Create activity</q-card-section>
     <q-separator />
     <q-card-section>
@@ -99,7 +103,7 @@ async function updateActivity() {
     <q-card-actions align="right">
       <q-btn label="Cancel" flat v-close-popup></q-btn>
       <q-btn
-        v-if="!!props.activityId"
+        v-if="!!props.doc"
         label="Save"
         color="primary"
         @click="updateActivity"

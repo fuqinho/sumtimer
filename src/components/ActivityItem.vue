@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
-import { ActivityDocumentData } from 'src/common/types';
+import { ActivityDoc } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useRouter } from 'vue-router';
 import ActivityForm from 'src/components/ActivityForm.vue';
 
 interface Props {
-  activity_id: string;
-  activity_data: ActivityDocumentData;
+  doc: ActivityDoc;
 }
 
 const props = defineProps<Props>();
@@ -21,17 +20,17 @@ const router = useRouter();
 const editing = ref(false);
 
 const categoryName = computed(() => {
-  if (!props.activity_data.cid) return 'Uncategorized';
+  if (!props.doc.data.cid) return 'Uncategorized';
 
-  const data = userStore.getCategoryData(props.activity_data.cid);
+  const data = userStore.getCategoryData(props.doc.data.cid);
   if (data && data.label) return data.label;
   return 'Uncategorized';
 });
 
 const categoryColor = computed(() => {
-  if (!props.activity_data.cid) return '#bdbdbd';
+  if (!props.doc.data.cid) return '#bdbdbd';
 
-  const data = userStore.getCategoryData(props.activity_data.cid);
+  const data = userStore.getCategoryData(props.doc.data.cid);
   if (data && data.color) return data.color;
   return '#ff0000';
 });
@@ -39,11 +38,11 @@ const categoryColor = computed(() => {
 function addRecordForTesting() {
   const end = Timestamp.now();
   const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
-  recordStore.addRecord(props.activity_id, start, end);
+  recordStore.addRecord(props.doc.id, start, end);
 }
 
 const numRecords = computed(() => {
-  const cache = props.activity_data.cache;
+  const cache = props.doc.data.cache;
   if (cache && cache.numRecords) {
     return cache.numRecords;
   }
@@ -51,7 +50,7 @@ const numRecords = computed(() => {
 });
 
 const totalHours = computed(() => {
-  const cache = props.activity_data.cache;
+  const cache = props.doc.data.cache;
   if (cache && cache.elapsedTime) {
     return (cache.elapsedTime / (60 * 60 * 1000)).toFixed(1);
   }
@@ -59,7 +58,7 @@ const totalHours = computed(() => {
 });
 
 async function startActivity() {
-  await userStore.startOngoingActivity(props.activity_id);
+  await userStore.startOngoingActivity(props.doc.id);
   router.push('/');
 }
 </script>
@@ -84,7 +83,7 @@ async function startActivity() {
         categoryName
       }}</q-item-label>
       <q-item-label class="activity-name">
-        {{ props.activity_data.label }}
+        {{ props.doc.data.label }}
       </q-item-label>
     </q-item-section>
     <q-item-section side>
@@ -104,10 +103,7 @@ async function startActivity() {
   </q-item>
 
   <q-dialog v-model="editing">
-    <ActivityForm
-      :activity-id="props.activity_id"
-      @on-updated="editing = false"
-    />
+    <ActivityForm :doc="props.doc" @on-updated="editing = false" />
   </q-dialog>
 </template>
 

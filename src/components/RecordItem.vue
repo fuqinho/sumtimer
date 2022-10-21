@@ -1,33 +1,33 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
-import { RecordDocumentData } from 'src/common/types';
+import { RecordDoc } from 'src/common/types';
 import { useTimeUtil } from 'src/composables/time-util';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import RecordForm from 'src/components/RecordForm.vue';
 
+interface Props {
+  doc: RecordDoc;
+}
+const props = defineProps<Props>();
+
 const userStore = useUserDataStore();
 const activityStore = useActivityStore();
 const timeUtil = useTimeUtil();
 
+const editing = ref(false);
+
 const activityName = computed(() => {
-  if (props.record_data.aid) {
-    const doc = activityStore.getActivityData(props.record_data.aid);
+  if (props.doc.data.aid) {
+    const doc = activityStore.getActivityData(props.doc.data.aid);
     return doc ? doc.label : '';
   }
   return '';
 });
 
-interface Props {
-  record_id: string;
-  record_data: RecordDocumentData;
-}
-
-const props = defineProps<Props>();
-
 const categoryColor = computed(() => {
-  const aid = props.record_data.aid;
+  const aid = props.doc.data.aid;
   if (aid) {
     const activity = activityStore.getActivityData(aid);
     if (activity && activity.cid) {
@@ -41,7 +41,7 @@ const categoryColor = computed(() => {
 });
 
 const categoryName = computed(() => {
-  const aid = props.record_data.aid;
+  const aid = props.doc.data.aid;
   if (aid) {
     const activity = activityStore.getActivityData(aid);
     if (activity && activity.cid) {
@@ -54,19 +54,17 @@ const categoryName = computed(() => {
   return 'Unknown category';
 });
 
-const editing = ref(false);
-
-async function deleteRecord() {
-  await deleteDoc(doc(getFirestore(), 'records', props.record_id));
-}
-
 const hours = computed(() => {
   const duration_h = timeUtil.durationInHour(
-    props.record_data.start,
-    props.record_data.end
+    props.doc.data.start,
+    props.doc.data.end
   );
   return (Math.ceil(duration_h * 100) / 100).toFixed(2);
 });
+
+async function deleteRecord() {
+  await deleteDoc(doc(getFirestore(), 'records', props.doc.id));
+}
 </script>
 
 <template>
@@ -84,15 +82,15 @@ const hours = computed(() => {
     </q-item-section>
     <q-item-section>
       <q-item-label caption>
-        {{ props.record_data.start.toDate().toLocaleDateString() }}
+        {{ props.doc.data.start.toDate().toLocaleDateString() }}
       </q-item-label>
       <q-item-label caption>
-        {{ props.record_data.start.toDate().toLocaleTimeString() }} -
-        {{ props.record_data.end.toDate().toLocaleTimeString() }}
+        {{ props.doc.data.start.toDate().toLocaleTimeString() }} -
+        {{ props.doc.data.end.toDate().toLocaleTimeString() }}
       </q-item-label>
     </q-item-section>
     <q-item-section>
-      {{ props.record_data.memo }}
+      {{ props.doc.data.memo }}
     </q-item-section>
     <q-item-section>{{ hours }}</q-item-section>
     <q-item-section side>
@@ -103,10 +101,6 @@ const hours = computed(() => {
     </q-item-section>
   </q-item>
   <q-dialog v-model="editing">
-    <RecordForm
-      :record_id="props.record_id"
-      :record_data="props.record_data"
-      @on-saved="editing = false"
-    />
+    <RecordForm :doc="props.doc" @on-saved="editing = false" />
   </q-dialog>
 </template>

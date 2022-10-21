@@ -13,8 +13,7 @@ const { records } = storeToRefs(recordStore);
       <RecordItem
         v-for="record in records"
         :key="record.id"
-        :record_id="record.id"
-        :record_data="record.data"
+        :doc="record"
       ></RecordItem>
     </q-list>
   </div>

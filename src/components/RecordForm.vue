@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
-import { RecordDocumentData, ActivityData } from 'src/common/types';
+import { ActivityDoc, RecordDoc, RecordChange } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import DateTimeInput from 'src/components/DateTimeInput.vue';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 interface Props {
-  record_id?: string;
-  record_data?: RecordDocumentData;
+  doc?: RecordDoc;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onSaved']);
@@ -17,28 +16,38 @@ const emit = defineEmits(['onSaved']);
 const userStore = useUserDataStore();
 const recordStore = useRecordStore();
 const activityStore = useActivityStore();
-const startTime = ref(
-  props.record_data ? props.record_data.start.toDate() : new Date()
-);
-const endTime = ref(
-  props.record_data ? props.record_data.end.toDate() : new Date()
-);
+
+const startTime = ref(props.doc ? props.doc.data.start.toDate() : new Date());
+const endTime = ref(props.doc ? props.doc.data.end.toDate() : new Date());
 
 async function updateRecord() {
-  if (props.record_id && props.record_data) {
-    const newData = props.record_data;
-    newData.start = Timestamp.fromDate(startTime.value);
-    newData.end = Timestamp.fromDate(endTime.value);
-    newData.aid = selectedActivity.value
-      ? selectedActivity.value.aid
-      : undefined;
-    newData.memo = memo.value ? memo.value : undefined;
-    await recordStore.updateRecord(props.record_id, newData);
-    emit('onSaved');
+  if (!props.doc) {
+    console.error('updateRecord() is called without base record data.');
+    return;
   }
+  const change = {} as RecordChange;
+  const startTimestamp = Timestamp.fromDate(startTime.value);
+  if (startTimestamp !== props.doc.data.start) {
+    change.start = startTimestamp;
+  }
+  const endTimestamp = Timestamp.fromDate(endTime.value);
+  if (endTimestamp !== props.doc.data.end) {
+    change.end = endTimestamp;
+  }
+  if (
+    selectedActivity.value &&
+    selectedActivity.value.aid !== props.doc.data.aid
+  ) {
+    change.aid = selectedActivity.value.aid;
+  }
+  if (memo.value != props.doc.data.memo) {
+    change.memo = memo.value;
+  }
+  await recordStore.updateRecord(props.doc.id, change);
+  emit('onSaved');
 }
 
-function categoryName(activity: ActivityData) {
+function categoryName(activity: ActivityDoc) {
   if (activity.data.cid) {
     const data = userStore.getCategoryData(activity.data.cid);
     if (data && data.label) {
@@ -58,17 +67,15 @@ const activityOptions = ref(
   })
 );
 const selectedActivity = ref(null as { aid: string; label: string } | null);
-if (props.record_data) {
+if (props.doc) {
   for (const option of activityOptions.value) {
-    if (option.aid === props.record_data.aid) {
+    if (option.aid === props.doc.data.aid) {
       selectedActivity.value = option;
       break;
     }
   }
 }
-const memo = ref(
-  props.record_data && props.record_data.memo ? props.record_data.memo : ''
-);
+const memo = ref(props.doc && props.doc.data.memo ? props.doc.data.memo : '');
 </script>
 
 <template>

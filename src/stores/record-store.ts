@@ -13,7 +13,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { RecordDocumentData, RecordData } from 'src/common/types';
+import { RecordDocumentData, RecordDoc } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { useActivityStore } from 'src/stores/activity-store';
 
@@ -22,7 +22,7 @@ export const useRecordStore = defineStore('records', () => {
   const activityStore = useActivityStore();
   const { uid, ongoing } = storeToRefs(userStore);
 
-  const records = ref([] as RecordData[]);
+  const records = ref([] as RecordDoc[]);
 
   if (uid.value) startWatchRecords(uid.value);
   watch(uid, startWatchRecords);
@@ -78,8 +78,8 @@ export const useRecordStore = defineStore('records', () => {
     activityStore.onRecordAdded(docData);
   }
 
-  async function updateRecord(id: string, data: RecordDocumentData) {
-    await updateDoc(doc(getFirestore(), 'records', id), data);
+  async function updateRecord(id: string, change: object) {
+    await updateDoc(doc(getFirestore(), 'records', id), change);
   }
 
   async function startRecording(aid: string) {
