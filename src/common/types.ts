@@ -1,4 +1,4 @@
-import { DocumentData, Timestamp, FieldValue } from '@firebase/firestore';
+import { DocumentData, Timestamp } from '@firebase/firestore';
 
 export interface CategoryDocumentData extends DocumentData {
   uid: string;
@@ -64,8 +64,8 @@ export interface RecordDocumentData extends DocumentData {
   aid?: string;
   start: Timestamp;
   end: Timestamp;
+  duration: number;
   breaks?: { start: Timestamp; end: Timestamp }[];
-  duration?: number;
   memo?: string;
   progressFrom?: number;
   progressTo?: number;
@@ -80,6 +80,7 @@ export interface RecordChange {
   aid?: string;
   start?: Timestamp;
   end?: Timestamp;
+  duration?: number;
   memo?: string;
 }
 

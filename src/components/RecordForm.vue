@@ -6,6 +6,7 @@ import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import DateTimeInput from 'src/components/DateTimeInput.vue';
 import { useCategoryStore } from 'src/stores/category-store';
+import { useUtil } from 'src/composables/util';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -18,6 +19,7 @@ const emit = defineEmits(['onSaved']);
 const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
 const activityStore = useActivityStore();
+const util = useUtil();
 
 // =========================== Computed properties =============================
 // =========================== Refs ============================================
@@ -58,6 +60,13 @@ async function updateRecord() {
   }
   if (memo.value != props.doc.data.memo) {
     change.memo = memo.value;
+  }
+  const duration = util.computeDuration({
+    ...props.doc.data,
+    ...change,
+  });
+  if (duration != props.doc.data.duration) {
+    change.duration = duration;
   }
   await recordStore.updateRecord(props.doc.id, change);
   emit('onSaved');

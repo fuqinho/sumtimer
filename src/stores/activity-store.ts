@@ -25,7 +25,6 @@ import { useUserDataStore } from 'src/stores/user-data-store';
 
 export const useActivityStore = defineStore('activities', () => {
   const userStore = useUserDataStore();
-  const util = useUtil();
   const { uid } = storeToRefs(userStore);
   const activities = ref([] as ActivityDoc[]);
   const idToActivity = computed(() => {
@@ -88,7 +87,7 @@ export const useActivityStore = defineStore('activities', () => {
 
     await updateDoc(doc(getFirestore(), 'activities', aid), {
       'cache.numRecords': prevNumRecords + 1,
-      'cache.elapsedTime': prevElapsedTime + util.computeDuration(recordData),
+      'cache.elapsedTime': prevElapsedTime + recordData.duration,
       updated: serverTimestamp(),
     });
   }
@@ -109,7 +108,7 @@ export const useActivityStore = defineStore('activities', () => {
 
     await updateDoc(doc(getFirestore(), 'activities', aid), {
       'cache.numRecords': prevNumRecords - 1,
-      'cache.elapsedTime': prevElapsedTime - util.computeDuration(recordData),
+      'cache.elapsedTime': prevElapsedTime - recordData.duration,
       updated: serverTimestamp(),
     });
   }
@@ -128,10 +127,8 @@ export const useActivityStore = defineStore('activities', () => {
     if (activityData.cache && activityData.cache.elapsedTime)
       prevElapsedTime = activityData.cache.elapsedTime;
 
-    const prevDuration = util.computeDuration(prev);
-    const nextDuration = util.computeDuration(next);
     await updateDoc(doc(getFirestore(), 'activities', aid), {
-      'cache.elapsedTime': prevElapsedTime + (nextDuration - prevDuration),
+      'cache.elapsedTime': prevElapsedTime + (next.duration - prev.duration),
       updated: serverTimestamp(),
     });
   }

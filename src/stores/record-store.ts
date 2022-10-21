@@ -11,7 +11,6 @@ import {
   orderBy,
   query,
   Timestamp,
-  UpdateData,
   updateDoc,
   where,
   writeBatch,
@@ -81,6 +80,7 @@ export const useRecordStore = defineStore('records', () => {
       aid: aid,
       start: start,
       end: end,
+      duration: end.toMillis() - start.toMillis(),
     };
     if (memo) docData.memo = memo;
 
@@ -88,26 +88,15 @@ export const useRecordStore = defineStore('records', () => {
     await addDoc(collection(getFirestore(), 'records'), docData);
   }
 
-  async function updateRecord(
-    id: string,
-    change: {
-      start?: Timestamp;
-      end?: Timestamp;
-      breaks?: { start: Timestamp; end: Timestamp }[];
-    }
-  ) {
+  async function updateRecord(id: string, change: object) {
     const docPrev = idToRecord.value[id];
     if (docPrev) {
-      const docNext = JSON.parse(JSON.stringify(docPrev)) as RecordDocumentData;
-      if (change.start) {
-        docNext.start = change.start;
-      }
-      if (change.end) {
-        docNext.end = change.end;
-      }
-      if (change.breaks) {
-        docNext.breaks = change.breaks;
-      }
+      const docNext = {
+        ...docPrev,
+        ...change,
+      };
+      console.log('docPrev', docPrev);
+      console.log('docNext', docNext);
       await activityStore.onRecordUpdated(docPrev, docNext);
     }
     await updateDoc(doc(getFirestore(), 'records', id), change);
