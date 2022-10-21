@@ -15,12 +15,13 @@ const recordStore = useRecordStore();
 // =========================== Computed properties =============================
 const activityName = computed(() => {
   if (!ongoing.value) return '';
-  const data = activityStore.getActivityData(ongoing.value.aid);
+  const data = idToActivity.value[ongoing.value.aid];
   return data ? data.label : 'Unknown activity';
 });
 
 // =========================== Refs ============================================
 const { ongoing } = storeToRefs(userStore);
+const { idToActivity } = storeToRefs(activityStore);
 const elapsed_ms = ref(0);
 const memo = ref('');
 

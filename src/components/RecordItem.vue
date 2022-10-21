@@ -10,6 +10,7 @@ import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
+import { storeToRefs } from 'pinia';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -25,7 +26,7 @@ const timeUtil = useTimeUtil();
 // =========================== Computed properties =============================
 const activityName = computed(() => {
   if (props.doc.data.aid) {
-    const doc = activityStore.getActivityData(props.doc.data.aid);
+    const doc = idToActivity.value[props.doc.data.aid];
     return doc ? doc.label : '';
   }
   return '';
@@ -34,9 +35,9 @@ const activityName = computed(() => {
 const categoryColor = computed(() => {
   const aid = props.doc.data.aid;
   if (aid) {
-    const activity = activityStore.getActivityData(aid);
+    const activity = idToActivity.value[aid];
     if (activity && activity.cid) {
-      const category = categoryStore.docData(activity.cid);
+      const category = idToCategory.value[activity.cid];
       if (category) {
         return category.color;
       }
@@ -48,9 +49,9 @@ const categoryColor = computed(() => {
 const categoryName = computed(() => {
   const aid = props.doc.data.aid;
   if (aid) {
-    const activity = activityStore.getActivityData(aid);
+    const activity = idToActivity.value[aid];
     if (activity && activity.cid) {
-      const category = categoryStore.docData(activity.cid);
+      const category = idToCategory.value[activity.cid];
       if (category) {
         return category.label;
       }
@@ -68,6 +69,8 @@ const hours = computed(() => {
 });
 
 // =========================== Refs ============================================
+const { idToCategory } = storeToRefs(categoryStore);
+const { idToActivity } = storeToRefs(activityStore);
 const editing = ref(false);
 
 // =========================== Methods =========================================

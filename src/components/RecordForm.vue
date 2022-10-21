@@ -20,6 +20,7 @@ const recordStore = useRecordStore();
 const activityStore = useActivityStore();
 
 // =========================== Computed properties =============================
+// =========================== Refs ============================================
 const selectedActivity = ref(null as { aid: string; label: string } | null);
 const activityOptions = ref(
   activityStore.activities.map((activity) => {
@@ -31,8 +32,6 @@ const activityOptions = ref(
   })
 );
 const memo = ref(props.doc && props.doc.data.memo ? props.doc.data.memo : '');
-
-// =========================== Refs ============================================
 const startTime = ref(props.doc ? props.doc.data.start.toDate() : new Date());
 const endTime = ref(props.doc ? props.doc.data.end.toDate() : new Date());
 

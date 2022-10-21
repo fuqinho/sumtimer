@@ -11,6 +11,7 @@ import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
+import { storeToRefs } from 'pinia';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -28,7 +29,7 @@ const router = useRouter();
 const categoryName = computed(() => {
   const cid = props.doc.data.cid;
   if (cid) {
-    const data = categoryStore.docData(cid);
+    const data = idToCategory.value[cid];
     if (data) return data.label;
   }
   return defaultCategoryName;
@@ -37,7 +38,7 @@ const categoryName = computed(() => {
 const categoryColor = computed(() => {
   const cid = props.doc.data.cid;
   if (cid) {
-    const data = categoryStore.docData(cid);
+    const data = idToCategory.value[cid];
     if (data) return data.color;
   }
   return defaultCategoryColor;
@@ -61,6 +62,7 @@ const totalHours = computed(() => {
 
 // =========================== Refs ============================================
 const editing = ref(false);
+const { idToCategory } = storeToRefs(categoryStore);
 
 // =========================== Methods =========================================
 async function startActivity() {

@@ -65,7 +65,7 @@ async function updateActivity() {
 
 // =========================== Additional setup ================================
 if (props.doc) {
-  const data = activityStore.getActivityData(props.doc.id);
+  const data = activityStore.docData(props.doc.id);
   if (data) {
     for (const option of categoryOptions.value) {
       if (option.cid == data.cid) {

@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import {
   getFirestore,
@@ -12,6 +12,7 @@ import {
   serverTimestamp,
   addDoc,
   Timestamp,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
@@ -26,6 +27,12 @@ export const useActivityStore = defineStore('activities', () => {
   const util = useUtil();
   const { uid } = storeToRefs(userStore);
   const activities = ref([] as ActivityDoc[]);
+  const idToActivity = computed(() => {
+    return activities.value.reduce((res, item) => {
+      res[item.id] = item.data;
+      return res;
+    }, {} as { [key: string]: ActivityDocumentData });
+  });
 
   startWatchActivities(uid.value);
   watch(uid, startWatchActivities);
@@ -64,20 +71,11 @@ export const useActivityStore = defineStore('activities', () => {
     });
   }
 
-  function getActivityData(aid: string): ActivityDocumentData | null {
-    for (const activity of activities.value) {
-      if (activity.id === aid) {
-        return activity.data;
-      }
-    }
-    return null;
-  }
-
   async function onRecordAdded(recordData: RecordDocumentData) {
     const aid = recordData.aid;
     if (!aid) return;
 
-    const activityData = getActivityData(aid);
+    const activityData = docData(aid);
     if (!activityData) return;
 
     let prevNumRecords = 0;
@@ -94,6 +92,10 @@ export const useActivityStore = defineStore('activities', () => {
     });
   }
 
+  function docData(id: string) {
+    return idToActivity.value[id];
+  }
+
   async function addActivity(label: string, cid?: string) {
     const data: ActivityDocumentData = {
       uid: uid.value,
@@ -106,14 +108,20 @@ export const useActivityStore = defineStore('activities', () => {
     await addDoc(collection(getFirestore(), 'activities'), data);
   }
 
+  async function deleteActivity(id: string) {
+    await deleteDoc(doc(getFirestore(), 'activities', id));
+  }
+
   async function updateActivity(id: string, change: object) {
     await updateDoc(doc(getFirestore(), 'activities', id), change);
   }
 
   return {
     activities,
-    getActivityData,
+    idToActivity,
+    docData,
     addActivity,
+    deleteActivity,
     updateActivity,
     onRecordAdded,
   };
