@@ -4,12 +4,25 @@ import { storeToRefs } from 'pinia';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
-const emit = defineEmits(['onCreated']);
+// ======= Properties/Emitters =======
+interface Props {
+  activityId?: string;
+}
+const props = defineProps<Props>();
+const emit = defineEmits(['onCreated', 'onUpdated']);
 
+// ======= Use stores/composables =======
 const userStore = useUserDataStore();
-const { categories } = storeToRefs(userStore);
 const activityStore = useActivityStore();
 
+// ======= Refs =======
+const { categories } = storeToRefs(userStore);
+const selectedCategory = ref(
+  null as { cid: string; label: string; color: string } | null
+);
+const activityName = ref('');
+
+// ======= Computed properties =======
 const categoryOptions = computed(() => {
   return categories.value.map((category) => {
     return {
@@ -20,12 +33,20 @@ const categoryOptions = computed(() => {
   });
 });
 
-const selectedCategory = ref(
-  null as { cid: string; label: string; color: string } | null
-);
+// ======= Other setup =======
+if (props.activityId) {
+  const data = activityStore.getActivityData(props.activityId);
+  if (data) {
+    for (const option of categoryOptions.value) {
+      if (option.cid == data.cid) {
+        selectedCategory.value = option;
+      }
+    }
+    activityName.value = data.label;
+  }
+}
 
-const activityName = ref('');
-
+// ======= Methods =======
 async function addActivity() {
   await activityStore.addActivity(
     activityName.value,
@@ -33,11 +54,30 @@ async function addActivity() {
   );
   emit('onCreated');
 }
+
+async function updateActivity() {
+  console.log('updateActivity');
+  if (!props.activityId) {
+    console.error('updateActivity is called without activityId.');
+    return;
+  }
+  const data = activityStore.getActivityData(props.activityId);
+  if (!data) {
+    console.error('updateActivity is called without activityData.');
+    return;
+  }
+  if (selectedCategory.value) data.cid = selectedCategory.value.cid;
+  data.label = activityName.value;
+
+  await activityStore.updateActivity(props.activityId, data);
+  emit('onUpdated');
+}
 </script>
 
 <template>
   <q-card>
-    <q-card-section>New activity.</q-card-section>
+    <q-card-section v-if="!!props.activityId">Modify activity</q-card-section>
+    <q-card-section v-else>Create activity</q-card-section>
     <q-separator />
     <q-card-section>
       <q-select
@@ -58,7 +98,13 @@ async function addActivity() {
     </q-card-section>
     <q-card-actions align="right">
       <q-btn label="Cancel" flat v-close-popup></q-btn>
-      <q-btn label="Add" color="primary" @click="addActivity"></q-btn>
+      <q-btn
+        v-if="!!props.activityId"
+        label="Save"
+        color="primary"
+        @click="updateActivity"
+      ></q-btn>
+      <q-btn v-else label="Add" color="primary" @click="addActivity"></q-btn>
     </q-card-actions>
   </q-card>
 </template>

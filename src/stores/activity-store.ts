@@ -106,5 +106,15 @@ export const useActivityStore = defineStore('activities', () => {
     await addDoc(collection(getFirestore(), 'activities'), data);
   }
 
-  return { activities, getActivityData, addActivity, onRecordAdded };
+  async function updateActivity(id: string, data: ActivityDocumentData) {
+    await updateDoc(doc(getFirestore(), 'activities', id), data);
+  }
+
+  return {
+    activities,
+    getActivityData,
+    addActivity,
+    updateActivity,
+    onRecordAdded,
+  };
 });

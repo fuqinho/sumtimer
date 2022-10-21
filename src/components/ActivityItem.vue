@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
 import { ActivityDocumentData } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useRouter } from 'vue-router';
+import ActivityForm from 'src/components/ActivityForm.vue';
 
 interface Props {
   activity_id: string;
@@ -16,6 +17,8 @@ const props = defineProps<Props>();
 const userStore = useUserDataStore();
 const recordStore = useRecordStore();
 const router = useRouter();
+
+const editing = ref(false);
 
 const categoryName = computed(() => {
   if (!props.activity_data.cid) return 'Uncategorized';
@@ -94,11 +97,18 @@ async function startActivity() {
     </q-item-section>
     <q-item-section side>
       <div class="text-grey-7 q-gutter-xs">
-        <q-btn size="sm" round flat icon="edit" />
+        <q-btn size="sm" @click="editing = true" round flat icon="edit" />
         <q-btn size="sm" @click="addRecordForTesting" round flat icon="stop" />
       </div>
     </q-item-section>
   </q-item>
+
+  <q-dialog v-model="editing">
+    <ActivityForm
+      :activity-id="props.activity_id"
+      @on-updated="editing = false"
+    />
+  </q-dialog>
 </template>
 
 <style>
