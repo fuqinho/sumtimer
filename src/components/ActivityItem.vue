@@ -64,6 +64,7 @@ const totalHours = computed(() => {
 
 // =========================== Refs ============================================
 const editing = ref(false);
+const confirm = ref(false);
 const { idToCategory } = storeToRefs(categoryStore);
 
 // =========================== Methods =========================================
@@ -76,6 +77,14 @@ function addRecordForTesting() {
   const end = Timestamp.now();
   const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
   recordStore.addRecord(props.doc.id, start, end);
+}
+
+async function startDeleteActivity() {
+  if (!numRecords.value) {
+    await deleteActivity();
+  } else {
+    confirm.value = true;
+  }
 }
 
 async function deleteActivity() {
@@ -120,13 +129,40 @@ async function deleteActivity() {
       <div class="text-grey-7 q-gutter-xs">
         <q-btn size="sm" @click="editing = true" round flat icon="edit" />
         <q-btn size="sm" @click="addRecordForTesting" round flat icon="stop" />
-        <q-btn size="sm" @click="deleteActivity" round flat icon="delete" />
+        <q-btn
+          size="sm"
+          @click="startDeleteActivity"
+          round
+          flat
+          icon="delete"
+        />
       </div>
     </q-item-section>
   </q-item>
 
   <q-dialog v-model="editing">
     <ActivityForm :doc="props.doc" @on-updated="editing = false" />
+  </q-dialog>
+
+  <q-dialog v-model="confirm">
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center">
+        <q-avatar icon="warning" color="white" text-color="red" />
+        <span class="q-ml-sm">
+          Are you OK to delete {{ numRecords }} records about this activity?
+        </span>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat label="Cancel" color="primary" v-close-popup />
+        <q-btn
+          @click="deleteActivity"
+          flat
+          label="Delete records"
+          color="primary"
+          v-close-popup
+        />
+      </q-card-actions>
+    </q-card>
   </q-dialog>
 </template>
 
