@@ -5,6 +5,7 @@ import { RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 import { storeToRefs } from 'pinia';
+import { defaultCategoryColor } from 'src/common/constants';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -46,7 +47,7 @@ const bars = computed(() => {
         style: {
           left: leftPercent + '%',
           width: widthPercent + '%',
-          backgroundColor: 'blue',
+          backgroundColor: defaultCategoryColor,
         },
       };
       if (record.data.aid) {
