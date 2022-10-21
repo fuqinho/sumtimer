@@ -49,13 +49,10 @@ const bars = computed(() => {
           backgroundColor: 'blue',
         },
       };
-      console.log('aid', record.data.aid);
       if (record.data.aid) {
         const activityData = idToActivity.value[record.data.aid];
-        console.log('activityData', activityData);
         if (activityData && activityData.cid) {
           const categoryData = idToCategory.value[activityData.cid];
-          console.log('categoryData', categoryData);
           if (categoryData && categoryData.color) {
             data.style.backgroundColor = categoryData.color;
           }
