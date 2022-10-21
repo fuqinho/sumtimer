@@ -11,17 +11,18 @@ import {
   defaultCategoryName,
 } from 'src/common/constants';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   doc: RecordDoc;
 }
 const props = defineProps<Props>();
 
+// =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const timeUtil = useTimeUtil();
 
-const editing = ref(false);
-
+// =========================== Computed properties =============================
 const activityName = computed(() => {
   if (props.doc.data.aid) {
     const doc = activityStore.getActivityData(props.doc.data.aid);
@@ -66,9 +67,15 @@ const hours = computed(() => {
   return (Math.ceil(duration_h * 100) / 100).toFixed(2);
 });
 
+// =========================== Refs ============================================
+const editing = ref(false);
+
+// =========================== Methods =========================================
 async function deleteRecord() {
   await deleteDoc(doc(getFirestore(), 'records', props.doc.id));
 }
+
+// =========================== Additional setup ================================
 </script>
 
 <template>

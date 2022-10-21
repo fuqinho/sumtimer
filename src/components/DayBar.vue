@@ -5,15 +5,18 @@ import { RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   start: Date;
   records: RecordDoc[];
 }
 const props = defineProps<Props>();
 
+// =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 
+// =========================== Computed properties =============================
 interface BarData {
   rid: string;
   style: {
@@ -59,6 +62,10 @@ const bars = computed(() => {
   }
   return res;
 });
+
+// =========================== Refs ============================================
+// =========================== Methods =========================================
+// =========================== Additional setup ================================
 </script>
 
 <template>

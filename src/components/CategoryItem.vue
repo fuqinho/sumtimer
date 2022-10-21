@@ -4,14 +4,21 @@ import { useCategoryStore } from 'src/stores/category-store';
 import { ref } from 'vue';
 import CategoryForm from './CategoryForm.vue';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   doc: CategoryDoc;
 }
 const props = defineProps<Props>();
 
+// =========================== Use stores/composables ==========================
+const categoryStore = useCategoryStore();
+
+// =========================== Computed properties =============================
+// =========================== Refs ============================================
 const editing = ref(false);
 
-const categoryStore = useCategoryStore();
+// =========================== Methods =========================================
+// =========================== Additional setup ================================
 </script>
 
 <template>

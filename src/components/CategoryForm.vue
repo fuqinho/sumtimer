@@ -8,17 +8,22 @@ import {
 } from 'src/common/constants';
 import { useCategoryStore } from 'src/stores/category-store';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   doc?: CategoryDoc;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onAdded', 'onUpdated']);
 
+// =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 
+// =========================== Computed properties =============================
+// =========================== Refs ============================================
 const name = ref(props.doc ? props.doc.data.label : '');
 const color = ref(props.doc ? props.doc.data.color : defaultCategoryColor);
 
+// =========================== Methods =========================================
 async function add() {
   await categoryStore.addCategory(name.value, color.value);
   emit('onAdded');
@@ -35,6 +40,8 @@ async function update() {
   await categoryStore.updateCategory(props.doc.id, change);
   emit('onUpdated');
 }
+
+// =========================== Additional setup ================================
 </script>
 
 <template>

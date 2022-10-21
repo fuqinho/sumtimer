@@ -6,35 +6,25 @@ import { useRecordStore } from 'src/stores/record-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import TimeDisplay from 'src/components/TimeDisplay.vue';
 
+// =========================== Properties/Emitters =============================
+// =========================== Use stores/composables ==========================
 const userStore = useUserDataStore();
-const { ongoing } = storeToRefs(userStore);
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
 
-const elapsed_ms = ref(0);
-
-let timerId = 0;
-
+// =========================== Computed properties =============================
 const activityName = computed(() => {
   if (!ongoing.value) return '';
   const data = activityStore.getActivityData(ongoing.value.aid);
   return data ? data.label : 'Unknown activity';
 });
 
-watch(ongoing, () => {
-  updateElapsedTime();
-});
+// =========================== Refs ============================================
+const { ongoing } = storeToRefs(userStore);
+const elapsed_ms = ref(0);
+const memo = ref('');
 
-onBeforeMount(() => {
-  updateElapsedTime();
-  timerId = window.setInterval(updateElapsedTime, 1000);
-});
-
-onUnmounted(() => {
-  clearInterval(timerId);
-  timerId = 0;
-});
-
+// =========================== Methods =========================================
 function updateElapsedTime() {
   if (ongoing.value) {
     let elapsed = new Date().getTime() - ongoing.value.start.toMillis();
@@ -55,7 +45,22 @@ async function recordMemo() {
   await userStore.updateOngoingMemo(memo.value);
 }
 
-const memo = ref('');
+// =========================== Additional setup ================================
+let timerId = 0;
+
+watch(ongoing, () => {
+  updateElapsedTime();
+});
+
+onBeforeMount(() => {
+  updateElapsedTime();
+  timerId = window.setInterval(updateElapsedTime, 1000);
+});
+
+onUnmounted(() => {
+  clearInterval(timerId);
+  timerId = 0;
+});
 </script>
 
 <template>

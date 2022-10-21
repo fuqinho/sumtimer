@@ -7,19 +7,36 @@ import { useRecordStore } from 'src/stores/record-store';
 import DateTimeInput from 'src/components/DateTimeInput.vue';
 import { useCategoryStore } from 'src/stores/category-store';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   doc?: RecordDoc;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onSaved']);
 
+// =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
 const activityStore = useActivityStore();
 
+// =========================== Computed properties =============================
+const selectedActivity = ref(null as { aid: string; label: string } | null);
+const activityOptions = ref(
+  activityStore.activities.map((activity) => {
+    return {
+      aid: activity.id,
+      label: activity.data.label,
+      category: categoryName(activity),
+    };
+  })
+);
+const memo = ref(props.doc && props.doc.data.memo ? props.doc.data.memo : '');
+
+// =========================== Refs ============================================
 const startTime = ref(props.doc ? props.doc.data.start.toDate() : new Date());
 const endTime = ref(props.doc ? props.doc.data.end.toDate() : new Date());
 
+// =========================== Methods =========================================
 async function updateRecord() {
   if (!props.doc) {
     console.error('updateRecord() is called without base record data.');
@@ -57,17 +74,7 @@ function categoryName(activity: ActivityDoc) {
   return undefined;
 }
 
-const activityOptions = ref(
-  activityStore.activities.map((activity) => {
-    return {
-      aid: activity.id,
-      label: activity.data.label,
-      category: categoryName(activity),
-    };
-  })
-);
-
-const selectedActivity = ref(null as { aid: string; label: string } | null);
+// =========================== Additional setup ================================
 if (props.doc) {
   for (const option of activityOptions.value) {
     if (option.aid === props.doc.data.aid) {
@@ -76,7 +83,6 @@ if (props.doc) {
     }
   }
 }
-const memo = ref(props.doc && props.doc.data.memo ? props.doc.data.memo : '');
 </script>
 
 <template>

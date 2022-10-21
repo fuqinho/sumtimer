@@ -5,25 +5,18 @@ import { ActivityDoc, ActivityChange } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 
-// ======= Properties/Emitters =======
+// =========================== Properties/Emitters =============================
 interface Props {
   doc?: ActivityDoc;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onCreated', 'onUpdated']);
 
-// ======= Use stores/composables =======
+// =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 
-// ======= Refs =======
-const { categories } = storeToRefs(categoryStore);
-const selectedCategory = ref(
-  null as { cid: string; label: string; color: string } | null
-);
-const activityName = ref('');
-
-// ======= Computed properties =======
+// =========================== Computed properties =============================
 const categoryOptions = computed(() => {
   return categories.value.map((category) => {
     return {
@@ -34,20 +27,14 @@ const categoryOptions = computed(() => {
   });
 });
 
-// ======= Other setup =======
-if (props.doc) {
-  const data = activityStore.getActivityData(props.doc.id);
-  if (data) {
-    for (const option of categoryOptions.value) {
-      if (option.cid == data.cid) {
-        selectedCategory.value = option;
-      }
-    }
-    activityName.value = data.label;
-  }
-}
+// =========================== Refs ============================================
+const { categories } = storeToRefs(categoryStore);
+const selectedCategory = ref(
+  null as { cid: string; label: string; color: string } | null
+);
+const activityName = ref('');
 
-// ======= Methods =======
+// =========================== Methods =========================================
 async function addActivity() {
   await activityStore.addActivity(
     activityName.value,
@@ -74,6 +61,19 @@ async function updateActivity() {
   }
   await activityStore.updateActivity(props.doc.id, change);
   emit('onUpdated');
+}
+
+// =========================== Additional setup ================================
+if (props.doc) {
+  const data = activityStore.getActivityData(props.doc.id);
+  if (data) {
+    for (const option of categoryOptions.value) {
+      if (option.cid == data.cid) {
+        selectedCategory.value = option;
+      }
+    }
+    activityName.value = data.label;
+  }
 }
 </script>
 

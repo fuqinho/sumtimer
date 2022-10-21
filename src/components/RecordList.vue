@@ -3,8 +3,16 @@ import { storeToRefs } from 'pinia';
 import { useRecordStore } from 'src/stores/record-store';
 import RecordItem from 'src/components/RecordItem.vue';
 
+// =========================== Properties/Emitters =============================
+// =========================== Use stores/composables ==========================
 const recordStore = useRecordStore();
+
+// =========================== Computed properties =============================
+// =========================== Refs ============================================
 const { records } = storeToRefs(recordStore);
+
+// =========================== Methods =========================================
+// =========================== Additional setup ================================
 </script>
 
 <template>

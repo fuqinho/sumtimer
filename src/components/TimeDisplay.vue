@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   time: number;
 }
 const props = defineProps<Props>();
 
+// =========================== Use stores/composables ==========================
+// =========================== Computed properties =============================
 const secondMs = 1000;
 const minuteMs = secondMs * 60;
 const hourMs = minuteMs * 60;
@@ -13,6 +16,10 @@ const hourMs = minuteMs * 60;
 const hour = computed(() => Math.floor(props.time / hourMs));
 const minute = computed(() => Math.floor((props.time % hourMs) / minuteMs));
 const second = computed(() => Math.floor((props.time % minuteMs) / secondMs));
+
+// =========================== Refs ============================================
+// =========================== Methods =========================================
+// =========================== Additional setup ================================
 </script>
 
 <template>

@@ -2,12 +2,15 @@
 import { computed } from 'vue';
 import { date } from 'quasar';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   time: Date;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['update:time']);
 
+// =========================== Use stores/composables ==========================
+// =========================== Computed properties =============================
 const model = computed({
   get: () => date.formatDate(props.time, 'YYYY-MM-DD HH:mm'),
   set: (str) => {
@@ -15,6 +18,10 @@ const model = computed({
     emit('update:time', newDate);
   },
 });
+
+// =========================== Refs ============================================
+// =========================== Methods =========================================
+// =========================== Additional setup ================================
 </script>
 
 <template>

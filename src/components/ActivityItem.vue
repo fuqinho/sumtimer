@@ -12,19 +12,19 @@ import {
   defaultCategoryName,
 } from 'src/common/constants';
 
+// =========================== Properties/Emitters =============================
 interface Props {
   doc: ActivityDoc;
 }
-
 const props = defineProps<Props>();
 
+// =========================== Use stores/composables ==========================
 const userStore = useUserDataStore();
 const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
 const router = useRouter();
 
-const editing = ref(false);
-
+// =========================== Computed properties =============================
 const categoryName = computed(() => {
   const cid = props.doc.data.cid;
   if (cid) {
@@ -59,6 +59,10 @@ const totalHours = computed(() => {
   return '0';
 });
 
+// =========================== Refs ============================================
+const editing = ref(false);
+
+// =========================== Methods =========================================
 async function startActivity() {
   await userStore.startOngoingActivity(props.doc.id);
   router.push('/');

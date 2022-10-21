@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { date } from 'quasar';
-import { RecordData } from 'src/common/types';
+import { RecordDoc } from 'src/common/types';
 import DayBar from 'src/components/DayBar.vue';
-
-interface Props {
-  start: Date;
-  records: RecordData[];
-}
-const props = defineProps<Props>();
 
 interface RowData {
   start: Date;
@@ -18,6 +12,15 @@ interface RowData {
   };
   weekLabel: string;
 }
+
+// =========================== Properties/Emitters =============================
+interface Props {
+  start: Date;
+  records: RecordDoc[];
+}
+const props = defineProps<Props>();
+
+// =========================== Use stores/composables ==========================
 const rows = computed(() => {
   const result = [] as RowData[];
   for (let i = 0; i < 7; i++) {
@@ -52,6 +55,11 @@ const hours = computed(() => {
   }
   return result;
 });
+
+// =========================== Computed properties =============================
+// =========================== Refs ============================================
+// =========================== Methods =========================================
+// =========================== Additional setup ================================
 </script>
 
 <template>
