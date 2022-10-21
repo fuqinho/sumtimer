@@ -93,6 +93,49 @@ export const useActivityStore = defineStore('activities', () => {
     });
   }
 
+  async function onRecordDeleted(recordData: RecordDocumentData) {
+    const aid = recordData.aid;
+    if (!aid) return;
+
+    const activityData = docData(aid);
+    if (!activityData) return;
+
+    let prevNumRecords = 0;
+    if (activityData.cache && activityData.cache.numRecords)
+      prevNumRecords = activityData.cache.numRecords;
+    let prevElapsedTime = 0;
+    if (activityData.cache && activityData.cache.elapsedTime)
+      prevElapsedTime = activityData.cache.elapsedTime;
+
+    await updateDoc(doc(getFirestore(), 'activities', aid), {
+      'cache.numRecords': prevNumRecords - 1,
+      'cache.elapsedTime': prevElapsedTime - util.computeDuration(recordData),
+      updated: serverTimestamp(),
+    });
+  }
+
+  async function onRecordUpdated(
+    prev: RecordDocumentData,
+    next: RecordDocumentData
+  ) {
+    const aid = next.aid;
+    if (!aid) return;
+
+    const activityData = docData(aid);
+    if (!activityData) return;
+
+    let prevElapsedTime = 0;
+    if (activityData.cache && activityData.cache.elapsedTime)
+      prevElapsedTime = activityData.cache.elapsedTime;
+
+    const prevDuration = util.computeDuration(prev);
+    const nextDuration = util.computeDuration(next);
+    await updateDoc(doc(getFirestore(), 'activities', aid), {
+      'cache.elapsedTime': prevElapsedTime + (nextDuration - prevDuration),
+      updated: serverTimestamp(),
+    });
+  }
+
   function docData(id: string) {
     return idToActivity.value[id];
   }
@@ -134,5 +177,7 @@ export const useActivityStore = defineStore('activities', () => {
     deleteActivities,
     updateActivity,
     onRecordAdded,
+    onRecordDeleted,
+    onRecordUpdated,
   };
 });

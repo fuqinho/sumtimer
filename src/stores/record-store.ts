@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import {
   addDoc,
@@ -11,6 +11,7 @@ import {
   orderBy,
   query,
   Timestamp,
+  UpdateData,
   updateDoc,
   where,
   writeBatch,
@@ -25,6 +26,12 @@ export const useRecordStore = defineStore('records', () => {
   const { uid, ongoing } = storeToRefs(userStore);
 
   const records = ref([] as RecordDoc[]);
+  const idToRecord = computed(() => {
+    return records.value.reduce((res, item) => {
+      res[item.id] = item.data;
+      return res;
+    }, {} as { [key: string]: RecordDocumentData });
+  });
 
   if (uid.value) startWatchRecords(uid.value);
   watch(uid, startWatchRecords);
@@ -76,15 +83,39 @@ export const useRecordStore = defineStore('records', () => {
       end: end,
     };
     if (memo) docData.memo = memo;
+
+    await activityStore.onRecordAdded(docData);
     await addDoc(collection(getFirestore(), 'records'), docData);
-    activityStore.onRecordAdded(docData);
   }
 
-  async function updateRecord(id: string, change: object) {
+  async function updateRecord(
+    id: string,
+    change: {
+      start?: Timestamp;
+      end?: Timestamp;
+      breaks?: { start: Timestamp; end: Timestamp }[];
+    }
+  ) {
+    const docPrev = idToRecord.value[id];
+    if (docPrev) {
+      const docNext = JSON.parse(JSON.stringify(docPrev)) as RecordDocumentData;
+      if (change.start) {
+        docNext.start = change.start;
+      }
+      if (change.end) {
+        docNext.end = change.end;
+      }
+      if (change.breaks) {
+        docNext.breaks = change.breaks;
+      }
+      await activityStore.onRecordUpdated(docPrev, docNext);
+    }
     await updateDoc(doc(getFirestore(), 'records', id), change);
   }
 
   async function deleteRecord(id: string) {
+    const docData = idToRecord.value[id];
+    if (docData) await activityStore.onRecordDeleted(docData);
     await deleteDoc(doc(getFirestore(), 'records', id));
   }
 

@@ -1,4 +1,4 @@
-import { DocumentData, Timestamp } from '@firebase/firestore';
+import { DocumentData, Timestamp, FieldValue } from '@firebase/firestore';
 
 export interface CategoryDocumentData extends DocumentData {
   uid: string;
