@@ -20,7 +20,6 @@ import {
   ActivityDoc,
   RecordDocumentData,
 } from 'src/common/types';
-import { useUtil } from 'src/composables/util';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 export const useActivityStore = defineStore('activities', () => {
