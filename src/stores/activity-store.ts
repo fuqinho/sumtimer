@@ -13,6 +13,7 @@ import {
   addDoc,
   Timestamp,
   deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
@@ -112,6 +113,14 @@ export const useActivityStore = defineStore('activities', () => {
     await deleteDoc(doc(getFirestore(), 'activities', id));
   }
 
+  async function deleteActivities(ids: string[]) {
+    const batch = writeBatch(getFirestore());
+    for (const id of ids) {
+      batch.delete(doc(getFirestore(), 'activities', id));
+    }
+    await batch.commit();
+  }
+
   async function updateActivity(id: string, change: object) {
     await updateDoc(doc(getFirestore(), 'activities', id), change);
   }
@@ -122,6 +131,7 @@ export const useActivityStore = defineStore('activities', () => {
     docData,
     addActivity,
     deleteActivity,
+    deleteActivities,
     updateActivity,
     onRecordAdded,
   };

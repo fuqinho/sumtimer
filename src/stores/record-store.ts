@@ -13,6 +13,7 @@ import {
   Timestamp,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 import { RecordDocumentData, RecordDoc } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
@@ -87,6 +88,21 @@ export const useRecordStore = defineStore('records', () => {
     await deleteDoc(doc(getFirestore(), 'records', id));
   }
 
+  async function deleteRecords(ids: string[]) {
+    const batch = writeBatch(getFirestore());
+    for (const id of ids) {
+      batch.delete(doc(getFirestore(), 'records', id));
+    }
+    await batch.commit();
+  }
+
+  async function deleteRecordsByActivityId(aid: string) {
+    const ids = records.value
+      .filter((o) => o.data.aid === aid)
+      .map((o) => o.id);
+    await deleteRecords(ids);
+  }
+
   async function startRecording(aid: string) {
     await userStore.startOngoingActivity(aid);
   }
@@ -108,6 +124,8 @@ export const useRecordStore = defineStore('records', () => {
     addRecord,
     updateRecord,
     deleteRecord,
+    deleteRecords,
+    deleteRecordsByActivityId,
     startRecording,
     finishRecording,
   };

@@ -79,7 +79,9 @@ function addRecordForTesting() {
 }
 
 async function deleteActivity() {
-  activityStore.deleteActivity(props.doc.id);
+  const aid = props.doc.id;
+  await recordStore.deleteRecordsByActivityId(aid);
+  await activityStore.deleteActivity(aid);
 }
 </script>
 
