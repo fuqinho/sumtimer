@@ -28,12 +28,26 @@ const name = computed(() => {
 const folderOpacity = computed(() => {
   return props.doc ? 1 : 0;
 });
+
+const toTarget = computed(() => {
+  if (props.doc) {
+    return {
+      name: 'CategoryActivities',
+      params: {
+        cid: props.doc.id,
+      },
+    };
+  } else {
+    return { name: 'Activities' };
+  }
+});
 </script>
 
 <template>
-  <q-tab
+  <q-route-tab
     :style="{ color: color }"
     :name="name"
+    :to="toTarget"
     class="category-tab"
     content-class="content"
     active-class="tab-active"
@@ -71,7 +85,7 @@ const folderOpacity = computed(() => {
         </div>
       </q-item-section>
     </q-item>
-  </q-tab>
+  </q-route-tab>
 
   <q-dialog> </q-dialog>
 </template>

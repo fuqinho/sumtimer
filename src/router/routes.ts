@@ -11,8 +11,16 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/CategoriesPage.vue'),
       },
       {
+        name: 'Activities',
         path: 'activities',
         component: () => import('pages/ActivitiesPage.vue'),
+        children: [
+          {
+            name: 'CategoryActivities',
+            path: 'c/:cid',
+            component: () => import('pages/ActivitiesPage.vue'),
+          },
+        ],
       },
       {
         path: 'records',
