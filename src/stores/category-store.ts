@@ -88,10 +88,13 @@ export const useCategoryStore = defineStore('catgories', () => {
   }
 
   async function addCategory(label: string, color: string) {
+    const lastCategory = categories.value[categories.value.length - 1];
+    const lastOrder = lastCategory ? lastCategory.data.order : 0;
     const data: CategoryDocumentData = {
       uid: uid.value,
       label: label,
       color: color,
+      order: lastOrder + 1,
     };
     await addDoc(collection(getFirestore(), 'categories'), data);
   }
