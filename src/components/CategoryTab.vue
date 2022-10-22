@@ -14,7 +14,7 @@ interface Emits {
 const emit = defineEmits<Emits>();
 
 const color = computed(() => {
-  return props.doc ? props.doc.data.color : '333';
+  return props.doc ? props.doc.data.color : '#444';
 });
 
 const label = computed(() => {
@@ -25,8 +25,8 @@ const name = computed(() => {
   return props.doc ? props.doc.id : '';
 });
 
-const folderOpacity = computed(() => {
-  return props.doc ? 1 : 0;
+const icon = computed(() => {
+  return props.doc ? 'folder' : 'storage';
 });
 
 const toTarget = computed(() => {
@@ -54,7 +54,7 @@ const toTarget = computed(() => {
   >
     <q-item class="">
       <q-item-section class="folder-icon">
-        <q-icon size="sm" name="folder" :style="{ opacity: folderOpacity }" />
+        <q-icon size="sm" :name="icon" />
       </q-item-section>
       <q-item-section class="category-name">
         <div class="text-ellipsis">{{ label }}</div>
