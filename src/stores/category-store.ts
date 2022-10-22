@@ -107,6 +107,46 @@ export const useCategoryStore = defineStore('catgories', () => {
     await updateDoc(doc(getFirestore(), 'categories', id), change);
   }
 
+  async function moveUp(id: string) {
+    let index = -1;
+    for (let i = 0; i < categories.value.length; i++) {
+      if (categories.value[i].id == id) {
+        index = i;
+        break;
+      }
+    }
+    if (index > 0) {
+      const order0 =
+        index - 2 >= 0 ? categories.value[index - 2].data.order : 0;
+      const order1 = categories.value[index - 1].data.order;
+      const newOrder = (order0 + order1) / 2;
+      await updateDoc(doc(getFirestore(), 'categories', id), {
+        order: newOrder,
+      });
+    }
+  }
+
+  async function moveDown(id: string) {
+    let index = -1;
+    for (let i = 0; i < categories.value.length; i++) {
+      if (categories.value[i].id == id) {
+        index = i;
+        break;
+      }
+    }
+    if (index != -1 && index < categories.value.length - 1) {
+      const order0 = categories.value[index + 1].data.order;
+      const order1 =
+        index + 2 < categories.value.length
+          ? categories.value[index + 2].data.order
+          : categories.value[index + 1].data.order + 2;
+      const newOrder = (order0 + order1) / 2;
+      await updateDoc(doc(getFirestore(), 'categories', id), {
+        order: newOrder,
+      });
+    }
+  }
+
   return {
     categories,
     idToCategory,
@@ -114,5 +154,7 @@ export const useCategoryStore = defineStore('catgories', () => {
     addCategory,
     deleteCategory,
     updateCategory,
+    moveUp,
+    moveDown,
   };
 });

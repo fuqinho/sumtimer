@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CategoryDoc } from 'src/common/types';
+import { useCategoryStore } from 'src/stores/category-store';
 import { computed } from 'vue';
 
 interface Props {
@@ -8,10 +9,10 @@ interface Props {
 const props = defineProps<Props>();
 interface Emits {
   (e: 'onEdit', cid: string): void;
-  (e: 'onUp', cid: string): void;
-  (e: 'onDown', cid: string): void;
 }
 const emit = defineEmits<Emits>();
+
+const categoryStore = useCategoryStore();
 
 const color = computed(() => {
   return props.doc ? props.doc.data.color : '#444';
@@ -41,6 +42,14 @@ const toTarget = computed(() => {
     return { name: 'Activities' };
   }
 });
+
+async function moveUp() {
+  if (props.doc) await categoryStore.moveUp(props.doc.id);
+}
+
+async function moveDown() {
+  if (props.doc) await categoryStore.moveDown(props.doc.id);
+}
 </script>
 
 <template>
@@ -74,12 +83,12 @@ const toTarget = computed(() => {
             <q-icon
               name="arrow_drop_up"
               size="xs"
-              @click="emit('onUp', name)"
+              @click.prevent="moveUp"
             ></q-icon>
             <q-icon
               name="arrow_drop_down"
               size="xs"
-              @click="emit('onUp', name)"
+              @click.prevent="moveDown"
             ></q-icon>
           </div>
         </div>
