@@ -63,7 +63,7 @@ const toTarget = computed(() => {
       <q-item-section v-if="!!props.doc" class="actions" side>
         <div class="row">
           <q-btn
-            @click="emit('onEdit', name)"
+            @click.prevent="emit('onEdit', name)"
             size="sm"
             round
             flat
