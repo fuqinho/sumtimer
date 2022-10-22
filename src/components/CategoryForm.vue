@@ -13,7 +13,7 @@ interface Props {
   doc?: CategoryDoc;
 }
 const props = defineProps<Props>();
-const emit = defineEmits(['onAdded', 'onUpdated']);
+const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
 
 // =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
@@ -41,6 +41,14 @@ async function update() {
   emit('onUpdated');
 }
 
+async function deleteCategory() {
+  if (!props.doc) {
+    console.error('CategoryForm.delete is called without base document data.');
+    return;
+  }
+  await categoryStore.deleteCategory(props.doc.id);
+  emit('onDeleted');
+}
 // =========================== Additional setup ================================
 </script>
 
@@ -73,6 +81,15 @@ async function update() {
       <q-avatar :style="{ 'background-color': color }" />
     </q-card-section>
     <q-card-actions>
+      <q-btn
+        v-if="props.doc"
+        flat
+        round
+        icon="delete"
+        color="negative"
+        @click="deleteCategory"
+      />
+      <q-space />
       <q-btn label="Cancel" flat v-close-popup></q-btn>
       <q-btn label="Save" v-if="props.doc" color="primary" @click="update" />
       <q-btn label="Add" v-else color="primary" @click="add" />

@@ -92,6 +92,7 @@ function onEditCategoryClicked(cid: string) {
   <q-dialog v-model="editingCategory">
     <CategoryForm
       @on-updated="editingCategory = false"
+      @on-deleted="editingCategory = false"
       :doc="currentCategory"
     />
   </q-dialog>
