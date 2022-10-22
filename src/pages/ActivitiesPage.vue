@@ -81,7 +81,10 @@ function onEditCategoryClicked(cid: string) {
   </div>
 
   <q-dialog v-model="creatingActivity">
-    <ActivityForm @on-created="creatingActivity = false" />
+    <ActivityForm
+      :initial-category="tab"
+      @on-created="creatingActivity = false"
+    />
   </q-dialog>
   <q-dialog v-model="creatingCategory">
     <CategoryForm @on-added="creatingCategory = false" />

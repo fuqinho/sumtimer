@@ -8,6 +8,7 @@ import { useCategoryStore } from 'src/stores/category-store';
 // =========================== Properties/Emitters =============================
 interface Props {
   doc?: ActivityDoc;
+  initialCategory?: string;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onCreated', 'onUpdated']);
@@ -28,7 +29,7 @@ const categoryOptions = computed(() => {
 });
 
 // =========================== Refs ============================================
-const { categories } = storeToRefs(categoryStore);
+const { categories, idToCategory } = storeToRefs(categoryStore);
 const selectedCategory = ref(
   null as { cid: string; label: string; color: string } | null
 );
@@ -74,6 +75,13 @@ if (props.doc) {
     }
     activityName.value = data.label;
   }
+} else if (props.initialCategory) {
+  for (const option of categoryOptions.value) {
+    if (option.cid == props.initialCategory) {
+      selectedCategory.value = option;
+    }
+  }
+  activityName.value = idToCategory.value[props.initialCategory].labels;
 }
 </script>
 
