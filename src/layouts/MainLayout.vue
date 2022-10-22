@@ -61,7 +61,6 @@ function signOutUser() {
 
       <q-tabs align="left">
         <q-route-tab to="/" label="Home" />
-        <q-route-tab to="/categories" label="Categories" />
         <q-route-tab to="/activities" label="Activities" />
         <q-route-tab to="/records" label="Records" />
       </q-tabs>
