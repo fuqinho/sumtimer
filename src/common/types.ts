@@ -4,6 +4,7 @@ export interface CategoryDocumentData extends DocumentData {
   uid: string;
   label: string;
   color: string;
+  order: number;
 }
 
 export interface CategoryDoc {

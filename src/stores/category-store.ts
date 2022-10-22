@@ -7,6 +7,7 @@ import {
   doc,
   getFirestore,
   onSnapshot,
+  orderBy,
   query,
   Unsubscribe,
   updateDoc,
@@ -44,7 +45,8 @@ export const useCategoryStore = defineStore('catgories', () => {
     }
     const q = query(
       collection(getFirestore(), 'categories'),
-      where('uid', '==', uid)
+      where('uid', '==', uid),
+      orderBy('order', 'asc')
     );
     unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {

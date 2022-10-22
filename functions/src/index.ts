@@ -11,37 +11,38 @@ const presetCategories = [
   {
     label: 'Work',
     color: '#ef5350',
+    order: 1,
     activities: [{ label: 'General work' }],
   },
   {
     label: 'Learning',
     color: '#29b6f6',
+    order: 2,
     activities: [{ label: 'General learning' }],
   },
   {
     label: 'Exercise',
     color: '#9ccc65',
+    order: 3,
     activities: [{ label: 'Walking' }, { label: 'Running' }],
   },
   {
     label: 'Entertainment',
     color: '#ffa726',
+    order: 4,
     activities: [{ label: 'Video game' }],
   },
   {
     label: 'Rest',
     color: '#7e57c2',
+    order: 5,
     activities: [{ label: 'Sleep' }],
   },
   {
     label: 'Chore',
     color: '#8d6e63',
+    order: 6,
     activities: [{ label: 'House cleaning' }, { label: 'Errands' }],
-  },
-  {
-    label: 'Others',
-    color: '#bdbdbd',
-    activities: [{ label: 'Any other activity' }],
   },
 ];
 
@@ -62,11 +63,13 @@ async function onCreateUser(user: UserRecord) {
 
     const categoryCollection = admin.firestore().collection('categories');
     const activityCollection = admin.firestore().collection('activities');
-    for (const category of presetCategories) {
+    for (let i = presetCategories.length - 1; i >= 0; i--) {
+      const category = presetCategories[i];
       const categoryDoc = {
         uid: user.uid,
         label: category.label,
         color: category.color,
+        order: category.order,
       };
       const newCategoryRef = categoryCollection.doc();
       await newCategoryRef.set(categoryDoc);
