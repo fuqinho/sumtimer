@@ -20,16 +20,16 @@
     }
   ],
   "hosting": {
-    "public": "./dist/spa",
-    "headers": [
+    "public": "dist/spa",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
       {
-        "source": "**/*.@(js|html)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=0"
-          }
-        ]
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   }
