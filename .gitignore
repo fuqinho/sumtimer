@@ -33,7 +33,7 @@ yarn-error.log*
 *.sln
 
 # API keys etc... stay in this file (using dotenv)
-.env
+.env.local
 
 # Firebase
 .firebaserc
