@@ -38,5 +38,10 @@ jobs:
           VITE_SUMTIMER_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           VITE_SUMTIMER_FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
 
+      - name: Setup functions
+        working-directory: ./functions
+        run: npm install
+
       - name: Deploy to Firebase
+        working-directory: ./
         run: npm run deploy -- --project ${{ secrets.FIREBASE_PROJECT_ID }} --force
