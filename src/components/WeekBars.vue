@@ -44,13 +44,14 @@ const rows = computed(() => {
   return result;
 });
 
+const hourSeparations = 24;
 const hours = computed(() => {
   const result = [] as { label: string; left: string }[];
   const startH = props.start.getHours();
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i <= hourSeparations; i++) {
     const data = {
-      label: '' + ((startH + i * 3) % 24),
-      left: 12.5 * i + '%',
+      label: '' + ((startH + i * (24 / hourSeparations)) % 24),
+      left: (100 / hourSeparations) * i + '%',
     };
     result.push(data);
   }
@@ -113,6 +114,7 @@ const hours = computed(() => {
   position: relative;
   height: 14px;
   width: 100%;
+  left: -3px;
 }
 
 .hour-anchor {

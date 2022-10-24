@@ -140,6 +140,16 @@ function updateBar() {
   }
 }
 
+const separationNum = 24;
+const separatorStyles = computed(() => {
+  const res = [];
+  for (let i = 1; i < separationNum; i++) {
+    const curPercent = (100 * i) / separationNum;
+    res.push({ id: i, left: curPercent + '%' });
+  }
+  return res;
+});
+
 // =========================== Refs ============================================
 const { idToCategory } = storeToRefs(categoryStore);
 const { idToActivity } = storeToRefs(activityStore);
@@ -150,6 +160,14 @@ const { idToActivity } = storeToRefs(activityStore);
 
 <template>
   <div class="container">
+    <q-icon
+      v-for="sep in separatorStyles"
+      :key="sep.id"
+      name="circle"
+      size="4px"
+      class="bar-separator"
+      :style="sep"
+    />
     <div
       v-for="bar in bars"
       :key="bar.rid"
@@ -193,5 +211,12 @@ const { idToActivity } = storeToRefs(activityStore);
   height: 0;
   top: -13px;
   left: 50%;
+}
+
+.bar-separator {
+  width: 0;
+  height: 0;
+  top: -3px;
+  color: rgba(0, 0, 0, 0.1);
 }
 </style>
