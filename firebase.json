@@ -18,5 +18,19 @@
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
-  ]
+  ],
+  "hosting": {
+    "public": "./dist/spa",
+    "headers": [
+      {
+        "source": "**/*.@(js|html)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0"
+          }
+        ]
+      }
+    ]
+  }
 }
