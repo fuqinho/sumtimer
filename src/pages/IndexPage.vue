@@ -5,6 +5,8 @@ import ActivityList from 'src/components/ActivityList.vue';
 import OngoingRecord from 'src/components/OngoingRecord.vue';
 import WeekBars from 'src/components/WeekBars.vue';
 import { useRecordStore } from 'src/stores/record-store';
+import { storeToRefs } from 'pinia';
+import { useUserDataStore } from 'src/stores/user-data-store';
 
 const startHourOfDay = 5;
 const startDayOfWeek = 1; // Monday
@@ -20,13 +22,15 @@ while (date.getDayOfWeek(startDate) != startDayOfWeek) {
 }
 const start = ref(startDate);
 
+const userStore = useUserDataStore();
 const recordStore = useRecordStore();
-const records = ref(recordStore.records);
+const { records } = storeToRefs(recordStore);
+const { ongoing } = storeToRefs(userStore);
 </script>
 
 <template>
   <q-page class="col items-center justify-evenly">
-    <week-bars :start="start" :records="records"></week-bars>
+    <week-bars :start="start" :records="records" :ongoing="ongoing"></week-bars>
     <ongoing-record></ongoing-record>
     <activity-list></activity-list>
   </q-page>

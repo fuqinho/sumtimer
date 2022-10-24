@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { date } from 'quasar';
-import { RecordDoc } from 'src/common/types';
+import { OngoingRecord, RecordDoc } from 'src/common/types';
 import DayBar from 'src/components/DayBar.vue';
 
 interface RowData {
@@ -17,6 +17,7 @@ interface RowData {
 interface Props {
   start: Date;
   records: RecordDoc[];
+  ongoing?: OngoingRecord;
 }
 const props = defineProps<Props>();
 
@@ -89,6 +90,7 @@ const hours = computed(() => {
         <DayBar
           :start="row.start"
           :records="props.records"
+          :ongoing="props.ongoing"
           class="col"
         ></DayBar>
       </div>

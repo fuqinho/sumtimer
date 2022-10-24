@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { date } from 'quasar';
-import { RecordDoc } from 'src/common/types';
+import { OngoingRecord, RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 import { storeToRefs } from 'pinia';
@@ -11,6 +11,7 @@ import { defaultCategoryColor } from 'src/common/constants';
 interface Props {
   start: Date;
   records: RecordDoc[];
+  ongoing?: OngoingRecord;
 }
 const props = defineProps<Props>();
 
@@ -20,46 +21,85 @@ const activityStore = useActivityStore();
 
 // =========================== Computed properties =============================
 interface BarData {
-  rid: string;
+  rid?: string;
   style: {
     left: string;
     width: string;
     backgroundColor: string;
+    outlineColor?: string;
+    outlineWidth?: string;
+    outlineStyle?: string;
   };
 }
 
+function hasIntersection(s0: number, e0: number, s1: number, e1: number) {
+  return s0 < e1 && s1 < e0;
+}
+
+function barGeometry(
+  recStart: number,
+  recEnd: number,
+  dayStart: number,
+  dayEnd: number
+): [number, number] {
+  const startTime = Math.max(recStart, dayStart);
+  const endTime = Math.min(recEnd, dayEnd);
+  const startHour = (startTime - dayStart) / (60 * 60 * 1000);
+  const leftPercent = Math.round((startHour / 24) * 10000) / 100;
+  const durationHour = (endTime - startTime) / (60 * 60 * 1000);
+  const widthPercent = Math.round((durationHour / 24) * 10000) / 100;
+  return [leftPercent, widthPercent];
+}
+
+function barColor(aid?: string) {
+  if (aid) {
+    const activityData = idToActivity.value[aid];
+    if (activityData && activityData.cid) {
+      const categoryData = idToCategory.value[activityData.cid];
+      if (categoryData && categoryData.color) {
+        return categoryData.color;
+      }
+    }
+  }
+  return defaultCategoryColor;
+}
+
 const bars = computed(() => {
-  const dayStart = props.start;
-  const dayEnd = date.addToDate(props.start, { days: 1 });
+  const dayStart = props.start.getTime();
+  const dayEnd = date.addToDate(props.start, { days: 1 }).getTime();
   const res = [] as BarData[];
   for (const record of props.records) {
     const recStart = record.data.start.toMillis();
     const recEnd = record.data.end.toMillis();
-    if (recEnd > dayStart.getTime() && recStart < dayEnd.getTime()) {
-      const startTime = Math.max(recStart, dayStart.getTime());
-      const endTime = Math.min(recEnd, dayEnd.getTime());
-      const startHour = (startTime - dayStart.getTime()) / (60 * 60 * 1000);
-      const leftPercent = Math.round((startHour / 24) * 10000) / 100;
-      const durationHour = (endTime - startTime) / (60 * 60 * 1000);
-      const widthPercent = Math.round((durationHour / 24) * 10000) / 100;
-      const data = {
+    if (hasIntersection(recStart, recEnd, dayStart, dayEnd)) {
+      const [left, width] = barGeometry(recStart, recEnd, dayStart, dayEnd);
+      const color = barColor(record.data.aid);
+      res.push({
         rid: record.id,
         style: {
-          left: leftPercent + '%',
-          width: widthPercent + '%',
-          backgroundColor: defaultCategoryColor,
+          left: left + '%',
+          width: width + '%',
+          backgroundColor: color,
         },
-      };
-      if (record.data.aid) {
-        const activityData = idToActivity.value[record.data.aid];
-        if (activityData && activityData.cid) {
-          const categoryData = idToCategory.value[activityData.cid];
-          if (categoryData && categoryData.color) {
-            data.style.backgroundColor = categoryData.color;
-          }
-        }
-      }
-      res.push(data);
+      });
+    }
+  }
+  if (props.ongoing) {
+    const recStart = props.ongoing.start.toMillis();
+    const recEnd = Date.now();
+    if (hasIntersection(recStart, recEnd, dayStart, dayEnd)) {
+      const [left, width] = barGeometry(recStart, recEnd, dayStart, dayEnd);
+      const color = barColor(props.ongoing.aid);
+      res.push({
+        style: {
+          left: left + '%',
+          width: width + '%',
+          backgroundColor: color,
+          outlineColor: 'rgba(255, 255, 0, 0.8)',
+          outlineWidth: '4px',
+          outlineStyle: 'solid',
+        },
+      });
     }
   }
   return res;
