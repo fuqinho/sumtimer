@@ -121,7 +121,7 @@ function updateBar() {
           width: width + '%',
           backgroundColor: color,
           outlineColor: 'rgba(255, 255, 0, 0.8)',
-          outlineWidth: '4px',
+          outlineWidth: '2px',
           outlineStyle: 'solid',
         },
       };
