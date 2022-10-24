@@ -89,15 +89,16 @@ const bars = computed(() => {
 });
 
 const ongoingBar = ref(null as BarData | null);
+const nowMarkerStyle = ref(null as { left: string } | null);
 
 watch(ongoing, () => {
-  updateOngoingBar();
+  updateBar();
 });
 
 let timerId = 0;
 onBeforeMount(() => {
-  updateOngoingBar();
-  timerId = window.setInterval(updateOngoingBar, 20000);
+  updateBar();
+  timerId = window.setInterval(updateBar, 20000);
 });
 
 onUnmounted(() => {
@@ -105,7 +106,7 @@ onUnmounted(() => {
   timerId = 0;
 });
 
-function updateOngoingBar() {
+function updateBar() {
   const dayStart = props.start.getTime();
   const dayEnd = date.addToDate(props.start, { days: 1 }).getTime();
   if (ongoing.value) {
@@ -128,6 +129,15 @@ function updateOngoingBar() {
   } else {
     ongoingBar.value = null;
   }
+
+  const now = Date.now();
+  if (now >= dayStart && now < dayEnd) {
+    const startHour = (now - dayStart) / (60 * 60 * 1000);
+    const leftPercent = Math.round((startHour / 24) * 10000) / 100;
+    nowMarkerStyle.value = { left: leftPercent + '%' };
+  } else {
+    nowMarkerStyle.value = null;
+  }
 }
 
 // =========================== Refs ============================================
@@ -147,6 +157,14 @@ const { idToActivity } = storeToRefs(activityStore);
       :style="bar.style"
     ></div>
     <div v-if="ongoingBar" class="bar" :style="ongoingBar.style"></div>
+    <q-icon
+      v-if="nowMarkerStyle"
+      color="orange"
+      size="10px"
+      name="tornado"
+      class="now-marker-icon"
+      :style="nowMarkerStyle"
+    ></q-icon>
   </div>
 </template>
 
@@ -168,5 +186,12 @@ const { idToActivity } = storeToRefs(activityStore);
 .bar:hover {
   box-shadow: $shadow-2;
   cursor: pointer;
+}
+
+.now-marker-icon {
+  width: 0;
+  height: 0;
+  top: -13px;
+  left: 50%;
 }
 </style>
