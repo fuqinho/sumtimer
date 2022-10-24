@@ -22,7 +22,8 @@ jobs:
           node-version: 18
 
       - name: Restore service account
-        run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUMTIMER_8721E }} | base64 --decode > service-account.json
+        run: |
+          echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SUMTIMER_8721E }} | base64 --decode > service-account.json
 
       - name: Build app
         run: |
