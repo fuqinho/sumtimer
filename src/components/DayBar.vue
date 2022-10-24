@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch, onBeforeMount, onUnmounted, ref } from 'vue';
 import { date } from 'quasar';
 import { OngoingRecord, RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
@@ -18,6 +18,7 @@ const props = defineProps<Props>();
 // =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
+const ongoing = computed(() => props.ongoing);
 
 // =========================== Computed properties =============================
 interface BarData {
@@ -84,13 +85,36 @@ const bars = computed(() => {
       });
     }
   }
-  if (props.ongoing) {
-    const recStart = props.ongoing.start.toMillis();
+  return res;
+});
+
+const ongoingBar = ref(null as BarData | null);
+
+watch(ongoing, () => {
+  updateOngoingBar();
+});
+
+let timerId = 0;
+onBeforeMount(() => {
+  updateOngoingBar();
+  timerId = window.setInterval(updateOngoingBar, 20000);
+});
+
+onUnmounted(() => {
+  clearInterval(timerId);
+  timerId = 0;
+});
+
+function updateOngoingBar() {
+  const dayStart = props.start.getTime();
+  const dayEnd = date.addToDate(props.start, { days: 1 }).getTime();
+  if (ongoing.value) {
+    const recStart = ongoing.value.start.toMillis();
     const recEnd = Date.now();
     if (hasIntersection(recStart, recEnd, dayStart, dayEnd)) {
       const [left, width] = barGeometry(recStart, recEnd, dayStart, dayEnd);
-      const color = barColor(props.ongoing.aid);
-      res.push({
+      const color = barColor(ongoing.value.aid);
+      ongoingBar.value = {
         style: {
           left: left + '%',
           width: width + '%',
@@ -99,11 +123,12 @@ const bars = computed(() => {
           outlineWidth: '4px',
           outlineStyle: 'solid',
         },
-      });
+      };
     }
+  } else {
+    ongoingBar.value = null;
   }
-  return res;
-});
+}
 
 // =========================== Refs ============================================
 const { idToCategory } = storeToRefs(categoryStore);
@@ -121,6 +146,7 @@ const { idToActivity } = storeToRefs(activityStore);
       class="bar"
       :style="bar.style"
     ></div>
+    <div v-if="ongoingBar" class="bar" :style="ongoingBar.style"></div>
   </div>
 </template>
 
