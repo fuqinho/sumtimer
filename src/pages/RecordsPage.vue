@@ -3,5 +3,7 @@ import RecordList from 'src/components/RecordList.vue';
 </script>
 
 <template>
-  <RecordList />
+  <div class="q-pa-md">
+    <RecordList />
+  </div>
 </template>

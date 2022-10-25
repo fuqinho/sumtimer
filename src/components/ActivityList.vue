@@ -27,7 +27,7 @@ const { activities } = storeToRefs(activityStore);
 </script>
 
 <template>
-  <div class="q-pa-md">
+  <div>
     <q-list bordered separator>
       <ActivityItem
         v-for="activity in filteredActivities"

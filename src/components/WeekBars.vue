@@ -65,7 +65,7 @@ const hours = computed(() => {
 </script>
 
 <template>
-  <div class="q-pa-md">
+  <div>
     <div>
       <div class="row items-center">
         <div class="date-label"></div>

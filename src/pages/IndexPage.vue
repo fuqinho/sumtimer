@@ -29,9 +29,9 @@ const { ongoing } = storeToRefs(userStore);
 </script>
 
 <template>
-  <q-page class="col items-center justify-evenly">
+  <q-page class="q-pa-md col items-center justify-evenly">
     <week-bars :start="start" :records="records" :ongoing="ongoing"></week-bars>
-    <ongoing-record></ongoing-record>
-    <activity-list></activity-list>
+    <ongoing-record class="q-mt-md"></ongoing-record>
+    <activity-list class="q-mt-md"></activity-list>
   </q-page>
 </template>

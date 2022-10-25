@@ -30,7 +30,7 @@ console.log(aid);
 </script>
 
 <template>
-  <div class="q-pa-md" q-pa-md>
+  <div>
     <q-list bordered separator>
       <RecordItem
         v-for="record in filteredRecords"

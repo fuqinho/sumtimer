@@ -33,10 +33,10 @@ function onEditCategoryClicked(cid: string) {
 </script>
 
 <template>
-  <div class="q-py-md">
+  <div class="q-py-md q-pr-md">
     <q-splitter v-model="splitterModel">
       <template v-slot:before>
-        <div class="q-py-md">
+        <div>
           <q-tabs
             v-model="tab"
             vertical
