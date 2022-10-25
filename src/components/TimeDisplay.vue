@@ -38,7 +38,7 @@ const second = computed(() => Math.floor((props.time % minuteMs) / secondMs));
 <style>
 .digit,
 .colon {
-  font-size: 30px;
+  font-size: 32px;
   vertical-align: baseline;
   color: #333;
 }

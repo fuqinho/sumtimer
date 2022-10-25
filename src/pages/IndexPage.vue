@@ -31,7 +31,11 @@ const { ongoing } = storeToRefs(userStore);
 <template>
   <q-page class="q-pa-md col items-center justify-evenly">
     <week-bars :start="start" :records="records" :ongoing="ongoing"></week-bars>
-    <ongoing-record class="q-mt-md"></ongoing-record>
+    <ongoing-record
+      v-if="ongoing"
+      class="q-mt-md"
+      :ongoing="ongoing"
+    ></ongoing-record>
     <activity-list class="q-mt-md"></activity-list>
   </q-page>
 </template>

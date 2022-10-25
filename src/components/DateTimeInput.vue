@@ -25,7 +25,7 @@ const model = computed({
 </script>
 
 <template>
-  <q-input filled v-model="model">
+  <q-input v-model="model">
     <template v-slot:prepend>
       <q-icon name="event" class="cursor-pointer">
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">

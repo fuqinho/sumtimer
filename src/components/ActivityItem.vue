@@ -172,7 +172,7 @@ async function deleteActivity() {
   </q-dialog>
 </template>
 
-<style>
+<style scoped>
 .activity {
   padding: 0 !important;
 }

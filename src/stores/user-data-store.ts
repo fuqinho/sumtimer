@@ -64,6 +64,12 @@ export const useUserDataStore = defineStore('userData', () => {
     await updateDoc(docRef, { 'ongoing.memo': memo });
   }
 
+  async function updateOngoingStartTime(startTime?: Date) {
+    if (!ongoing.value || !startTime) return;
+    const docRef = doc(getFirestore(), 'users', uid.value);
+    await updateDoc(docRef, { 'ongoing.start': Timestamp.fromDate(startTime) });
+  }
+
   async function finishOngoingActivity() {
     if (!ongoing.value) return;
 
@@ -78,5 +84,6 @@ export const useUserDataStore = defineStore('userData', () => {
     startOngoingActivity,
     finishOngoingActivity,
     updateOngoingMemo,
+    updateOngoingStartTime,
   };
 });
