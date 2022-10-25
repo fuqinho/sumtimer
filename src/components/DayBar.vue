@@ -125,6 +125,8 @@ function updateBar() {
           outlineStyle: 'solid',
         },
       };
+    } else {
+      ongoingBar.value = null;
     }
   } else {
     ongoingBar.value = null;
