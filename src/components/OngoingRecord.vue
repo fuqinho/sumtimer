@@ -57,7 +57,7 @@ const lightenCategoryColor = computed(() => {
 });
 
 const startDate = computed(() => {
-  return date.extractDate(start.value, 'YYYY-MM-DD HH:mm');
+  return date.extractDate(start.value, 'YYYY-MM-DD HH:mm:ss');
 });
 
 const startDayStr = computed(() => {
@@ -94,7 +94,7 @@ function updateStartTime() {
   if (ongoing.value) {
     start.value = date.formatDate(
       ongoing.value.start.toDate(),
-      'YYYY-MM-DD HH:mm'
+      'YYYY-MM-DD HH:mm:ss'
     );
   }
 }
@@ -154,7 +154,7 @@ onUnmounted(() => {
       <div v-if="start" class="start-time row items-center">
         <q-icon name="event" class="cursor-pointer" size="xs" color="grey">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-date v-model="start" mask="YYYY-MM-DD HH:mm" today-btn>
+            <q-date v-model="start" mask="YYYY-MM-DD HH:mm:ss" today-btn>
               <div class="row items-center justify-end">
                 <q-btn v-close-popup label="Close" color="primary" flat />
               </div>
@@ -169,7 +169,12 @@ onUnmounted(() => {
           color="grey"
         >
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-time v-model="start" mask="YYYY-MM-DD HH:mm" format24h>
+            <q-time
+              v-model="start"
+              mask="YYYY-MM-DD HH:mm:ss"
+              format24h
+              now-btn
+            >
               <div class="row items-center justify-end">
                 <q-btn v-close-popup label="Close" color="primary" flat />
               </div>
@@ -177,6 +182,7 @@ onUnmounted(() => {
           </q-popup-proxy>
         </q-icon>
         <div class="time-str">{{ startTimeStr }}</div>
+        <div class="time-str">~</div>
       </div>
       <q-input
         v-model="memo"
@@ -199,9 +205,7 @@ onUnmounted(() => {
   width: 10px;
   height: 100%;
 }
-.start-time {
-  max-width: 200px;
-}
+
 date-time-input {
   width: 200px;
 }
