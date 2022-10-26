@@ -2,64 +2,23 @@
 import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import { OngoingRecord } from 'src/common/types';
-import { defaultCategoryColor } from 'src/common/constants';
-import { useCategoryStore } from 'src/stores/category-store';
-import { useActivityStore } from 'src/stores/activity-store';
-import { useRecordStore } from 'src/stores/record-store';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useOngoingStore } from 'src/stores/ongoing-store';
 import TimeDisplay from 'src/components/TimeDisplay.vue';
 import TimeInput from 'src/components/TimeInput.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
-  ongoing: OngoingRecord;
-}
-const props = defineProps<Props>();
 
 // =========================== Use stores/composables ==========================
-const userStore = useUserDataStore();
-const categoryStore = useCategoryStore();
-const activityStore = useActivityStore();
-const recordStore = useRecordStore();
+const ongoingStore = useOngoingStore();
 
 // =========================== Refs ============================================
-const { idToActivity } = storeToRefs(activityStore);
-const { idToCategory } = storeToRefs(categoryStore);
+const { ongoing, activityName, categoryName, categoryColor } =
+  storeToRefs(ongoingStore);
 const elapsed_ms = ref(0);
 const memo = ref('');
 
 // =========================== Computed properties =============================
-const ongoing = computed(() => props.ongoing);
-
-const ongoingStart = computed(() => props.ongoing.start.toDate());
-
-const activity = computed(() => {
-  if (!ongoing.value) return null;
-  return idToActivity.value[ongoing.value.aid];
-});
-
-const activityName = computed(() => {
-  if (activity.value) return activity.value.label;
-  return 'Uknown activity';
-});
-
-const category = computed(() => {
-  if (!activity.value) return null;
-  if (activity.value && activity.value.cid) {
-    const data = idToCategory.value[activity.value.cid];
-    if (data) return data;
-  }
-  return null;
-});
-
-const categoryName = computed(() => {
-  return category.value ? category.value.label : 'Unknown category';
-});
-
-const categoryColor = computed(() => {
-  return category.value ? category.value.color : defaultCategoryColor;
-});
+const ongoingStart = computed(() => ongoing.value?.start.toDate());
 
 const lightenedCategoryColor = computed(() => {
   return colors.lighten(categoryColor.value, 90);
@@ -74,21 +33,20 @@ function updateElapsedTime() {
   }
 }
 
-function finishRecording() {
-  recordStore.finishRecording();
+async function finishRecording() {
+  await ongoingStore.finish();
 }
 
-function pauseRecording() {
+async function pauseRecording() {
   console.log('pauseRecording');
 }
 
 async function recordMemo() {
-  await userStore.updateOngoingMemo(memo.value);
+  await ongoingStore.updateMemo(memo.value);
 }
 
 async function onChangeStartTime(time: Date) {
-  console.log(time);
-  await userStore.updateOngoingStartTime(time);
+  await ongoingStore.updateStart(time);
 }
 
 // =========================== Additional setup ================================
@@ -123,7 +81,7 @@ onUnmounted(() => {
     </q-card-section>
     <q-separator />
     <q-card-section class="row justify-end"> </q-card-section>
-    <q-card-section class="items-start">
+    <q-card-section v-if="ongoingStart" class="items-start">
       <div class="start-time row items-center">
         <TimeInput :time="ongoingStart" @on-change="onChangeStartTime" />
         <div class="time-str">~</div>

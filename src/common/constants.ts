@@ -22,3 +22,4 @@ export const defaultColorPalette = [
 
 export const defaultCategoryColor = '#bdbdbd';
 export const defaultCategoryName = 'Uncategorized';
+export const defaultActivityName = '???';
