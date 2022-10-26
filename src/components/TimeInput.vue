@@ -26,8 +26,10 @@ const dayStr = computed(() => {
 const timeStr = computed(() => date.formatDate(props.time, 'HH:mm'));
 
 function commitEditedTime() {
-  console.log('commit');
-  const newTime = date.extractDate(model.value, 'YYYY-MM-DD HH:mm:ss');
+  let newTime = date.extractDate(model.value, 'YYYY-MM-DD HH:mm:ss');
+  if (props.startTime && newTime.getTime() < props.startTime.getTime()) {
+    newTime = date.addToDate(newTime, { days: 1 });
+  }
   emit('onChange', newTime);
 }
 
@@ -38,62 +40,71 @@ function clearEditedTime() {
 
 <template>
   <div class="start-time row items-center">
-    <q-icon name="event" class="cursor-pointer" size="xs" color="grey">
-      <q-popup-proxy
-        @hide="clearEditedTime"
-        cover
-        transition-show="scale"
-        transition-hide="scale"
-      >
-        <q-date v-model="model" mask="YYYY-MM-DD HH:mm:ss" today-btn>
-          <div class="row items-center justify-end">
-            <q-btn
-              @click="clearEditedTime"
-              v-close-popup
-              label="Cancel"
-              color="grey-8"
-              flat
-            />
-            <q-btn
-              @click="commitEditedTime"
-              v-close-popup
-              label="Set"
-              color="primary"
-              flat
-            />
-          </div>
-        </q-date>
-      </q-popup-proxy>
-    </q-icon>
-    <div class="day-str">{{ dayStr }}</div>
-    <q-icon name="access_time" class="cursor-pointer" size="xs" color="grey">
-      <q-popup-proxy
-        @hide="clearEditedTime"
-        cover
-        transition-show="scale"
-        transition-hide="scale"
-      >
-        <q-time v-model="model" mask="YYYY-MM-DD HH:mm:ss" format24h now-btn>
-          <div class="row items-center justify-end">
-            <q-btn
-              @click="clearEditedTime"
-              v-close-popup
-              label="Cancel"
-              color="grey-8"
-              flat
-            />
-            <q-btn
-              @click="commitEditedTime"
-              v-close-popup
-              label="Set"
-              color="primary"
-              flat
-            />
-          </div>
-        </q-time>
-      </q-popup-proxy>
-    </q-icon>
-    <div class="time-str">{{ timeStr }}</div>
+    <div v-if="!props.startTime" class="row items-center">
+      <q-icon name="event" class="cursor-pointer" size="xs" color="grey">
+        <q-popup-proxy
+          @hide="clearEditedTime"
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+        >
+          <q-date v-model="model" mask="YYYY-MM-DD HH:mm:ss" today-btn>
+            <div class="row items-center justify-end">
+              <q-btn
+                @click="clearEditedTime"
+                v-close-popup
+                label="Cancel"
+                color="grey-8"
+                flat
+              />
+              <q-btn
+                @click="commitEditedTime"
+                v-close-popup
+                label="Set"
+                color="primary"
+                flat
+              />
+            </div>
+          </q-date>
+        </q-popup-proxy>
+      </q-icon>
+      <div class="day-str">{{ dayStr }}</div>
+    </div>
+    <div class="row items-center">
+      <q-icon name="access_time" class="cursor-pointer" size="xs" color="grey">
+        <q-popup-proxy
+          @hide="clearEditedTime"
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+        >
+          <q-time
+            v-model="model"
+            mask="YYYY-MM-DD HH:mm:ss"
+            format24h
+            :now-btn="!props.startTime"
+          >
+            <div class="row items-center justify-end">
+              <q-btn
+                @click="clearEditedTime"
+                v-close-popup
+                label="Cancel"
+                color="grey-8"
+                flat
+              />
+              <q-btn
+                @click="commitEditedTime"
+                v-close-popup
+                label="Set"
+                color="primary"
+                flat
+              />
+            </div>
+          </q-time>
+        </q-popup-proxy>
+      </q-icon>
+      <div class="time-str">{{ timeStr }}</div>
+    </div>
   </div>
 </template>
 

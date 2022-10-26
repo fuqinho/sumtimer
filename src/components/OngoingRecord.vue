@@ -18,35 +18,17 @@ const elapsed_ms = ref(0);
 const memo = ref('');
 
 // =========================== Computed properties =============================
-const ongoingStart = computed(() => ongoing.value?.start.toDate());
-
 const lightenedCategoryColor = computed(() => {
   return colors.lighten(categoryColor.value, 90);
 });
 
 // =========================== Methods =========================================
 function updateElapsedTime() {
-  if (ongoing.value) {
-    let elapsed = new Date().getTime() - ongoing.value.start.toMillis();
-    elapsed = Math.max(elapsed, 0);
-    elapsed_ms.value = elapsed;
-  }
-}
-
-async function finishRecording() {
-  await ongoingStore.finish();
-}
-
-async function pauseRecording() {
-  console.log('pauseRecording');
+  elapsed_ms.value = ongoingStore.totalDuration();
 }
 
 async function recordMemo() {
   await ongoingStore.updateMemo(memo.value);
-}
-
-async function onChangeStartTime(time: Date) {
-  await ongoingStore.updateStart(time);
 }
 
 // =========================== Additional setup ================================
@@ -68,7 +50,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <q-card :style="{ backgroundColor: lightenedCategoryColor }">
+  <q-card v-if="ongoing" :style="{ backgroundColor: lightenedCategoryColor }">
     <q-card-section class="row">
       <div class="column items-start">
         <q-badge :style="{ backgroundColor: categoryColor }">{{
@@ -81,17 +63,61 @@ onUnmounted(() => {
     </q-card-section>
     <q-separator />
     <q-card-section class="row justify-end"> </q-card-section>
-    <q-card-section v-if="ongoingStart" class="items-start">
-      <div class="start-time row items-center">
-        <TimeInput :time="ongoingStart" @on-change="onChangeStartTime" />
-        <div class="time-str">~</div>
+    <q-card-section class="items-start">
+      <div v-if="ongoing.subs">
+        <div
+          v-for="(sub, i) in ongoing.subs"
+          :key="sub.start.toMillis()"
+          class="start-time row items-center"
+        >
+          <TimeInput
+            :time="sub.start.toDate()"
+            @on-change="ongoingStore.updateSubStart(i, $event)"
+          />
+          <div class="time-str">~</div>
+          <TimeInput
+            :time="sub.end.toDate()"
+            :startTime="sub.start.toDate()"
+            @on-change="ongoingStore.updateSubEnd(i, $event)"
+          />
+        </div>
+      </div>
+      <div v-if="ongoing.curStart">
+        <div class="start-time row items-center">
+          <TimeInput
+            :time="ongoing.curStart.toDate()"
+            @on-change="ongoingStore.updateCurStart"
+          />
+          <div class="time-str">~</div>
+        </div>
       </div>
       <q-input v-model="memo" label="Memo" autogrow @blur="recordMemo" />
     </q-card-section>
     <q-separator dark />
     <q-card-actions align="right">
-      <q-btn round color="primary" flat icon="pause" @click="pauseRecording" />
-      <q-btn round color="primary" flat icon="stop" @click="finishRecording" />
+      <q-btn
+        v-if="ongoing.curStart"
+        round
+        color="primary"
+        flat
+        icon="pause"
+        @click="ongoingStore.pause()"
+      />
+      <q-btn
+        v-else
+        round
+        color="primary"
+        flat
+        icon="play_arrow"
+        @click="ongoingStore.resume()"
+      />
+      <q-btn
+        round
+        color="primary"
+        flat
+        icon="stop"
+        @click="ongoingStore.finish()"
+      />
     </q-card-actions>
   </q-card>
 </template>

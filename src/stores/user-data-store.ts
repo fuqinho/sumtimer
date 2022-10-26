@@ -1,14 +1,6 @@
 import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
-import {
-  getFirestore,
-  doc,
-  onSnapshot,
-  Unsubscribe,
-  updateDoc,
-  deleteField,
-  Timestamp,
-} from 'firebase/firestore';
+import { getFirestore, doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { CategoryDoc, OngoingRecord, UserDocumentData } from 'src/common/types';
 import { useAuthStore } from 'src/stores/auth-store';
 
@@ -48,42 +40,9 @@ export const useUserDataStore = defineStore('userData', () => {
     }
   }
 
-  async function startOngoingActivity(aid: string) {
-    const docRef = doc(getFirestore(), 'users', uid.value);
-    const ongoing = {
-      aid: aid,
-      start: Timestamp.now(),
-    };
-    await updateDoc(docRef, { ongoing: ongoing });
-  }
-
-  async function updateOngoingMemo(memo: string) {
-    if (!ongoing.value) return;
-
-    const docRef = doc(getFirestore(), 'users', uid.value);
-    await updateDoc(docRef, { 'ongoing.memo': memo });
-  }
-
-  async function updateOngoingStartTime(startTime?: Date) {
-    if (!ongoing.value || !startTime) return;
-    const docRef = doc(getFirestore(), 'users', uid.value);
-    await updateDoc(docRef, { 'ongoing.start': Timestamp.fromDate(startTime) });
-  }
-
-  async function finishOngoingActivity() {
-    if (!ongoing.value) return;
-
-    const docRef = doc(getFirestore(), 'users', uid.value);
-    await updateDoc(docRef, { ongoing: deleteField() });
-  }
-
   return {
     uid,
     categories,
     ongoing,
-    startOngoingActivity,
-    finishOngoingActivity,
-    updateOngoingMemo,
-    updateOngoingStartTime,
   };
 });

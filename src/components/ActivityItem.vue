@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Timestamp } from '@firebase/firestore';
 import { ActivityDoc } from 'src/common/types';
-import { useUserDataStore } from 'src/stores/user-data-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useRouter } from 'vue-router';
 import ActivityForm from 'src/components/ActivityForm.vue';
@@ -13,6 +11,7 @@ import {
 } from 'src/common/constants';
 import { storeToRefs } from 'pinia';
 import { useActivityStore } from 'src/stores/activity-store';
+import { useOngoingStore } from 'src/stores/ongoing-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -21,10 +20,10 @@ interface Props {
 const props = defineProps<Props>();
 
 // =========================== Use stores/composables ==========================
-const userStore = useUserDataStore();
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
+const ongoingStore = useOngoingStore();
 const router = useRouter();
 
 // =========================== Computed properties =============================
@@ -69,14 +68,8 @@ const { idToCategory } = storeToRefs(categoryStore);
 
 // =========================== Methods =========================================
 async function startActivity() {
-  await userStore.startOngoingActivity(props.doc.id);
+  await ongoingStore.start(props.doc.id);
   router.push('/');
-}
-
-function addRecordForTesting() {
-  const end = Timestamp.now();
-  const start = Timestamp.fromMillis(end.toMillis() - 30 * 60 * 1000);
-  recordStore.addRecord(props.doc.id, start, end);
 }
 
 async function startDeleteActivity() {
@@ -134,7 +127,6 @@ async function deleteActivity() {
     <q-item-section side>
       <div class="text-grey-7 q-gutter-xs">
         <q-btn size="sm" @click="editing = true" round flat icon="edit" />
-        <q-btn size="sm" @click="addRecordForTesting" round flat icon="stop" />
         <q-btn
           size="sm"
           @click="startDeleteActivity"

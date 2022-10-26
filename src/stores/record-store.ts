@@ -10,7 +10,6 @@ import {
   onSnapshot,
   orderBy,
   query,
-  Timestamp,
   updateDoc,
   where,
   writeBatch,
@@ -22,7 +21,7 @@ import { useActivityStore } from 'src/stores/activity-store';
 export const useRecordStore = defineStore('records', () => {
   const userStore = useUserDataStore();
   const activityStore = useActivityStore();
-  const { uid, ongoing } = storeToRefs(userStore);
+  const { uid } = storeToRefs(userStore);
 
   const records = ref([] as RecordDoc[]);
   const idToRecord = computed(() => {
@@ -69,21 +68,7 @@ export const useRecordStore = defineStore('records', () => {
     });
   }
 
-  async function addRecord(
-    aid: string,
-    start: Timestamp,
-    end: Timestamp,
-    memo?: string
-  ) {
-    const docData: RecordDocumentData = {
-      uid: uid.value,
-      aid: aid,
-      start: start,
-      end: end,
-      duration: end.toMillis() - start.toMillis(),
-    };
-    if (memo) docData.memo = memo;
-
+  async function addRecord(docData: RecordDocumentData) {
     await activityStore.onRecordAdded(docData);
     await addDoc(collection(getFirestore(), 'records'), docData);
   }
@@ -123,22 +108,6 @@ export const useRecordStore = defineStore('records', () => {
     await deleteRecords(ids);
   }
 
-  async function startRecording(aid: string) {
-    await userStore.startOngoingActivity(aid);
-  }
-
-  async function finishRecording() {
-    if (!ongoing.value) return;
-
-    await addRecord(
-      ongoing.value.aid,
-      ongoing.value.start,
-      Timestamp.now(),
-      ongoing.value.memo
-    );
-    await userStore.finishOngoingActivity();
-  }
-
   return {
     records,
     addRecord,
@@ -146,7 +115,5 @@ export const useRecordStore = defineStore('records', () => {
     deleteRecord,
     deleteRecords,
     deleteRecordsByActivityId,
-    startRecording,
-    finishRecording,
   };
 });

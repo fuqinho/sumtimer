@@ -110,7 +110,7 @@ function updateBar() {
   const dayStart = props.start.getTime();
   const dayEnd = date.addToDate(props.start, { days: 1 }).getTime();
   if (ongoing.value) {
-    const recStart = ongoing.value.start.toMillis();
+    const recStart = ongoing.value.recStart.toMillis();
     const recEnd = Date.now();
     if (hasIntersection(recStart, recEnd, dayStart, dayEnd)) {
       const [left, width] = barGeometry(recStart, recEnd, dayStart, dayEnd);

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { RecordDoc } from 'src/common/types';
-import { useTimeUtil } from 'src/composables/time-util';
 import { useActivityStore } from 'src/stores/activity-store';
 import RecordForm from 'src/components/RecordForm.vue';
 import { useCategoryStore } from 'src/stores/category-store';
@@ -22,7 +21,6 @@ const props = defineProps<Props>();
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
-const timeUtil = useTimeUtil();
 
 // =========================== Computed properties =============================
 const activityName = computed(() => {
@@ -62,10 +60,7 @@ const categoryName = computed(() => {
 });
 
 const hours = computed(() => {
-  const duration_h = timeUtil.durationInHour(
-    props.doc.data.start,
-    props.doc.data.end
-  );
+  const duration_h = props.doc.data.duration / (60 * 60 * 1000);
   return (Math.ceil(duration_h * 100) / 100).toFixed(2);
 });
 
