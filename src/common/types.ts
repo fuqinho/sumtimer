@@ -16,7 +16,7 @@ export interface OngoingRecord {
   aid: string;
   start: Timestamp;
   memo?: string;
-  breaks?: { start: Timestamp; end?: Timestamp }[];
+  sub?: { start: Timestamp; end: Timestamp }[];
 }
 
 export interface UserDocumentData extends DocumentData {
@@ -66,7 +66,7 @@ export interface RecordDocumentData extends DocumentData {
   start: Timestamp;
   end: Timestamp;
   duration: number;
-  breaks?: { start: Timestamp; end: Timestamp }[];
+  sub?: { start: Timestamp; end: Timestamp }[];
   memo?: string;
   progressFrom?: number;
   progressTo?: number;

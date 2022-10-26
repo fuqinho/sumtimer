@@ -9,6 +9,7 @@ import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import TimeDisplay from 'src/components/TimeDisplay.vue';
+import TimeInput from 'src/components/TimeInput.vue';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -22,8 +23,17 @@ const activityStore = useActivityStore();
 const recordStore = useRecordStore();
 const { lighten } = colors;
 
+// =========================== Refs ============================================
+const { idToActivity } = storeToRefs(activityStore);
+const { idToCategory } = storeToRefs(categoryStore);
+const elapsed_ms = ref(0);
+const memo = ref('');
+const start = ref('');
+
 // =========================== Computed properties =============================
 const ongoing = computed(() => props.ongoing);
+
+const ongoingStart = computed(() => props.ongoing.start.toDate());
 
 const activity = computed(() => {
   if (!ongoing.value) return null;
@@ -56,35 +66,6 @@ const lightenCategoryColor = computed(() => {
   return lighten(categoryColor.value, 90);
 });
 
-const startDate = computed(() => {
-  return ongoing.value.start.toDate();
-});
-
-const editingStartDate = computed(() => {
-  return date.extractDate(start.value, 'YYYY-MM-DD HH:mm:ss');
-});
-
-const startDayStr = computed(() => {
-  const thisYear = new Date().getFullYear();
-  const startYear = startDate.value.getFullYear();
-  if (startYear === thisYear) {
-    return date.formatDate(startDate.value, 'MM/DD');
-  } else {
-    return date.formatDate(startDate.value, 'YYYY/MM/DD');
-  }
-});
-
-const startTimeStr = computed(() => {
-  return date.formatDate(startDate.value, 'HH:mm');
-});
-
-// =========================== Refs ============================================
-const { idToActivity } = storeToRefs(activityStore);
-const { idToCategory } = storeToRefs(categoryStore);
-const elapsed_ms = ref(0);
-const memo = ref('');
-const start = ref('');
-
 // =========================== Methods =========================================
 function updateElapsedTime() {
   if (ongoing.value) {
@@ -115,12 +96,9 @@ async function recordMemo() {
   await userStore.updateOngoingMemo(memo.value);
 }
 
-async function commitEditedStartTime() {
-  await userStore.updateOngoingStartTime(editingStartDate.value);
-}
-
-async function clearEditedStartTime() {
-  updateStartTime();
+async function onChangeStartTime(time: Date) {
+  console.log(time);
+  await userStore.updateOngoingStartTime(time);
 }
 
 // =========================== Additional setup ================================
@@ -160,62 +138,7 @@ onUnmounted(() => {
     <q-card-section class="items-start">
       <div v-if="start">Start:</div>
       <div v-if="start" class="start-time row items-center">
-        <q-icon name="event" class="cursor-pointer" size="xs" color="grey">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-date v-model="start" mask="YYYY-MM-DD HH:mm:ss" today-btn>
-              <div class="row items-center justify-end">
-                <q-btn
-                  @click="clearEditedStartTime"
-                  v-close-popup
-                  label="Cancel"
-                  color="grey-8"
-                  flat
-                />
-                <q-btn
-                  @click="commitEditedStartTime"
-                  v-close-popup
-                  label="Set"
-                  color="primary"
-                  flat
-                />
-              </div>
-            </q-date>
-          </q-popup-proxy>
-        </q-icon>
-        <div class="day-str">{{ startDayStr }}</div>
-        <q-icon
-          name="access_time"
-          class="cursor-pointer"
-          size="xs"
-          color="grey"
-        >
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-time
-              v-model="start"
-              mask="YYYY-MM-DD HH:mm:ss"
-              format24h
-              now-btn
-            >
-              <div class="row items-center justify-end">
-                <q-btn
-                  @click="clearEditedStartTime"
-                  v-close-popup
-                  label="Cancel"
-                  color="grey-8"
-                  flat
-                />
-                <q-btn
-                  @click="commitEditedStartTime"
-                  v-close-popup
-                  label="Set"
-                  color="primary"
-                  flat
-                />
-              </div>
-            </q-time>
-          </q-popup-proxy>
-        </q-icon>
-        <div class="time-str">{{ startTimeStr }}</div>
+        <TimeInput :time="ongoingStart" @on-change="onChangeStartTime" />
         <div class="time-str">~</div>
       </div>
       <q-input
