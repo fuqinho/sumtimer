@@ -84,6 +84,7 @@ export interface RecordChange {
   start?: Timestamp;
   end?: Timestamp;
   duration?: number;
+  subs?: { start: Timestamp; end: Timestamp }[];
   memo?: string;
 }
 

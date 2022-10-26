@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
 import { ActivityDoc, RecordDoc, RecordChange } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
-import DateTimeInput from 'src/components/DateTimeInput.vue';
 import { useCategoryStore } from 'src/stores/category-store';
-import { useUtil } from 'src/composables/util';
+import TimeInput from 'src/components/TimeInput.vue';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -19,9 +18,7 @@ const emit = defineEmits(['onSaved']);
 const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
 const activityStore = useActivityStore();
-const util = useUtil();
 
-// =========================== Computed properties =============================
 // =========================== Refs ============================================
 const selectedActivity = ref(null as { aid: string; label: string } | null);
 const activityOptions = ref(
@@ -34,8 +31,36 @@ const activityOptions = ref(
   })
 );
 const memo = ref(props.doc && props.doc.data.memo ? props.doc.data.memo : '');
-const startTime = ref(props.doc ? props.doc.data.start.toDate() : new Date());
-const endTime = ref(props.doc ? props.doc.data.end.toDate() : new Date());
+const frames = ref(
+  !props.doc
+    ? []
+    : !props.doc.data.subs
+    ? [{ start: props.doc.data.start, end: props.doc.data.end }]
+    : props.doc.data.subs
+);
+
+// =========================== Computed properties =============================
+const earliestStart = computed(() => {
+  let res = frames.value[0].start.toMillis();
+  for (let i = 1; i < frames.value.length; i++) {
+    res = Math.min(res, frames.value[i].start.toMillis());
+  }
+  return Timestamp.fromMillis(res);
+});
+const latestEnd = computed(() => {
+  let res = frames.value[0].end.toMillis();
+  for (let i = 1; i < frames.value.length; i++) {
+    res = Math.max(res, frames.value[i].end.toMillis());
+  }
+  return Timestamp.fromMillis(res);
+});
+const totalDuration = computed(() => {
+  let res = 0;
+  for (const frame of frames.value) {
+    res += frame.end.toMillis() - frame.start.toMillis();
+  }
+  return res;
+});
 
 // =========================== Methods =========================================
 async function updateRecord() {
@@ -44,11 +69,11 @@ async function updateRecord() {
     return;
   }
   const change = {} as RecordChange;
-  const startTimestamp = Timestamp.fromDate(startTime.value);
+  const startTimestamp = earliestStart.value;
   if (startTimestamp !== props.doc.data.start) {
     change.start = startTimestamp;
   }
-  const endTimestamp = Timestamp.fromDate(endTime.value);
+  const endTimestamp = latestEnd.value;
   if (endTimestamp !== props.doc.data.end) {
     change.end = endTimestamp;
   }
@@ -61,12 +86,12 @@ async function updateRecord() {
   if (memo.value != props.doc.data.memo) {
     change.memo = memo.value;
   }
-  const duration = util.computeDuration({
-    ...props.doc.data,
-    ...change,
-  });
+  const duration = totalDuration.value;
   if (duration != props.doc.data.duration) {
     change.duration = duration;
+  }
+  if (props.doc.data.subs) {
+    change.subs = frames.value;
   }
   await recordStore.updateRecord(props.doc.id, change);
   emit('onSaved');
@@ -80,6 +105,22 @@ function categoryName(activity: ActivityDoc) {
     }
   }
   return undefined;
+}
+
+async function updateFrameStart(index: number, time: Date) {
+  if (index >= frames.value.length) {
+    console.error('index is OOB. index:', index, 'size:', frames.value.length);
+    return;
+  }
+  frames.value[index].start = Timestamp.fromDate(time);
+}
+
+async function updateFrameEnd(index: number, time: Date) {
+  if (index >= frames.value.length) {
+    console.error('index is OOB. index:', index, 'size:', frames.value.length);
+    return;
+  }
+  frames.value[index].end = Timestamp.fromDate(time);
 }
 
 // =========================== Additional setup ================================
@@ -118,11 +159,23 @@ if (props.doc) {
         </template>
       </q-select>
     </q-card-section>
-    <q-card-section>
-      <date-time-input label="Start" v-model:time="startTime" />
-    </q-card-section>
-    <q-card-section>
-      <date-time-input label="End" v-model:time="endTime" />
+    <q-card-section v-if="props.doc">
+      <div
+        v-for="(frame, i) in frames"
+        :key="frame.start.toMillis()"
+        class="row items-center"
+      >
+        <TimeInput
+          :time="frame.start.toDate()"
+          @on-change="updateFrameStart(i, $event)"
+        />
+        <div class="time-str">~</div>
+        <TimeInput
+          :time="frame.end.toDate()"
+          :startTime="frame.start.toDate()"
+          @on-change="updateFrameEnd(i, $event)"
+        />
+      </div>
     </q-card-section>
     <q-card-section>
       <q-input v-model="memo" label="Memo" filled autogrow></q-input>

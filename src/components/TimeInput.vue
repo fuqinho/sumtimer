@@ -30,6 +30,12 @@ function commitEditedTime() {
   if (props.startTime && newTime.getTime() < props.startTime.getTime()) {
     newTime = date.addToDate(newTime, { days: 1 });
   }
+  if (
+    props.startTime &&
+    newTime.getTime() > props.startTime.getTime() + 24 * 60 * 60 * 1000
+  ) {
+    newTime = date.subtractFromDate(newTime, { days: 1 });
+  }
   emit('onChange', newTime);
 }
 

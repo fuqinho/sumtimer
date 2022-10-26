@@ -156,7 +156,11 @@ export const useOngoingStore = defineStore('ongoing', () => {
       docData.memo = ongoing.value.memo;
     }
     if (ongoing.value.subs) {
-      docData.subs = ongoing.value.subs;
+      const subs = [];
+      for (const sub of ongoing.value.subs) subs.push(sub);
+      if (ongoing.value.curStart)
+        subs.push({ start: ongoing.value.curStart, end: Timestamp.now() });
+      docData.subs = subs;
     }
     await recordStore.addRecord(docData);
     await updateDoc(userDocRef.value, { ongoing: deleteField() });

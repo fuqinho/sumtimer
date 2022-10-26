@@ -80,8 +80,6 @@ export const useRecordStore = defineStore('records', () => {
         ...docPrev,
         ...change,
       };
-      console.log('docPrev', docPrev);
-      console.log('docNext', docNext);
       await activityStore.onRecordUpdated(docPrev, docNext);
     }
     await updateDoc(doc(getFirestore(), 'records', id), change);
