@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { colors, date } from 'quasar';
+import { colors } from 'quasar';
 import { OngoingRecord } from 'src/common/types';
 import { defaultCategoryColor } from 'src/common/constants';
 import { useCategoryStore } from 'src/stores/category-store';
@@ -12,23 +12,22 @@ import TimeDisplay from 'src/components/TimeDisplay.vue';
 import TimeInput from 'src/components/TimeInput.vue';
 
 // =========================== Properties/Emitters =============================
-const props = defineProps<{
+interface Props {
   ongoing: OngoingRecord;
-}>();
+}
+const props = defineProps<Props>();
 
 // =========================== Use stores/composables ==========================
 const userStore = useUserDataStore();
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
-const { lighten } = colors;
 
 // =========================== Refs ============================================
 const { idToActivity } = storeToRefs(activityStore);
 const { idToCategory } = storeToRefs(categoryStore);
 const elapsed_ms = ref(0);
 const memo = ref('');
-const start = ref('');
 
 // =========================== Computed properties =============================
 const ongoing = computed(() => props.ongoing);
@@ -62,8 +61,8 @@ const categoryColor = computed(() => {
   return category.value ? category.value.color : defaultCategoryColor;
 });
 
-const lightenCategoryColor = computed(() => {
-  return lighten(categoryColor.value, 90);
+const lightenedCategoryColor = computed(() => {
+  return colors.lighten(categoryColor.value, 90);
 });
 
 // =========================== Methods =========================================
@@ -72,15 +71,6 @@ function updateElapsedTime() {
     let elapsed = new Date().getTime() - ongoing.value.start.toMillis();
     elapsed = Math.max(elapsed, 0);
     elapsed_ms.value = elapsed;
-  }
-}
-
-function updateStartTime() {
-  if (ongoing.value) {
-    start.value = date.formatDate(
-      ongoing.value.start.toDate(),
-      'YYYY-MM-DD HH:mm:ss'
-    );
   }
 }
 
@@ -103,14 +93,12 @@ async function onChangeStartTime(time: Date) {
 
 // =========================== Additional setup ================================
 watch(ongoing, () => {
-  updateStartTime();
   updateElapsedTime();
 });
 
 let timerId = 0;
 
 onBeforeMount(() => {
-  updateStartTime();
   updateElapsedTime();
   timerId = window.setInterval(updateElapsedTime, 1000);
 });
@@ -122,7 +110,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <q-card v-if="!!ongoing" :style="{ backgroundColor: lightenCategoryColor }">
+  <q-card :style="{ backgroundColor: lightenedCategoryColor }">
     <q-card-section class="row">
       <div class="column items-start">
         <q-badge :style="{ backgroundColor: categoryColor }">{{
@@ -136,17 +124,11 @@ onUnmounted(() => {
     <q-separator />
     <q-card-section class="row justify-end"> </q-card-section>
     <q-card-section class="items-start">
-      <div v-if="start">Start:</div>
-      <div v-if="start" class="start-time row items-center">
+      <div class="start-time row items-center">
         <TimeInput :time="ongoingStart" @on-change="onChangeStartTime" />
         <div class="time-str">~</div>
       </div>
-      <q-input
-        v-model="memo"
-        label="Memo"
-        autogrow
-        @blur="recordMemo"
-      ></q-input>
+      <q-input v-model="memo" label="Memo" autogrow @blur="recordMemo" />
     </q-card-section>
     <q-separator dark />
     <q-card-actions align="right">
@@ -157,22 +139,6 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.color-label {
-  background-color: red;
-  width: 10px;
-  height: 100%;
-}
-
-date-time-input {
-  width: 200px;
-}
-
-.day-str {
-  font-size: 20px;
-  margin-left: 2px;
-  margin-right: 8px;
-}
-
 .time-str {
   margin-left: 2px;
   font-size: 20px;
