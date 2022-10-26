@@ -57,6 +57,10 @@ const lightenCategoryColor = computed(() => {
 });
 
 const startDate = computed(() => {
+  return ongoing.value.start.toDate();
+});
+
+const editingStartDate = computed(() => {
   return date.extractDate(start.value, 'YYYY-MM-DD HH:mm:ss');
 });
 
@@ -111,6 +115,14 @@ async function recordMemo() {
   await userStore.updateOngoingMemo(memo.value);
 }
 
+async function commitEditedStartTime() {
+  await userStore.updateOngoingStartTime(editingStartDate.value);
+}
+
+async function clearEditedStartTime() {
+  updateStartTime();
+}
+
 // =========================== Additional setup ================================
 watch(ongoing, () => {
   updateStartTime();
@@ -123,10 +135,6 @@ onBeforeMount(() => {
   updateStartTime();
   updateElapsedTime();
   timerId = window.setInterval(updateElapsedTime, 1000);
-
-  watch(start, () => {
-    userStore.updateOngoingStartTime(startDate.value);
-  });
 });
 
 onUnmounted(() => {
@@ -156,7 +164,20 @@ onUnmounted(() => {
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-date v-model="start" mask="YYYY-MM-DD HH:mm:ss" today-btn>
               <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Close" color="primary" flat />
+                <q-btn
+                  @click="clearEditedStartTime"
+                  v-close-popup
+                  label="Cancel"
+                  color="grey-8"
+                  flat
+                />
+                <q-btn
+                  @click="commitEditedStartTime"
+                  v-close-popup
+                  label="Set"
+                  color="primary"
+                  flat
+                />
               </div>
             </q-date>
           </q-popup-proxy>
@@ -176,7 +197,20 @@ onUnmounted(() => {
               now-btn
             >
               <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Close" color="primary" flat />
+                <q-btn
+                  @click="clearEditedStartTime"
+                  v-close-popup
+                  label="Cancel"
+                  color="grey-8"
+                  flat
+                />
+                <q-btn
+                  @click="commitEditedStartTime"
+                  v-close-popup
+                  label="Set"
+                  color="primary"
+                  flat
+                />
               </div>
             </q-time>
           </q-popup-proxy>
