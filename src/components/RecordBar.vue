@@ -43,7 +43,7 @@ const categoryColor = computed(() => {
 
 const lightCategoryColor = computed(
   //() => colors.lighten(categoryColor.value, 90)
-  () => colors.changeAlpha(categoryColor.value + 'ff', -0.88)
+  () => colors.changeAlpha(categoryColor.value + 'ff', -0.8)
 );
 
 const containerStyle = computed(() => {
