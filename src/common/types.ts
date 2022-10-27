@@ -12,19 +12,17 @@ export interface CategoryDoc {
   data: CategoryDocumentData;
 }
 
-export interface OngoingRecord {
+export interface UserDocumentData extends DocumentData {
+  displayName: string;
+  email: string;
+}
+
+export interface OngoingDocumentData extends DocumentData {
   aid: string;
-  start: Timestamp;
   recStart: Timestamp;
   curStart?: Timestamp;
   memo?: string;
   subs?: { start: Timestamp; end: Timestamp }[];
-}
-
-export interface UserDocumentData extends DocumentData {
-  displayName: string;
-  email: string;
-  ongoing?: OngoingRecord;
 }
 
 export interface ActivityDocumentData extends DocumentData {

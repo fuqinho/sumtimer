@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, onBeforeMount, onUnmounted, ref } from 'vue';
 import { date } from 'quasar';
-import { OngoingRecord, RecordDoc } from 'src/common/types';
+import { OngoingDocumentData, RecordDoc } from 'src/common/types';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 import { storeToRefs } from 'pinia';
@@ -11,7 +11,7 @@ import { defaultCategoryColor } from 'src/common/constants';
 interface Props {
   start: Date;
   records: RecordDoc[];
-  ongoing?: OngoingRecord;
+  ongoing?: OngoingDocumentData;
 }
 const props = defineProps<Props>();
 

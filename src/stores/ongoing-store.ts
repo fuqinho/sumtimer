@@ -1,9 +1,13 @@
 import {
   arrayUnion,
+  deleteDoc,
   deleteField,
   doc,
   getFirestore,
+  onSnapshot,
+  setDoc,
   Timestamp,
+  Unsubscribe,
   updateDoc,
 } from 'firebase/firestore';
 import { defineStore, storeToRefs } from 'pinia';
@@ -12,10 +16,10 @@ import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
-import { RecordDocumentData } from 'src/common/types';
+import { OngoingDocumentData, RecordDocumentData } from 'src/common/types';
 import { useRecordStore } from 'src/stores/record-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useActivityStore } from './activity-store';
 import { useCategoryStore } from './category-store';
 
@@ -25,11 +29,48 @@ export const useOngoingStore = defineStore('ongoing', () => {
   const activityStore = useActivityStore();
   const recordStore = useRecordStore();
 
-  const { uid, ongoing } = storeToRefs(userStore);
+  const { uid } = storeToRefs(userStore);
   const { idToCategory } = storeToRefs(categoryStore);
   const { idToActivity } = storeToRefs(activityStore);
 
-  const userDocRef = computed(() => doc(getFirestore(), 'users', uid.value));
+  const ongoing = ref(null as OngoingDocumentData | null);
+
+  let unsubscribe = null as Unsubscribe | null;
+  function startWatchOngoing(uid: string) {
+    stopWatchOngoing();
+    unsubscribe = onSnapshot(
+      doc(getFirestore(), 'ongoings', uid),
+      (snapshot) => {
+        console.log('onSnapshot for ongoing is received.');
+        if (snapshot.exists()) {
+          ongoing.value = snapshot.data() as OngoingDocumentData;
+          console.log('shapshot exits. ', ongoing.value);
+        } else {
+          ongoing.value = null;
+          console.log('snapshot does not exist');
+        }
+      }
+    );
+  }
+  function stopWatchOngoing() {
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+    ongoing.value = null;
+  }
+
+  function onUpdateUid() {
+    if (uid.value) {
+      startWatchOngoing(uid.value);
+    } else {
+      stopWatchOngoing();
+    }
+  }
+  onUpdateUid();
+  watch(uid, onUpdateUid);
+
+  const docRef = computed(() => doc(getFirestore(), 'ongoings', uid.value));
   const recording = computed(() => !!ongoing.value);
   const activity = computed(() =>
     ongoing.value ? idToActivity.value[ongoing.value.aid] : null
@@ -80,7 +121,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
   }
 
   async function updateMemo(memo: string) {
-    await updateDoc(userDocRef.value, { 'ongoing.memo': memo });
+    await updateDoc(docRef.value, { memo: memo });
   }
 
   async function updateCurStart(start: Date) {
@@ -93,9 +134,9 @@ export const useOngoingStore = defineStore('ongoing', () => {
         earliestStart = Math.min(earliestStart, sub.start.toMillis());
       }
     }
-    await updateDoc(userDocRef.value, {
-      'ongoing.recStart': Timestamp.fromMillis(earliestStart),
-      'ongoing.curStart': Timestamp.fromDate(start),
+    await updateDoc(docRef.value, {
+      recStart: Timestamp.fromMillis(earliestStart),
+      curStart: Timestamp.fromDate(start),
     });
   }
 
@@ -110,9 +151,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
         newSubs.push(ongoing.value.subs[i]);
       }
     }
-    await updateDoc(userDocRef.value, {
-      'ongoing.subs': newSubs,
-    });
+    await updateDoc(docRef.value, { subs: newSubs });
   }
 
   async function updateSubEnd(index: number, time: Date) {
@@ -126,9 +165,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
         newSubs.push(ongoing.value.subs[i]);
       }
     }
-    await updateDoc(userDocRef.value, {
-      'ongoing.subs': newSubs,
-    });
+    await updateDoc(docRef.value, { subs: newSubs });
   }
 
   async function start(aid: string) {
@@ -139,7 +176,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
       recStart: Timestamp.now(),
       curStart: Timestamp.now(),
     };
-    await updateDoc(userDocRef.value, { ongoing: docData });
+    await setDoc(docRef.value, docData);
   }
 
   async function finish() {
@@ -163,25 +200,25 @@ export const useOngoingStore = defineStore('ongoing', () => {
       docData.subs = subs;
     }
     await recordStore.addRecord(docData);
-    await updateDoc(userDocRef.value, { ongoing: deleteField() });
+    await deleteDoc(docRef.value);
   }
 
   async function pause() {
     if (!ongoing.value) return;
 
-    await updateDoc(userDocRef.value, {
-      'ongoing.subs': arrayUnion({
+    await updateDoc(docRef.value, {
+      subs: arrayUnion({
         start: ongoing.value.curStart,
         end: Timestamp.now(),
       }),
-      'ongoing.curStart': deleteField(),
+      curStart: deleteField(),
     });
   }
 
   async function resume() {
     if (!ongoing.value) return;
 
-    await updateDoc(userDocRef.value, { 'ongoing.curStart': Timestamp.now() });
+    await updateDoc(docRef.value, { curStart: Timestamp.now() });
   }
 
   return {
