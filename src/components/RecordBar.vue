@@ -56,13 +56,8 @@ const containerStyle = computed(() => {
     recStart = props.ongoing.recStart.toMillis();
     recEnd = props.now || Date.now();
   }
-  if (props.doc) {
-    recStart = props.doc.data.start.toMillis();
-    recEnd = props.doc.data.end.toMillis();
-  } else if (props.ongoing) {
-    recStart = props.ongoing.recStart.toMillis();
-    recEnd = props.now || Date.now();
-  }
+  recStart = Math.max(recStart, props.dayStart);
+  recEnd = Math.min(recEnd, props.dayEnd);
   const total = 24 * 60 * 60 * 1000;
 
   const left = (recStart - props.dayStart) / total;
@@ -95,12 +90,15 @@ const subStyles = computed(() => {
     recStart = props.ongoing.recStart.toMillis();
     recEnd = props.now || Date.now();
   }
+  recStart = Math.max(recStart, props.dayStart);
+  recEnd = Math.min(recEnd, props.dayEnd);
   const total = recEnd - recStart;
-  console.log(total);
 
   return subs.value.map((sub) => {
-    const left = (sub.start.toMillis() - recStart) / total;
-    const width = (sub.end.toMillis() - sub.start.toMillis()) / total;
+    const subStart = Math.max(sub.start.toMillis(), props.dayStart);
+    const subEnd = Math.min(sub.end.toMillis(), props.dayEnd);
+    const left = (subStart - recStart) / total;
+    const width = (subEnd - subStart) / total;
     return {
       left: left * 100 + '%',
       width: width * 100 + '%',

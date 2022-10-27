@@ -37,6 +37,15 @@ const overlapRecords = computed(() => {
   }
   return res;
 });
+const isOngoingOverlap = computed(() => {
+  if (!ongoing.value) return false;
+
+  const dayStart = props.start.getTime();
+  const dayEnd = date.addToDate(props.start, { days: 1 }).getTime();
+  const ongoingStart = ongoing.value.recStart.toMillis();
+  const ongoingEnd = Date.now();
+  return hasIntersection(ongoingStart, ongoingEnd, dayStart, dayEnd);
+});
 const dayStartMillis = computed(() => props.start.getTime());
 const dayEndMillis = computed(() =>
   date.addToDate(props.start, { days: 1 }).getTime()
@@ -103,7 +112,7 @@ const separatorStyles = computed(() => {
       :doc="record"
     />
     <RecordBar
-      v-if="props.ongoing"
+      v-if="isOngoingOverlap"
       :day-start="dayStartMillis"
       :day-end="dayEndMillis"
       :ongoing="props.ongoing"
