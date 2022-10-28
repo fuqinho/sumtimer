@@ -23,3 +23,5 @@ export const defaultColorPalette = [
 export const defaultCategoryColor = '#bdbdbd';
 export const defaultCategoryName = 'Uncategorized';
 export const defaultActivityName = '???';
+export const maxMemoLength = 500;
+export const maxTimeFrames = 20;

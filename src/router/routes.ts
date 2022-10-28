@@ -29,6 +29,10 @@ const routes: RouteRecordRaw[] = [
           },
         ],
       },
+      {
+        path: 'settings',
+        component: () => import('pages/SettingsPage.vue'),
+      },
     ],
   },
 

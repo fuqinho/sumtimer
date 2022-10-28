@@ -5,6 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   getFirestore,
   onSnapshot,
   orderBy,
@@ -12,8 +13,14 @@ import {
   Unsubscribe,
   updateDoc,
   where,
+  QuerySnapshot,
+  writeBatch,
 } from 'firebase/firestore';
-import { CategoryDocumentData, CategoryDoc } from 'src/common/types';
+import {
+  CategoryDocumentData,
+  CategoryDoc,
+  PortableCategory,
+} from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 export const useCategoryStore = defineStore('catgories', () => {
@@ -147,6 +154,39 @@ export const useCategoryStore = defineStore('catgories', () => {
     }
   }
 
+  async function exportCategories() {
+    const q = query(
+      collection(getFirestore(), 'categories'),
+      where('uid', '==', uid.value),
+      orderBy('order', 'asc')
+    );
+    const snapshot = (await getDocs(q)) as QuerySnapshot<CategoryDocumentData>;
+
+    const res = [] as PortableCategory[];
+    for (const doc of snapshot.docs) {
+      res.push({
+        id: doc.id,
+        label: doc.data().label,
+        color: doc.data().color,
+      });
+    }
+    return res;
+  }
+
+  async function importCategories(cats: PortableCategory[]) {
+    const batch = writeBatch(getFirestore());
+    for (let i = 0; i < cats.length; i++) {
+      const data: CategoryDocumentData = {
+        uid: uid.value,
+        label: cats[i].label,
+        color: cats[i].color,
+        order: i + 1,
+      };
+      batch.set(doc(getFirestore(), 'categories', cats[i].id), data);
+    }
+    await batch.commit();
+  }
+
   return {
     categories,
     idToCategory,
@@ -156,5 +196,7 @@ export const useCategoryStore = defineStore('catgories', () => {
     updateCategory,
     moveUp,
     moveDown,
+    exportCategories,
+    importCategories,
   };
 });

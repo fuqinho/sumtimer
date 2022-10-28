@@ -5,16 +5,23 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   getFirestore,
   limit,
   onSnapshot,
   orderBy,
   query,
+  QuerySnapshot,
+  Timestamp,
   updateDoc,
   where,
   writeBatch,
 } from 'firebase/firestore';
-import { RecordDocumentData, RecordDoc } from 'src/common/types';
+import {
+  RecordDocumentData,
+  RecordDoc,
+  PortableRecord,
+} from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { useActivityStore } from 'src/stores/activity-store';
 
@@ -106,6 +113,76 @@ export const useRecordStore = defineStore('records', () => {
     await deleteRecords(ids);
   }
 
+  async function exportRecords() {
+    const q = query(
+      collection(getFirestore(), 'records'),
+      where('uid', '==', uid.value),
+      orderBy('end', 'desc')
+    );
+    const snapshot = (await getDocs(q)) as QuerySnapshot<RecordDocumentData>;
+
+    const res = [] as PortableRecord[];
+    for (let i = snapshot.docs.length - 1; i >= 0; i--) {
+      const doc = snapshot.docs[i];
+      const data = {
+        id: doc.id,
+        activityId: doc.data().aid,
+        timeFrames: [] as { start: Date; end: Date }[],
+      } as PortableRecord;
+      if (doc.data().memo) data.memo = doc.data().memo;
+      const subs = doc.data().subs;
+      if (subs) {
+        for (const sub of subs) {
+          data.timeFrames.push({
+            start: sub.start.toDate(),
+            end: sub.end.toDate(),
+          });
+        }
+      } else {
+        data.timeFrames.push({
+          start: doc.data().start.toDate(),
+          end: doc.data().end.toDate(),
+        });
+      }
+      res.push(data);
+    }
+    return res;
+  }
+
+  async function importRecords(recs: PortableRecord[]) {
+    const batch = writeBatch(getFirestore());
+    for (const rec of recs) {
+      let start = rec.timeFrames[0].start;
+      let end = rec.timeFrames[0].end;
+      let duration = 0;
+      for (let i = 0; i < rec.timeFrames.length; i++) {
+        start =
+          start < rec.timeFrames[i].start ? start : rec.timeFrames[i].start;
+        end = end > rec.timeFrames[i].end ? end : rec.timeFrames[i].end;
+        duration += end.getTime() - start.getTime();
+      }
+      const data: RecordDocumentData = {
+        uid: uid.value,
+        aid: rec.activityId,
+        start: Timestamp.fromDate(start),
+        end: Timestamp.fromDate(end),
+        duration: duration,
+      };
+      if (rec.memo) data.memo = rec.memo;
+      if (rec.timeFrames.length > 1) {
+        data.subs = rec.timeFrames.map((t) => {
+          return {
+            start: Timestamp.fromDate(t.start),
+            end: Timestamp.fromDate(t.end),
+          };
+        });
+      }
+      await activityStore.onRecordAdded(data);
+      batch.set(doc(getFirestore(), 'records', rec.id), data);
+    }
+    await batch.commit();
+  }
+
   return {
     records,
     addRecord,
@@ -113,5 +190,7 @@ export const useRecordStore = defineStore('records', () => {
     deleteRecord,
     deleteRecords,
     deleteRecordsByActivityId,
+    exportRecords,
+    importRecords,
   };
 });

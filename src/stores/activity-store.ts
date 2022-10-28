@@ -14,11 +14,14 @@ import {
   Timestamp,
   deleteDoc,
   writeBatch,
+  getDocs,
+  QuerySnapshot,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
   ActivityDoc,
   RecordDocumentData,
+  PortableActivity,
 } from 'src/common/types';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
@@ -164,6 +167,40 @@ export const useActivityStore = defineStore('activities', () => {
     await updateDoc(doc(getFirestore(), 'activities', id), change);
   }
 
+  async function exportActivities() {
+    const q = query(
+      collection(getFirestore(), 'activities'),
+      where('uid', '==', uid.value),
+      orderBy('updated', 'desc')
+    );
+    const snapshot = (await getDocs(q)) as QuerySnapshot<ActivityDocumentData>;
+
+    const res = [] as PortableActivity[];
+    for (let i = snapshot.docs.length - 1; i >= 0; i--) {
+      const doc = snapshot.docs[i];
+      res.push({
+        id: doc.id,
+        categoryId: doc.data().cid,
+        label: doc.data().label,
+      });
+    }
+    return res;
+  }
+
+  async function importActivities(acts: PortableActivity[]) {
+    const batch = writeBatch(getFirestore());
+    for (const act of acts) {
+      const data: ActivityDocumentData = {
+        uid: uid.value,
+        label: act.label,
+        updated: Timestamp.now(),
+      };
+      if (act.categoryId) data.cid = act.categoryId;
+      batch.set(doc(getFirestore(), 'activities', act.id), data);
+    }
+    await batch.commit();
+  }
+
   return {
     activities,
     idToActivity,
@@ -175,5 +212,7 @@ export const useActivityStore = defineStore('activities', () => {
     onRecordAdded,
     onRecordDeleted,
     onRecordUpdated,
+    exportActivities,
+    importActivities,
   };
 });
