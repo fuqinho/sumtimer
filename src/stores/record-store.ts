@@ -159,7 +159,8 @@ export const useRecordStore = defineStore('records', () => {
         start =
           start < rec.timeFrames[i].start ? start : rec.timeFrames[i].start;
         end = end > rec.timeFrames[i].end ? end : rec.timeFrames[i].end;
-        duration += end.getTime() - start.getTime();
+        duration +=
+          rec.timeFrames[i].end.getTime() - rec.timeFrames[i].start.getTime();
       }
       const data: RecordDocumentData = {
         uid: uid.value,
