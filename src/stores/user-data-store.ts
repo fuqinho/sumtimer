@@ -1,7 +1,5 @@
 import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
-import { getFirestore, doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
-import { UserDocumentData } from 'src/types/documents';
 import { useAuthStore } from 'src/stores/auth-store';
 
 export const useUserDataStore = defineStore('userData', () => {
@@ -9,30 +7,10 @@ export const useUserDataStore = defineStore('userData', () => {
   const { user } = storeToRefs(authStore);
   const uid = ref('');
 
-  let unsubscribe = null as Unsubscribe | null;
-  onUpdateUser(user.value ? user.value.uid : '');
+  uid.value = user.value ? user.value.uid : '';
   watch(user, (user) => {
     uid.value = user ? user.uid : '';
-    onUpdateUser(user ? user.uid : '');
   });
-
-  function onUpdateUser(uid: string) {
-    if (!uid) {
-      if (unsubscribe) {
-        unsubscribe();
-        unsubscribe = null;
-      }
-    } else {
-      // Start watching user data in 'users' collection.
-      const docRef = doc(getFirestore(), 'users', uid);
-      unsubscribe = onSnapshot(docRef, {}, async (snapshot) => {
-        if (snapshot.exists()) {
-          const userData = snapshot.data() as UserDocumentData;
-          console.log('userData: ', userData);
-        }
-      });
-    }
-  }
 
   return {
     uid,

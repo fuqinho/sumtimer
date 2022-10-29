@@ -24,8 +24,6 @@ const uploadSizeLimit = 2 * 1024 * 1024;
 const fileToImport = ref(null);
 
 async function exportJson() {
-  console.log('exportJson called.');
-
   const activities = await activityStore.exportActivities();
   const categories = await categoryStore.exportCategories();
   const records = await recordStore.exportRecords();
@@ -37,7 +35,6 @@ async function exportJson() {
     records: records,
   };
 
-  console.log(exportData);
   const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
     JSON.stringify(exportData)
   )}`;
@@ -112,7 +109,6 @@ function dateReceiver(key: string, value: string) {
 }
 
 async function importJson() {
-  console.log('importJson called.');
   if (!fileToImport.value) {
     $q.notify({
       type: 'negative',
@@ -147,8 +143,6 @@ function onUploadRejected() {
 }
 
 async function exportTogglCSV(paid: boolean) {
-  console.log('exportTogglCSV', paid);
-
   const email = authStore.user?.email;
   if (!email) {
     console.error('No email address to output for Toggl CSV.');

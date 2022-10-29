@@ -25,8 +25,6 @@ const { records } = storeToRefs(recordStore);
 
 // =========================== Methods =========================================
 // =========================== Additional setup ================================
-const aid = route.params.aid;
-console.log(aid);
 </script>
 
 <template>

@@ -41,13 +41,10 @@ export const useOngoingStore = defineStore('ongoing', () => {
     unsubscribe = onSnapshot(
       doc(getFirestore(), 'ongoings', uid),
       (snapshot) => {
-        console.log('onSnapshot for ongoing is received.');
         if (snapshot.exists()) {
           ongoing.value = snapshot.data() as OngoingDocumentData;
-          console.log('shapshot exits. ', ongoing.value);
         } else {
           ongoing.value = null;
-          console.log('snapshot does not exist');
         }
       }
     );
@@ -130,7 +127,6 @@ export const useOngoingStore = defineStore('ongoing', () => {
     let earliestStart = start.getTime();
     if (ongoing.value.subs) {
       for (const sub of ongoing.value.subs) {
-        console.log('lhs', earliestStart, 'rhs', sub.start.toMillis());
         earliestStart = Math.min(earliestStart, sub.start.toMillis());
       }
     }
