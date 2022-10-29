@@ -2,7 +2,10 @@
 import { Timestamp } from '@firebase/firestore';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import { defaultCategoryColor } from 'src/common/constants';
+import {
+  defaultActivityName,
+  defaultCategoryColor,
+} from 'src/common/constants';
 import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
@@ -23,21 +26,30 @@ const activityStore = useActivityStore();
 const { idToCategory } = storeToRefs(categoryStore);
 const { idToActivity } = storeToRefs(activityStore);
 
-const categoryColor = computed(() => {
+const activity = computed(() => {
   const aid =
     (props.doc && props.doc.data.aid) || (props.ongoing && props.ongoing.aid);
-  if (aid) {
-    const activity = idToActivity.value[aid];
-    if (activity) {
-      const cid = activity.cid;
-      if (cid) {
-        const category = idToCategory.value[cid];
-        if (category) {
-          return category.color;
-        }
+  return aid && idToActivity.value[aid] ? idToActivity.value[aid] : null;
+});
+
+const activityName = computed(() => {
+  if (activity.value) {
+    return activity.value.label;
+  }
+  return defaultActivityName;
+});
+
+const categoryColor = computed(() => {
+  if (activity.value) {
+    const cid = activity.value.cid;
+    if (cid) {
+      const category = idToCategory.value[cid];
+      if (category) {
+        return category.color;
       }
     }
   }
+
   return defaultCategoryColor;
 });
 
@@ -137,6 +149,7 @@ const subs = computed(() => {
     ></div>
 
     <div class="sub"></div>
+    <q-tooltip>{{ activityName }}</q-tooltip>
   </div>
 </template>
 
