@@ -23,11 +23,11 @@ import {
   RecordDocumentData,
 } from 'src/types/documents';
 import { PortableActivity } from 'src/types/portable';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useAuthStore } from 'src/stores/auth-store';
 
 export const useActivityStore = defineStore('activities', () => {
-  const userStore = useUserDataStore();
-  const { uid } = storeToRefs(userStore);
+  const authStore = useAuthStore();
+  const { uid } = storeToRefs(authStore);
   const activities = ref([] as ActivityDoc[]);
   const idToActivity = computed(() => {
     return activities.value.reduce((res, item) => {
@@ -45,7 +45,7 @@ export const useActivityStore = defineStore('activities', () => {
     const activitiesCollection = collection(getFirestore(), 'activities');
     const q = query(
       activitiesCollection,
-      where('uid', '==', userStore.uid),
+      where('uid', '==', uid),
       orderBy('updated', 'desc')
     );
     onSnapshot(q, (snapshot) => {

@@ -18,11 +18,11 @@ import {
 } from 'firebase/firestore';
 import { CategoryDocumentData, CategoryDoc } from 'src/types/documents';
 import { PortableCategory } from 'src/types/portable';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useAuthStore } from 'src/stores/auth-store';
 
 export const useCategoryStore = defineStore('catgories', () => {
-  const userStore = useUserDataStore();
-  const { uid } = storeToRefs(userStore);
+  const authStore = useAuthStore();
+  const { uid } = storeToRefs(authStore);
 
   const categories = ref([] as CategoryDoc[]);
   const idToCategory = computed(() => {

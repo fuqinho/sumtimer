@@ -19,13 +19,13 @@ import {
 } from 'firebase/firestore';
 import { RecordDocumentData, RecordDoc } from 'src/types/documents';
 import { PortableRecord } from 'src/types/portable';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useAuthStore } from 'src/stores/auth-store';
 import { useActivityStore } from 'src/stores/activity-store';
 
 export const useRecordStore = defineStore('records', () => {
-  const userStore = useUserDataStore();
+  const authStore = useAuthStore();
   const activityStore = useActivityStore();
-  const { uid } = storeToRefs(userStore);
+  const { uid } = storeToRefs(authStore);
 
   const records = ref([] as RecordDoc[]);
   const idToRecord = computed(() => {

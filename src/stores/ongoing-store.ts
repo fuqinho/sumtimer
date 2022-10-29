@@ -18,18 +18,18 @@ import {
 } from 'src/common/constants';
 import { OngoingDocumentData, RecordDocumentData } from 'src/types/documents';
 import { useRecordStore } from 'src/stores/record-store';
-import { useUserDataStore } from 'src/stores/user-data-store';
+import { useAuthStore } from 'src/stores/auth-store';
 import { computed, ref, watch } from 'vue';
 import { useActivityStore } from './activity-store';
 import { useCategoryStore } from './category-store';
 
 export const useOngoingStore = defineStore('ongoing', () => {
-  const userStore = useUserDataStore();
+  const authStore = useAuthStore();
   const categoryStore = useCategoryStore();
   const activityStore = useActivityStore();
   const recordStore = useRecordStore();
 
-  const { uid } = storeToRefs(userStore);
+  const { uid } = storeToRefs(authStore);
   const { idToCategory } = storeToRefs(categoryStore);
   const { idToActivity } = storeToRefs(activityStore);
 

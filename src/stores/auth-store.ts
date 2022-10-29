@@ -4,6 +4,7 @@ import { User } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null as User | null);
+  const uid = ref('');
   const isSignedIn = ref(false);
   const userDisplayName = computed(() => {
     if (user.value && user.value.displayName) return user.value.displayName;
@@ -16,11 +17,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   function setCurrentUser(currentUser: User | null) {
     user.value = currentUser;
+    uid.value = currentUser ? currentUser.uid : '';
     isSignedIn.value = !!currentUser;
   }
 
   return {
     user,
+    uid,
     isSignedIn,
     userDisplayName,
     userProfilePicUrl,
