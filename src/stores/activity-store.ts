@@ -26,6 +26,7 @@ import { PortableActivity } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
 
 export const useActivityStore = defineStore('activities', () => {
+  console.log('Setup activityStore start');
   const authStore = useAuthStore();
   const { uid } = storeToRefs(authStore);
   const activities = ref([] as ActivityDoc[]);
@@ -201,6 +202,7 @@ export const useActivityStore = defineStore('activities', () => {
     await batch.commit();
   }
 
+  console.log('Setup activityStore end');
   return {
     activities,
     idToActivity,

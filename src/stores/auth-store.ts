@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { User } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', () => {
+  console.log('Setup authStore start');
   const user = ref(null as User | null);
   const uid = ref('');
   const isSignedIn = ref(false);
@@ -21,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
     isSignedIn.value = !!currentUser;
   }
 
+  console.log('Setup authStore end');
   return {
     user,
     uid,

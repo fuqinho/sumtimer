@@ -21,6 +21,7 @@ import { PortableCategory } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
 
 export const useCategoryStore = defineStore('catgories', () => {
+  console.log('Setup categoryStore start');
   const authStore = useAuthStore();
   const { uid } = storeToRefs(authStore);
 
@@ -35,6 +36,7 @@ export const useCategoryStore = defineStore('catgories', () => {
   let unsubscribe = null as Unsubscribe | null;
 
   function onUpdateUid() {
+    console.log('categoryStore::onUpdateUid() uid:', uid.value);
     if (uid.value) {
       startWatchCategories(uid.value);
     } else {
@@ -184,6 +186,7 @@ export const useCategoryStore = defineStore('catgories', () => {
     await batch.commit();
   }
 
+  console.log('Setup categoryStore end');
   return {
     categories,
     idToCategory,

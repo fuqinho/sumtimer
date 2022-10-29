@@ -24,6 +24,7 @@ import { useActivityStore } from './activity-store';
 import { useCategoryStore } from './category-store';
 
 export const useOngoingStore = defineStore('ongoing', () => {
+  console.log('Setup ongoingStore start');
   const authStore = useAuthStore();
   const categoryStore = useCategoryStore();
   const activityStore = useActivityStore();
@@ -217,6 +218,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
     await updateDoc(docRef.value, { curStart: Timestamp.now() });
   }
 
+  console.log('Setup ongoingStore start');
   return {
     ongoing,
     recording,

@@ -23,6 +23,7 @@ import { useAuthStore } from 'src/stores/auth-store';
 import { useActivityStore } from 'src/stores/activity-store';
 
 export const useRecordStore = defineStore('records', () => {
+  console.log('Setup recordStore start');
   const authStore = useAuthStore();
   const activityStore = useActivityStore();
   const { uid } = storeToRefs(authStore);
@@ -181,6 +182,7 @@ export const useRecordStore = defineStore('records', () => {
     await batch.commit();
   }
 
+  console.log('Setup recordStore end');
   return {
     records,
     addRecord,
