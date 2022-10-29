@@ -1,40 +1,194 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useRecordStore } from 'src/stores/record-store';
+import { recordsPerPage } from 'src/common/constants';
 import RecordItem from 'src/components/RecordItem.vue';
-import { useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { Unsubscribe } from '@firebase/util';
+import {
+  collection,
+  endBefore,
+  getDocs,
+  getFirestore,
+  limit,
+  limitToLast,
+  onSnapshot,
+  orderBy,
+  query,
+  QuerySnapshot,
+  startAfter,
+  where,
+} from '@firebase/firestore';
+import { useAuthStore } from 'src/stores/auth-store';
+import { RecordDoc, RecordDocumentData } from 'src/types/documents';
 
 // =========================== Properties/Emitters =============================
+interface Props {
+  aid?: string;
+}
+const props = defineProps<Props>();
+
 // =========================== Use stores/composables ==========================
-const recordStore = useRecordStore();
-const route = useRoute();
+const authStore = useAuthStore();
+const currentSnapshot = ref(null as QuerySnapshot<RecordDocumentData> | null);
+
+// =========================== Refs ============================================
+const { uid } = storeToRefs(authStore);
+const hasNext = ref(false);
+const hasPrev = ref(false);
 
 // =========================== Computed properties =============================
-const filteredRecords = computed(() => {
-  if (route.params.aid) {
-    // TODO: Filter by query to DB, instead of this local filter.
-    return records.value.filter((r) => r.data.aid === route.params.aid);
+const records = computed(() => {
+  if (currentSnapshot.value) {
+    return currentSnapshot.value.docs.map((d) => {
+      return { id: d.id, data: d.data() };
+    });
   } else {
-    return records.value;
+    return [] as RecordDoc[];
   }
 });
 
-// =========================== Refs ============================================
-const { records } = storeToRefs(recordStore);
-
 // =========================== Methods =========================================
+
+function loadPrev() {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+  const q = buildQuery(props.aid, false, true);
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    currentSnapshot.value = snapshot as QuerySnapshot<RecordDocumentData>;
+  });
+}
+
+function loadNext() {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+  const q = buildQuery(props.aid, true, false);
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    currentSnapshot.value = snapshot as QuerySnapshot<RecordDocumentData>;
+  });
+}
+
+function buildQuery(
+  aid?: string,
+  isNext?: boolean,
+  isPrev?: boolean,
+  pageSize?: number
+) {
+  if (!pageSize) pageSize = recordsPerPage;
+  const recordsCollection = collection(getFirestore(), 'records');
+  const snapshot = currentSnapshot.value;
+  if (snapshot && isNext) {
+    const last = snapshot.docs[snapshot.docs.length - 1];
+    if (aid) {
+      return query(
+        recordsCollection,
+        where('uid', '==', uid.value),
+        where('aid', '==', aid),
+        orderBy('end', 'desc'),
+        startAfter(last),
+        limit(pageSize)
+      );
+    } else {
+      return query(
+        recordsCollection,
+        where('uid', '==', uid.value),
+        orderBy('end', 'desc'),
+        startAfter(last),
+        limit(pageSize)
+      );
+    }
+  } else if (snapshot && isPrev && snapshot.docs.length > 0) {
+    const first = snapshot.docs[0];
+    if (aid) {
+      return query(
+        recordsCollection,
+        where('uid', '==', uid.value),
+        where('aid', '==', aid),
+        orderBy('end', 'desc'),
+        endBefore(first),
+        limitToLast(pageSize)
+      );
+    } else {
+      return query(
+        recordsCollection,
+        where('uid', '==', uid.value),
+        orderBy('end', 'desc'),
+        endBefore(first),
+        limitToLast(pageSize)
+      );
+    }
+  } else {
+    if (aid) {
+      return query(
+        recordsCollection,
+        where('uid', '==', uid.value),
+        where('aid', '==', aid),
+        orderBy('end', 'desc'),
+        limit(pageSize)
+      );
+    } else {
+      return query(
+        recordsCollection,
+        where('uid', '==', uid.value),
+        orderBy('end', 'desc'),
+        limit(pageSize)
+      );
+    }
+  }
+}
+
 // =========================== Additional setup ================================
+
+let unsubscribe = null as Unsubscribe | null;
+
+onMounted(() => {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+
+  const q = buildQuery(props.aid);
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    currentSnapshot.value = snapshot as QuerySnapshot<RecordDocumentData>;
+  });
+});
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+});
+
+watch(currentSnapshot, async (snapshot) => {
+  if (snapshot) {
+    const qNext = buildQuery(props.aid, true, false, 1);
+    const docsNext = await getDocs(qNext);
+    hasNext.value = docsNext.docs.length > 0;
+
+    const qPrev = buildQuery(props.aid, false, true, 1);
+    const docsPrev = await getDocs(qPrev);
+    hasPrev.value = docsPrev.docs.length > 0;
+  } else {
+    hasNext.value = false;
+    hasPrev.value = false;
+  }
+});
 </script>
 
 <template>
   <div>
     <q-list bordered separator>
       <RecordItem
-        v-for="record in filteredRecords"
+        v-for="record in records"
         :key="record.id"
         :doc="record"
       ></RecordItem>
     </q-list>
+    <q-btn @click="loadPrev" :disable="!hasPrev">Prev</q-btn>
+    <q-btn @click="loadNext" :disable="!hasNext">Next</q-btn>
   </div>
 </template>

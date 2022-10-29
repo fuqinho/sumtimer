@@ -25,3 +25,4 @@ export const defaultCategoryName = 'Uncategorized';
 export const defaultActivityName = '???';
 export const maxMemoLength = 500;
 export const maxTimeFrames = 20;
+export const recordsPerPage = 20;
