@@ -7,9 +7,11 @@ import WeekBars from 'src/components/WeekBars.vue';
 import { useRecordStore } from 'src/stores/record-store';
 import { storeToRefs } from 'pinia';
 import { useOngoingStore } from 'src/stores/ongoing-store';
+import { startHourOfDay, startDayOfWeek } from 'src/common/constants';
+import { useAuthStore } from 'src/stores/auth-store';
 
-const startHourOfDay = 5;
-const startDayOfWeek = 1; // Monday
+const authStore = useAuthStore();
+const { uid } = storeToRefs(authStore);
 
 const now = new Date();
 let startDate = date.startOfDate(now, 'day');
@@ -40,6 +42,6 @@ const { ongoing } = storeToRefs(ongoingStore);
       class="q-mt-md"
       :ongoing="ongoing"
     ></ongoing-record>
-    <activity-list class="q-mt-md"></activity-list>
+    <ActivityList v-if="uid" :uid="uid" class="q-mt-md" />
   </q-page>
 </template>

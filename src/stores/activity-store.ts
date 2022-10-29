@@ -9,7 +9,6 @@ import {
   updateDoc,
   doc,
   orderBy,
-  serverTimestamp,
   addDoc,
   Timestamp,
   deleteDoc,
@@ -109,7 +108,7 @@ export const useActivityStore = defineStore('activities', () => {
     await updateDoc(doc(getFirestore(), 'activities', aid), {
       'cache.numRecords': prevNumRecords + 1,
       'cache.elapsedTime': prevElapsedTime + recordData.duration,
-      updated: serverTimestamp(),
+      updated: Timestamp.now(),
     });
   }
 
@@ -130,7 +129,7 @@ export const useActivityStore = defineStore('activities', () => {
     await updateDoc(doc(getFirestore(), 'activities', aid), {
       'cache.numRecords': prevNumRecords - 1,
       'cache.elapsedTime': prevElapsedTime - recordData.duration,
-      updated: serverTimestamp(),
+      updated: Timestamp.now(),
     });
   }
 
@@ -150,7 +149,7 @@ export const useActivityStore = defineStore('activities', () => {
 
     await updateDoc(doc(getFirestore(), 'activities', aid), {
       'cache.elapsedTime': prevElapsedTime + (next.duration - prev.duration),
-      updated: serverTimestamp(),
+      updated: Timestamp.now(),
     });
   }
 

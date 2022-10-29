@@ -2,14 +2,19 @@
 import ActivityForm from 'src/components/ActivityForm.vue';
 import ActivityList from 'src/components/ActivityList.vue';
 import CategoryTab from 'src/components/CategoryTab.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useCategoryStore } from 'src/stores/category-store';
 import { storeToRefs } from 'pinia';
 import CategoryForm from 'src/components/CategoryForm.vue';
 import { CategoryDoc } from 'src/types/documents';
+import { useAuthStore } from 'src/stores/auth-store';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
 
+const { uid } = storeToRefs(authStore);
 const { categories } = storeToRefs(categoryStore);
 
 const creatingCategory = ref(false);
@@ -18,6 +23,11 @@ const editingCategory = ref(false);
 const splitterModel = ref(20);
 const tab = ref('');
 const currentCategory = ref(undefined as CategoryDoc | undefined);
+
+const cid = computed(() => {
+  if (typeof route.params.cid === 'string') return route.params.cid;
+  return undefined;
+});
 
 function onEditCategoryClicked(cid: string) {
   let category = undefined;
@@ -65,7 +75,7 @@ function onEditCategoryClicked(cid: string) {
         </div>
       </template>
       <template v-slot:after>
-        <ActivityList />
+        <ActivityList v-if="uid" :uid="uid" :cid="cid" />
         <q-btn
           @click="creatingActivity = true"
           color="grey"

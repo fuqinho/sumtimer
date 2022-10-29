@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import { recordsPerPage } from 'src/common/constants';
 import RecordItem from 'src/components/RecordItem.vue';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -18,21 +17,19 @@ import {
   startAfter,
   where,
 } from '@firebase/firestore';
-import { useAuthStore } from 'src/stores/auth-store';
 import { RecordDoc, RecordDocumentData } from 'src/types/documents';
 
 // =========================== Properties/Emitters =============================
 interface Props {
+  uid: string;
   aid?: string;
 }
 const props = defineProps<Props>();
 
 // =========================== Use stores/composables ==========================
-const authStore = useAuthStore();
-const currentSnapshot = ref(null as QuerySnapshot<RecordDocumentData> | null);
 
 // =========================== Refs ============================================
-const { uid } = storeToRefs(authStore);
+const currentSnapshot = ref(null as QuerySnapshot<RecordDocumentData> | null);
 const hasNext = ref(false);
 const hasPrev = ref(false);
 
@@ -48,7 +45,6 @@ const records = computed(() => {
 });
 
 // =========================== Methods =========================================
-
 function loadPrev() {
   if (unsubscribe) {
     unsubscribe();
@@ -80,12 +76,12 @@ function buildQuery(
   if (!pageSize) pageSize = recordsPerPage;
   const recordsCollection = collection(getFirestore(), 'records');
   const snapshot = currentSnapshot.value;
-  if (snapshot && isNext) {
+  if (snapshot && isNext && snapshot.docs.length > 0) {
     const last = snapshot.docs[snapshot.docs.length - 1];
     if (aid) {
       return query(
         recordsCollection,
-        where('uid', '==', uid.value),
+        where('uid', '==', props.uid),
         where('aid', '==', aid),
         orderBy('end', 'desc'),
         startAfter(last),
@@ -94,7 +90,7 @@ function buildQuery(
     } else {
       return query(
         recordsCollection,
-        where('uid', '==', uid.value),
+        where('uid', '==', props.uid),
         orderBy('end', 'desc'),
         startAfter(last),
         limit(pageSize)
@@ -105,7 +101,7 @@ function buildQuery(
     if (aid) {
       return query(
         recordsCollection,
-        where('uid', '==', uid.value),
+        where('uid', '==', props.uid),
         where('aid', '==', aid),
         orderBy('end', 'desc'),
         endBefore(first),
@@ -114,7 +110,7 @@ function buildQuery(
     } else {
       return query(
         recordsCollection,
-        where('uid', '==', uid.value),
+        where('uid', '==', props.uid),
         orderBy('end', 'desc'),
         endBefore(first),
         limitToLast(pageSize)
@@ -124,7 +120,7 @@ function buildQuery(
     if (aid) {
       return query(
         recordsCollection,
-        where('uid', '==', uid.value),
+        where('uid', '==', props.uid),
         where('aid', '==', aid),
         orderBy('end', 'desc'),
         limit(pageSize)
@@ -132,7 +128,7 @@ function buildQuery(
     } else {
       return query(
         recordsCollection,
-        where('uid', '==', uid.value),
+        where('uid', '==', props.uid),
         orderBy('end', 'desc'),
         limit(pageSize)
       );
@@ -149,7 +145,6 @@ onMounted(() => {
     unsubscribe();
     unsubscribe = null;
   }
-
   const q = buildQuery(props.aid);
   unsubscribe = onSnapshot(q, (snapshot) => {
     currentSnapshot.value = snapshot as QuerySnapshot<RecordDocumentData>;

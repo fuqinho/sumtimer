@@ -20,9 +20,12 @@ export const defaultColorPalette = [
   '#78909C',
 ];
 
+export const startHourOfDay = 5;
+export const startDayOfWeek = 1; // Monday
 export const defaultCategoryColor = '#bdbdbd';
 export const defaultCategoryName = 'Uncategorized';
 export const defaultActivityName = '???';
 export const maxMemoLength = 500;
 export const maxTimeFrames = 20;
 export const recordsPerPage = 20;
+export const activitiesPerPage = 20;
