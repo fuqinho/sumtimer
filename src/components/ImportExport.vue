@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { PortableData } from 'src/common/types';
+import {
+  PortableActivity,
+  PortableCategory,
+  PortableData,
+} from 'src/common/types';
 import { maxMemoLength, maxTimeFrames } from 'src/common/constants';
 import { date, useQuasar } from 'quasar';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { ref } from 'vue';
+import { useAuthStore } from 'src/stores/auth-store';
 
+const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
@@ -139,6 +145,69 @@ function onUploadRejected() {
     message: `File size exeeds the limit: ${uploadSizeLimit}`,
   });
 }
+
+async function exportTogglCSV(paid: boolean) {
+  console.log('exportTogglCSV', paid);
+
+  const email = authStore.user?.email;
+  if (!email) {
+    console.error('No email address to output for Toggl CSV.');
+    return;
+  }
+
+  const activities = await activityStore.exportActivities();
+  const categories = await categoryStore.exportCategories();
+  const records = await recordStore.exportRecords();
+
+  const idToCategory = {} as { [key: string]: PortableCategory };
+  for (const category of categories) {
+    idToCategory[category.id] = category;
+  }
+  const idToActivity = {} as { [key: string]: PortableActivity };
+  for (const activity of activities) {
+    idToActivity[activity.id] = activity;
+  }
+
+  let content = paid
+    ? 'Email,Start Date,Start Time,Duration,Project,Task,Description\n'
+    : 'Email,Start Date,Start Time,Duration,Project,Description\n';
+  for (const rec of records) {
+    const activity = idToActivity[rec.activityId];
+    if (!activity) continue;
+    let projectStr = 'Not specified';
+    if (activity.categoryId && idToCategory[activity.categoryId]) {
+      projectStr = idToCategory[activity.categoryId].label;
+    }
+    let taskStr = activity.label;
+    let descriptionStr = activity.label;
+    if (rec.memo) descriptionStr += ' (' + rec.memo + ')';
+    for (const frame of rec.timeFrames) {
+      const start = frame.start;
+      const durSeconds = Math.ceil(
+        (frame.end.getTime() - frame.start.getTime()) / 1000
+      );
+      const hour = Math.floor(durSeconds / (60 * 60));
+      const minute = Math.floor((durSeconds % (60 * 60)) / 60);
+      const second = durSeconds % 60;
+      const startDateStr = date.formatDate(start, 'YYYY-MM-DD');
+      const startTimeStr = date.formatDate(start, 'HH:mm:ss');
+      const durationStr = `${hour}:${('00' + minute).slice(-2)}:${(
+        '00' + second
+      ).slice(-2)}`;
+      if (paid) {
+        content += `${email},${startDateStr},${startTimeStr},${durationStr},${projectStr},${taskStr},${descriptionStr}\n`;
+      } else {
+        content += `${email},${startDateStr},${startTimeStr},${durationStr},${projectStr},${descriptionStr}\n`;
+      }
+    }
+  }
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download =
+    'sumtimer-' + date.formatDate(Date.now(), 'YYYYMMDD-HHmm') + '.csv';
+  link.click();
+}
 </script>
 
 <template>
@@ -151,5 +220,15 @@ function onUploadRejected() {
       @rejected="onUploadRejected"
     />
     <q-btn @click="importJson" class="q-my-md" label="Impont JSON file" />
+    <q-btn
+      @click="exportTogglCSV(false)"
+      class="q-my-md"
+      label="Export as Toggl CSV (for free plan)"
+    />
+    <q-btn
+      @click="exportTogglCSV(true)"
+      class="q-my-md"
+      label="Export as Toggl CSV (for paid plan)"
+    />
   </div>
 </template>
