@@ -3,7 +3,7 @@ import { Timestamp } from '@firebase/firestore';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
 import { defaultCategoryColor } from 'src/common/constants';
-import { OngoingDocumentData, RecordDoc } from 'src/common/types';
+import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 import { computed } from 'vue';

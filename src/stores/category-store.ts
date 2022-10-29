@@ -16,11 +16,8 @@ import {
   QuerySnapshot,
   writeBatch,
 } from 'firebase/firestore';
-import {
-  CategoryDocumentData,
-  CategoryDoc,
-  PortableCategory,
-} from 'src/common/types';
+import { CategoryDocumentData, CategoryDoc } from 'src/types/documents';
+import { PortableCategory } from 'src/types/portable';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 export const useCategoryStore = defineStore('catgories', () => {

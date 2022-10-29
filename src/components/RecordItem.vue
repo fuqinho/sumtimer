@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { RecordDoc } from 'src/common/types';
+import { RecordDoc } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
 import RecordForm from 'src/components/RecordForm.vue';
 import { useCategoryStore } from 'src/stores/category-store';

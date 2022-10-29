@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import {
-  PortableActivity,
-  PortableCategory,
-  PortableData,
-} from 'src/common/types';
 import { maxMemoLength, maxTimeFrames } from 'src/common/constants';
 import { date, useQuasar } from 'quasar';
 import { useActivityStore } from 'src/stores/activity-store';
@@ -11,6 +6,11 @@ import { useCategoryStore } from 'src/stores/category-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { ref } from 'vue';
 import { useAuthStore } from 'src/stores/auth-store';
+import {
+  PortableCategory,
+  PortableActivity,
+  PortableData,
+} from 'src/types/portable';
 
 const authStore = useAuthStore();
 const categoryStore = useCategoryStore();

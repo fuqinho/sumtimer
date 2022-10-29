@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, onBeforeMount, onUnmounted, ref } from 'vue';
 import { date } from 'quasar';
-import { OngoingDocumentData, RecordDoc } from 'src/common/types';
+import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
 import RecordBar from 'src/components/RecordBar.vue';
 
 // =========================== Properties/Emitters =============================

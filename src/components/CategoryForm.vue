@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { UpdateData } from '@firebase/firestore';
-import { CategoryDocumentData, CategoryDoc } from 'src/common/types';
+import { CategoryDocumentData, CategoryDoc } from 'src/types/documents';
 import {
   defaultColorPalette,
   defaultCategoryColor,

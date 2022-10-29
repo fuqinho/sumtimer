@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { date } from 'quasar';
-import { OngoingDocumentData, RecordDoc } from 'src/common/types';
+import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
 import DayBar from 'src/components/DayBar.vue';
 
 interface RowData {

@@ -21,8 +21,8 @@ import {
   ActivityDocumentData,
   ActivityDoc,
   RecordDocumentData,
-  PortableActivity,
-} from 'src/common/types';
+} from 'src/types/documents';
+import { PortableActivity } from 'src/types/portable';
 import { useUserDataStore } from 'src/stores/user-data-store';
 
 export const useActivityStore = defineStore('activities', () => {

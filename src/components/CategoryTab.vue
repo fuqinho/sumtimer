@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CategoryDoc } from 'src/common/types';
+import { CategoryDoc } from 'src/types/documents';
 import { useCategoryStore } from 'src/stores/category-store';
 import { computed } from 'vue';
 

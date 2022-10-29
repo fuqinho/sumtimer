@@ -6,7 +6,7 @@ import { ref } from 'vue';
 import { useCategoryStore } from 'src/stores/category-store';
 import { storeToRefs } from 'pinia';
 import CategoryForm from 'src/components/CategoryForm.vue';
-import { CategoryDoc } from 'src/common/types';
+import { CategoryDoc } from 'src/types/documents';
 
 const categoryStore = useCategoryStore();
 

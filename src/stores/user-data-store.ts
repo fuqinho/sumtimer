@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { getFirestore, doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
-import { UserDocumentData } from 'src/common/types';
+import { UserDocumentData } from 'src/types/documents';
 import { useAuthStore } from 'src/stores/auth-store';
 
 export const useUserDataStore = defineStore('userData', () => {

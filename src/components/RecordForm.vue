@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
-import { ActivityDoc, RecordDoc, RecordChange } from 'src/common/types';
+import { ActivityDoc, RecordDoc, RecordChange } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useRecordStore } from 'src/stores/record-store';
 import { useCategoryStore } from 'src/stores/category-store';

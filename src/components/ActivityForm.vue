@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { ActivityDoc, ActivityChange } from 'src/common/types';
+import { ActivityDoc, ActivityChange } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCategoryStore } from 'src/stores/category-store';
 

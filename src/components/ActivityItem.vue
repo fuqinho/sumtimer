@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { ActivityDoc } from 'src/common/types';
+import { ActivityDoc } from 'src/types/documents';
 import { useRecordStore } from 'src/stores/record-store';
 import { useRouter } from 'vue-router';
 import ActivityForm from 'src/components/ActivityForm.vue';

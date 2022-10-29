@@ -17,11 +17,8 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
-import {
-  RecordDocumentData,
-  RecordDoc,
-  PortableRecord,
-} from 'src/common/types';
+import { RecordDocumentData, RecordDoc } from 'src/types/documents';
+import { PortableRecord } from 'src/types/portable';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { useActivityStore } from 'src/stores/activity-store';
 

@@ -16,7 +16,7 @@ import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
-import { OngoingDocumentData, RecordDocumentData } from 'src/common/types';
+import { OngoingDocumentData, RecordDocumentData } from 'src/types/documents';
 import { useRecordStore } from 'src/stores/record-store';
 import { useUserDataStore } from 'src/stores/user-data-store';
 import { computed, ref, watch } from 'vue';
