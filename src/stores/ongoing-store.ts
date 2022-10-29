@@ -37,6 +37,18 @@ export const useOngoingStore = defineStore('ongoing', () => {
   const ongoing = ref(null as OngoingDocumentData | null);
 
   let unsubscribe = null as Unsubscribe | null;
+  onUpdateUid();
+  watch(uid, onUpdateUid);
+
+  function onUpdateUid() {
+    console.log('ongoingStore::onUpdateUid():', uid.value);
+    if (uid.value) {
+      startWatchOngoing(uid.value);
+    } else {
+      stopWatchOngoing();
+    }
+  }
+
   function startWatchOngoing(uid: string) {
     stopWatchOngoing();
     unsubscribe = onSnapshot(
@@ -57,16 +69,6 @@ export const useOngoingStore = defineStore('ongoing', () => {
     }
     ongoing.value = null;
   }
-
-  function onUpdateUid() {
-    if (uid.value) {
-      startWatchOngoing(uid.value);
-    } else {
-      stopWatchOngoing();
-    }
-  }
-  onUpdateUid();
-  watch(uid, onUpdateUid);
 
   const docRef = computed(() => doc(getFirestore(), 'ongoings', uid.value));
   const recording = computed(() => !!ongoing.value);

@@ -34,9 +34,11 @@ export const useCategoryStore = defineStore('catgories', () => {
   });
 
   let unsubscribe = null as Unsubscribe | null;
+  onUpdateUid();
+  watch(uid, onUpdateUid);
 
   function onUpdateUid() {
-    console.log('categoryStore::onUpdateUid() uid:', uid.value);
+    console.log('categoryStore::onUpdateUid():', uid.value);
     if (uid.value) {
       startWatchCategories(uid.value);
     } else {
@@ -45,10 +47,8 @@ export const useCategoryStore = defineStore('catgories', () => {
   }
 
   function startWatchCategories(uid: string) {
-    if (unsubscribe) {
-      unsubscribe();
-      unsubscribe = null;
-    }
+    stopWatchCatgories();
+
     const q = query(
       collection(getFirestore(), 'categories'),
       where('uid', '==', uid),
@@ -85,9 +85,6 @@ export const useCategoryStore = defineStore('catgories', () => {
     }
     categories.value = [];
   }
-
-  onUpdateUid();
-  watch(uid, onUpdateUid);
 
   function docData(id: string) {
     return idToCategory.value[id];

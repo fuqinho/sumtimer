@@ -16,6 +16,7 @@ import {
   writeBatch,
   getDocs,
   QuerySnapshot,
+  Unsubscribe,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
@@ -37,19 +38,28 @@ export const useActivityStore = defineStore('activities', () => {
     }, {} as { [key: string]: ActivityDocumentData });
   });
 
-  startWatchActivities(uid.value);
-  watch(uid, startWatchActivities);
+  let unsubscribe = null as Unsubscribe | null;
+  onUpdateUid();
+  watch(uid, onUpdateUid);
+
+  function onUpdateUid() {
+    console.log('activityStore::onUpdateUid():', uid.value);
+    if (uid.value) {
+      startWatchActivities(uid.value);
+    } else {
+      stopWatchActivities();
+    }
+  }
 
   function startWatchActivities(uid: string) {
-    if (!uid) return;
+    stopWatchActivities();
 
-    const activitiesCollection = collection(getFirestore(), 'activities');
     const q = query(
-      activitiesCollection,
+      collection(getFirestore(), 'activities'),
       where('uid', '==', uid),
       orderBy('updated', 'desc')
     );
-    onSnapshot(q, (snapshot) => {
+    unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           activities.value.splice(change.newIndex, 0, {
@@ -72,6 +82,14 @@ export const useActivityStore = defineStore('activities', () => {
         }
       });
     });
+  }
+
+  function stopWatchActivities() {
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+    activities.value = [];
   }
 
   async function onRecordAdded(recordData: RecordDocumentData) {

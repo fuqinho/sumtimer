@@ -13,6 +13,7 @@ import {
   query,
   QuerySnapshot,
   Timestamp,
+  Unsubscribe,
   updateDoc,
   where,
   writeBatch,
@@ -36,19 +37,29 @@ export const useRecordStore = defineStore('records', () => {
     }, {} as { [key: string]: RecordDocumentData });
   });
 
-  if (uid.value) startWatchRecords(uid.value);
-  watch(uid, startWatchRecords);
+  let unsubscribe = null as Unsubscribe | null;
+  onUpdateUid();
+  watch(uid, onUpdateUid);
+
+  function onUpdateUid() {
+    console.log('recordStore::onUpdateUid():', uid.value);
+    if (uid.value) {
+      startWatchRecords(uid.value);
+    } else {
+      stopWatchRecords();
+    }
+  }
 
   function startWatchRecords(uid: string) {
-    if (!uid) return;
-    const recordsCollection = collection(getFirestore(), 'records');
+    stopWatchRecords();
+
     const q = query(
-      recordsCollection,
+      collection(getFirestore(), 'records'),
       where('uid', '==', uid),
       orderBy('end', 'desc'),
       limit(50)
     );
-    onSnapshot(q, (snapshot) => {
+    unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           records.value.splice(change.newIndex, 0, {
@@ -71,6 +82,14 @@ export const useRecordStore = defineStore('records', () => {
         }
       });
     });
+  }
+
+  function stopWatchRecords() {
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+    records.value = [];
   }
 
   async function addRecord(docData: RecordDocumentData) {
