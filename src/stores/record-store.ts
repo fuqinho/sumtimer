@@ -8,6 +8,7 @@ import {
   getDocs,
   getFirestore,
   limit,
+  limitToLast,
   onSnapshot,
   orderBy,
   query,
@@ -57,7 +58,7 @@ export const useRecordStore = defineStore('records', () => {
       collection(getFirestore(), 'records'),
       where('uid', '==', uid),
       orderBy('end', 'desc'),
-      limit(50)
+      limitToLast(300)
     );
     unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
