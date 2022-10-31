@@ -1,9 +1,10 @@
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import {
   collection,
-  deleteDoc,
   doc,
+  DocumentReference,
+  getDoc,
   getDocs,
   getFirestore,
   limitToLast,
@@ -11,18 +12,21 @@ import {
   orderBy,
   query,
   QuerySnapshot,
-  setDoc,
   Timestamp,
   Unsubscribe,
-  updateDoc,
   where,
+  WriteBatch,
   writeBatch,
 } from 'firebase/firestore';
-import { RecordDocumentData, RecordDoc } from 'src/types/documents';
+import {
+  RecordDocumentData,
+  RecordDoc,
+  RecordChange,
+} from 'src/types/documents';
 import { PortableRecord } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
+import { useCacheStore } from 'src/stores/cache-store';
 import { useActivityStore } from 'src/stores/activity-store';
-import { useCacheStore } from './cache-store';
 
 export const useRecordStore = defineStore('records', () => {
   console.log('Setup recordStore start');
@@ -32,13 +36,6 @@ export const useRecordStore = defineStore('records', () => {
 
   const { uid } = storeToRefs(authStore);
   const records = ref([] as RecordDoc[]);
-
-  const idToRecord = computed(() => {
-    return records.value.reduce((res, item) => {
-      res[item.id] = item.data;
-      return res;
-    }, {} as { [key: string]: RecordDocumentData });
-  });
 
   let unsubscribe = null as Unsubscribe | null;
   onUpdateUid();
@@ -95,29 +92,73 @@ export const useRecordStore = defineStore('records', () => {
     records.value = [];
   }
 
-  async function addRecord(docData: RecordDocumentData) {
-    const docRef = doc(collection(getFirestore(), 'records'));
-    await cacheStore.onRecordAdded(docRef.id, docData);
-    await activityStore.onRecordAdded(docData);
-    await setDoc(docRef, docData);
-  }
-
-  async function updateRecord(id: string, change: object) {
-    const docPrev = idToRecord.value[id];
-    if (docPrev) {
-      const docNext = {
-        ...docPrev,
-        ...change,
-      };
-      await activityStore.onRecordUpdated(docPrev, docNext);
+  async function addRecord(
+    rec: PortableRecord,
+    rid?: string,
+    inBatch?: WriteBatch
+  ) {
+    const frameNum = rec.timeFrames.length;
+    const start = rec.timeFrames[0].start;
+    const end = rec.timeFrames[frameNum - 1].end;
+    let duration = 0;
+    for (const frame of rec.timeFrames) {
+      duration += frame.end.getTime() - frame.start.getTime();
     }
-    await updateDoc(doc(getFirestore(), 'records', id), change);
+    const data: RecordDocumentData = {
+      uid: uid.value,
+      aid: rec.activityId,
+      start: Timestamp.fromDate(start),
+      end: Timestamp.fromDate(end),
+      duration: duration,
+    };
+    if (rec.memo) data.memo = rec.memo;
+    if (rec.timeFrames.length > 1) {
+      data.subs = rec.timeFrames.map((t) => {
+        return {
+          start: Timestamp.fromDate(t.start),
+          end: Timestamp.fromDate(t.end),
+        };
+      });
+    }
+
+    const batch = inBatch || writeBatch(getFirestore());
+    const colRef = collection(getFirestore(), 'records');
+    const docRef = rid ? doc(colRef, rid) : doc(colRef);
+    activityStore.updateActivity(data.aid, { updated: Timestamp.now() });
+    cacheStore.onRecordAdded(batch, docRef.id, data);
+    batch.set(docRef, data);
+    if (!inBatch) await batch.commit();
   }
 
   async function deleteRecord(id: string) {
-    const docData = idToRecord.value[id];
-    if (docData) await activityStore.onRecordDeleted(docData);
-    await deleteDoc(doc(getFirestore(), 'records', id));
+    const colRef = collection(getFirestore(), 'records');
+    const docRef = doc(colRef, id) as DocumentReference<RecordDocumentData>;
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) {
+      console.error('Trying to delete a record which does not exist.');
+      return;
+    }
+    const oldData = snapshot.data();
+    const batch = writeBatch(getFirestore());
+    cacheStore.onRecordDeleted(batch, id, oldData);
+    batch.delete(docRef);
+    await batch.commit();
+  }
+
+  async function updateRecord(id: string, change: RecordChange) {
+    const colRef = collection(getFirestore(), 'records');
+    const docRef = doc(colRef, id) as DocumentReference<RecordDocumentData>;
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) {
+      console.error('Trying to update a record which does not exist.');
+      return;
+    }
+    const oldData = snapshot.data();
+    const newData = { ...oldData, ...change };
+    const batch = writeBatch(getFirestore());
+    cacheStore.onRecordUpdated(batch, id, oldData, newData);
+    batch.set(docRef, newData);
+    await batch.commit();
   }
 
   async function deleteRecords(ids: string[]) {
@@ -174,34 +215,7 @@ export const useRecordStore = defineStore('records', () => {
   async function importRecords(recs: PortableRecord[]) {
     const batch = writeBatch(getFirestore());
     for (const rec of recs) {
-      let start = rec.timeFrames[0].start;
-      let end = rec.timeFrames[0].end;
-      let duration = 0;
-      for (let i = 0; i < rec.timeFrames.length; i++) {
-        start =
-          start < rec.timeFrames[i].start ? start : rec.timeFrames[i].start;
-        end = end > rec.timeFrames[i].end ? end : rec.timeFrames[i].end;
-        duration +=
-          rec.timeFrames[i].end.getTime() - rec.timeFrames[i].start.getTime();
-      }
-      const data: RecordDocumentData = {
-        uid: uid.value,
-        aid: rec.activityId,
-        start: Timestamp.fromDate(start),
-        end: Timestamp.fromDate(end),
-        duration: duration,
-      };
-      if (rec.memo) data.memo = rec.memo;
-      if (rec.timeFrames.length > 1) {
-        data.subs = rec.timeFrames.map((t) => {
-          return {
-            start: Timestamp.fromDate(t.start),
-            end: Timestamp.fromDate(t.end),
-          };
-        });
-      }
-      await activityStore.onRecordAdded(data);
-      batch.set(doc(getFirestore(), 'records', rec.id), data);
+      addRecord(rec, rec.id, batch);
     }
     await batch.commit();
   }

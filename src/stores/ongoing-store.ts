@@ -16,11 +16,12 @@ import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
-import { OngoingDocumentData, RecordDocumentData } from 'src/types/documents';
+import { OngoingDocumentData } from 'src/types/documents';
 import { useRecordStore } from 'src/stores/record-store';
 import { useAuthStore } from 'src/stores/auth-store';
 import { computed, ref, watch } from 'vue';
 import { useCacheStore } from './cache-store';
+import { PortableRecord } from 'src/types/portable';
 
 export const useOngoingStore = defineStore('ongoing', () => {
   console.log('Setup ongoingStore start');
@@ -178,24 +179,35 @@ export const useOngoingStore = defineStore('ongoing', () => {
   async function finish() {
     if (!ongoing.value) return;
 
-    const docData: RecordDocumentData = {
-      uid: uid.value,
-      aid: ongoing.value.aid,
-      start: ongoing.value.recStart,
-      end: Timestamp.fromMillis(recEndMillis()),
-      duration: totalDuration(),
+    const timeFrames = [];
+    if (ongoing.value.subs) {
+      for (const sub of ongoing.value.subs) {
+        timeFrames.push({
+          start: sub.start.toDate(),
+          end: sub.end.toDate(),
+        });
+      }
+      if (ongoing.value.curStart) {
+        timeFrames.push({
+          start: ongoing.value.curStart.toDate(),
+          end: Timestamp.now().toDate(),
+        });
+      }
+    } else {
+      timeFrames.push({
+        start: ongoing.value.recStart.toDate(),
+        end: Timestamp.fromMillis(recEndMillis()).toDate(),
+      });
+    }
+    const data: PortableRecord = {
+      id: '',
+      activityId: ongoing.value.aid,
+      timeFrames: timeFrames,
     };
     if (ongoing.value.memo) {
-      docData.memo = ongoing.value.memo;
+      data.memo = ongoing.value.memo;
     }
-    if (ongoing.value.subs) {
-      const subs = [];
-      for (const sub of ongoing.value.subs) subs.push(sub);
-      if (ongoing.value.curStart)
-        subs.push({ start: ongoing.value.curStart, end: Timestamp.now() });
-      docData.subs = subs;
-    }
-    await recordStore.addRecord(docData);
+    await recordStore.addRecord(data);
     await deleteDoc(docRef.value);
   }
 

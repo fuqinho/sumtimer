@@ -90,7 +90,6 @@ export interface CachedCategoryData {
   label: string;
   color: string;
   order: number;
-  duration: number;
 }
 
 export interface CachedCategory {

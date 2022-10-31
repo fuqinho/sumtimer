@@ -10,6 +10,8 @@ import {
   Unsubscribe,
   WriteBatch,
   Timestamp,
+  increment,
+  FieldValue,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
@@ -123,11 +125,7 @@ export const useCacheStore = defineStore('cache', () => {
     });
   }
 
-  function onActivityDeleted(
-    batch: WriteBatch,
-    aid: string,
-    before: ActivityDocumentData
-  ) {
+  function onActivityDeleted(batch: WriteBatch, aid: string) {
     if (!cache.value) return;
     if (!cache.value.activities[aid]) {
       console.error('Trying to delete an activity which is not in cache.');
@@ -158,20 +156,62 @@ export const useCacheStore = defineStore('cache', () => {
     batch.update(docRef.value, change);
   }
 
-  async function onRecordAdded(rid: string, data: RecordDocumentData) {
-    console.log('onRecordAdded');
-  }
-
-  async function onRecordDeleted(rid: string) {
-    console.log('onRecordDeleted');
-  }
-
-  async function onRecordUpdated(
+  function onRecordAdded(
+    batch: WriteBatch,
     rid: string,
-    before: RecordDocumentData,
-    after: RecordDocumentData
+    data: RecordDocumentData
   ) {
-    console.log('onRecordUpdated');
+    if (!cache.value) return;
+    if (!cache.value.activities[data.aid]) {
+      console.error('Trying to add a record whose activity is not in cache');
+      return;
+    }
+    const aid = data.aid;
+    const change = {} as { [key: string]: FieldValue };
+    change[`activities.${aid}.duration`] = increment(data.duration);
+    change[`activities.${aid}.count`] = increment(1);
+    batch.update(docRef.value, change);
+  }
+
+  function onRecordDeleted(
+    batch: WriteBatch,
+    rid: string,
+    data: RecordDocumentData
+  ) {
+    if (!cache.value) return;
+    if (!cache.value.activities[data.aid]) {
+      console.error('Trying to delete a record whose activity is not in cache');
+      return;
+    }
+    const aid = data.aid;
+    const change = {} as { [key: string]: FieldValue };
+    change[`activities.${aid}.duration`] = increment(-data.duration);
+    change[`activities.${aid}.count`] = increment(-1);
+    batch.update(docRef.value, change);
+  }
+
+  function onRecordUpdated(
+    batch: WriteBatch,
+    rid: string,
+    oldData: RecordDocumentData,
+    newData: RecordDocumentData
+  ) {
+    if (!cache.value) return;
+    if (!cache.value.activities[newData.aid]) {
+      console.error('Trying to update a record whose activity is not in cache');
+      return;
+    }
+    if (newData.aid != oldData.aid) {
+      onRecordDeleted(batch, rid, oldData);
+      onRecordAdded(batch, rid, newData);
+    } else {
+      const aid = newData.aid;
+      const change = {} as { [key: string]: FieldValue };
+      change[`activities.${aid}.duration`] = increment(
+        newData.duration - oldData.duration
+      );
+      batch.update(docRef.value, change);
+    }
   }
 
   // =========================== Additional setup ================================

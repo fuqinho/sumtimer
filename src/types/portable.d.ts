@@ -14,7 +14,7 @@ export interface PortableRecord {
   id: string;
   activityId: string;
   memo?: string;
-  timeFrames: [{ start: Date; end: Date }];
+  timeFrames: { start: Date; end: Date }[];
 }
 
 export interface PortableData {
