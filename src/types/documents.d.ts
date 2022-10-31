@@ -1,5 +1,10 @@
 import { DocumentData, Timestamp } from '@firebase/firestore';
 
+export interface UserDocumentData extends DocumentData {
+  displayName: string;
+  email: string;
+}
+
 export interface CategoryDocumentData extends DocumentData {
   uid: string;
   label: string;
@@ -7,14 +12,10 @@ export interface CategoryDocumentData extends DocumentData {
   order: number;
 }
 
-export interface CategoryDoc {
-  id: string;
-  data: CategoryDocumentData;
-}
-
-export interface UserDocumentData extends DocumentData {
-  displayName: string;
-  email: string;
+export interface CategoryChange {
+  label?: string;
+  color?: string;
+  order?: number;
 }
 
 export interface OngoingDocumentData extends DocumentData {
@@ -29,29 +30,7 @@ export interface ActivityDocumentData extends DocumentData {
   uid: string;
   label: string;
   cid: string;
-  progress?: {
-    progressMax?: number;
-    progressUnit?: string;
-  };
   updated: Timestamp;
-  cache?: {
-    progressNow?: number;
-    elapsedTime?: number;
-    numRecords?: number;
-    recentRecords?: {
-      start: Timestamp;
-      end: Timestamp;
-      duration: number;
-      whatsDone?: string;
-      progressFrom?: number;
-      progressTo?: number;
-    }[];
-  };
-}
-
-export interface ActivityDoc {
-  id: string;
-  data: ActivityDocumentData;
 }
 
 export interface ActivityChange {
@@ -68,8 +47,6 @@ export interface RecordDocumentData extends DocumentData {
   duration: number;
   subs?: { start: Timestamp; end: Timestamp }[];
   memo?: string;
-  progressFrom?: number;
-  progressTo?: number;
 }
 
 export interface RecordDoc {
@@ -97,12 +74,6 @@ export interface CachedCategory {
   data: CachedCategoryData;
 }
 
-export interface CategoryChange {
-  label?: string;
-  color?: string;
-  order?: number;
-}
-
 export interface CachedActivityData {
   label: string;
   cid: string;
@@ -114,12 +85,6 @@ export interface CachedActivityData {
 export interface CachedActivity {
   id: string;
   data: CachedActivityData;
-}
-
-export interface ActivityChange {
-  label?: string;
-  cid?: string;
-  updated?: Timestamp;
 }
 
 export interface CacheDocumentData extends DocumentData {
