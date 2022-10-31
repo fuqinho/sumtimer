@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserRecord } from 'firebase-admin/lib/auth/user-record';
-import { FieldValue } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
@@ -79,7 +79,7 @@ async function onCreateUser(user: UserRecord) {
           cid: string;
           duration: number;
           count: number;
-          updated: FieldValue;
+          updated: Timestamp;
         };
       },
     };
@@ -106,7 +106,7 @@ async function onCreateUser(user: UserRecord) {
           uid: user.uid,
           label: activity.label,
           cid: newCategoryRef.id,
-          updated: admin.firestore.FieldValue.serverTimestamp(),
+          updated: Timestamp.now(),
         };
         const newActivityRef = activityCollection.doc();
         await newActivityRef.set(activityDoc);
