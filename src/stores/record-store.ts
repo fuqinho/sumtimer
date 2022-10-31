@@ -1,5 +1,6 @@
 import { ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
+import { date } from 'quasar';
 import {
   collection,
   doc,
@@ -27,69 +28,124 @@ import { PortableRecord } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useCacheStore } from 'src/stores/cache-store';
 import { useActivityStore } from 'src/stores/activity-store';
+import { useUtil } from 'src/composables/util';
 
 export const useRecordStore = defineStore('records', () => {
   console.log('Setup recordStore start');
   const authStore = useAuthStore();
   const activityStore = useActivityStore();
   const cacheStore = useCacheStore();
+  const { startOfWeek } = useUtil();
 
   const { uid } = storeToRefs(authStore);
-  const records = ref([] as RecordDoc[]);
+  const recentRecords = ref([] as RecordDoc[]);
+  const requestedRecords = ref([] as RecordDoc[]);
 
-  let unsubscribe = null as Unsubscribe | null;
+  let unsubRecent = null as Unsubscribe | null;
+  let unsubRequested = null as Unsubscribe | null;
   onUpdateUid();
   watch(uid, onUpdateUid);
 
   function onUpdateUid() {
     console.log('recordStore::onUpdateUid():', uid.value);
     if (uid.value) {
-      startWatchRecords(uid.value);
+      startWatchRecentRecords(uid.value);
     } else {
-      stopWatchRecords();
+      stopWatchRecentRecords();
     }
   }
 
-  function startWatchRecords(uid: string) {
-    stopWatchRecords();
+  function startWatchRecentRecords(uid: string) {
+    stopWatchRecentRecords();
+
+    const start = startOfWeek(new Date());
+    const end = date.addToDate(start, { days: 8 });
 
     const q = query(
       collection(getFirestore(), 'records'),
       where('uid', '==', uid),
+      where('end', '>', start),
+      where('end', '<', end),
       orderBy('end', 'desc'),
       limitToLast(300)
     );
-    unsubscribe = onSnapshot(q, (snapshot) => {
+    unsubRecent = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
-          records.value.splice(change.newIndex, 0, {
+          recentRecords.value.splice(change.newIndex, 0, {
             id: change.doc.id,
             data: change.doc.data() as RecordDocumentData,
           });
         } else if (change.type === 'removed') {
-          records.value.splice(change.oldIndex, 1);
+          recentRecords.value.splice(change.oldIndex, 1);
         } else {
           const newItem = {
             id: change.doc.id,
             data: change.doc.data() as RecordDocumentData,
           };
           if (change.newIndex != change.oldIndex) {
-            records.value.splice(change.oldIndex, 1);
-            records.value.splice(change.newIndex, 0, newItem);
+            recentRecords.value.splice(change.oldIndex, 1);
+            recentRecords.value.splice(change.newIndex, 0, newItem);
           } else {
-            records.value[change.newIndex] = newItem;
+            recentRecords.value[change.newIndex] = newItem;
           }
         }
       });
     });
   }
 
-  function stopWatchRecords() {
-    if (unsubscribe) {
-      unsubscribe();
-      unsubscribe = null;
+  function stopWatchRecentRecords() {
+    if (unsubRecent) {
+      unsubRecent();
+      unsubRecent = null;
     }
-    records.value = [];
+    recentRecords.value = [];
+  }
+
+  function startWatchRequestedRecords(uid: string, start: Date) {
+    stopWatchRequestedRecords();
+
+    const end = date.addToDate(start, { days: 8 });
+
+    const q = query(
+      collection(getFirestore(), 'records'),
+      where('uid', '==', uid),
+      where('end', '>', start),
+      where('end', '<', end),
+      orderBy('end', 'desc'),
+      limitToLast(300)
+    );
+    unsubRequested = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          requestedRecords.value.splice(change.newIndex, 0, {
+            id: change.doc.id,
+            data: change.doc.data() as RecordDocumentData,
+          });
+        } else if (change.type === 'removed') {
+          requestedRecords.value.splice(change.oldIndex, 1);
+        } else {
+          const newItem = {
+            id: change.doc.id,
+            data: change.doc.data() as RecordDocumentData,
+          };
+          if (change.newIndex != change.oldIndex) {
+            requestedRecords.value.splice(change.oldIndex, 1);
+            requestedRecords.value.splice(change.newIndex, 0, newItem);
+          } else {
+            requestedRecords.value[change.newIndex] = newItem;
+          }
+        }
+      });
+    });
+  }
+
+  function stopWatchRequestedRecords() {
+    if (unsubRequested) {
+      unsubRequested();
+      unsubRequested = null;
+    }
+    requestedRecords.value = [];
   }
 
   async function addRecord(
@@ -170,10 +226,24 @@ export const useRecordStore = defineStore('records', () => {
   }
 
   async function deleteRecordsByActivityId(aid: string) {
-    const ids = records.value
-      .filter((o) => o.data.aid === aid)
-      .map((o) => o.id);
-    await deleteRecords(ids);
+    const q = query(
+      collection(getFirestore(), 'records'),
+      where('uid', '==', uid.value),
+      where('aid', '==', aid)
+    );
+    const snapshot = (await getDocs(q)) as QuerySnapshot<RecordDocumentData>;
+    const batch = writeBatch(getFirestore());
+    for (const doc of snapshot.docs) {
+      batch.delete(doc.ref);
+    }
+    await batch.commit();
+  }
+
+  function requestRecords(startTime: Date) {
+    if (uid.value) {
+      const start = startOfWeek(startTime);
+      startWatchRequestedRecords(uid.value, start);
+    }
   }
 
   async function exportRecords() {
@@ -222,12 +292,14 @@ export const useRecordStore = defineStore('records', () => {
 
   console.log('Setup recordStore end');
   return {
-    records,
+    recentRecords,
+    requestedRecords,
     addRecord,
     updateRecord,
     deleteRecord,
     deleteRecords,
     deleteRecordsByActivityId,
+    requestRecords,
     exportRecords,
     importRecords,
   };

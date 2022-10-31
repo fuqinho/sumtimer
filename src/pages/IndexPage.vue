@@ -1,32 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { date } from 'quasar';
 import ActivityList from 'src/components/ActivityList.vue';
 import OngoingRecord from 'src/components/OngoingRecord.vue';
 import WeekBars from 'src/components/WeekBars.vue';
 import { useRecordStore } from 'src/stores/record-store';
 import { storeToRefs } from 'pinia';
 import { useOngoingStore } from 'src/stores/ongoing-store';
-import { startHourOfDay, startDayOfWeek } from 'src/common/constants';
 import { useAuthStore } from 'src/stores/auth-store';
+import { useUtil } from 'src/composables/util';
 
 const authStore = useAuthStore();
 const { uid } = storeToRefs(authStore);
+const { startOfWeek } = useUtil();
 
-const now = new Date();
-let startDate = date.startOfDate(now, 'day');
-startDate = date.addToDate(startDate, { hours: startHourOfDay });
-if (startDate.getTime() >= now.getTime()) {
-  startDate = date.subtractFromDate(startDate, { days: 1 });
-}
-while (date.getDayOfWeek(startDate) != startDayOfWeek) {
-  startDate = date.subtractFromDate(startDate, { days: 1 });
-}
-const start = ref(startDate);
+const start = ref(startOfWeek(new Date()));
 
 const recordStore = useRecordStore();
 const ongoingStore = useOngoingStore();
-const { records } = storeToRefs(recordStore);
+const { recentRecords } = storeToRefs(recordStore);
 const { ongoing } = storeToRefs(ongoingStore);
 </script>
 
@@ -34,7 +25,7 @@ const { ongoing } = storeToRefs(ongoingStore);
   <q-page class="q-pa-md col items-center justify-evenly">
     <week-bars
       :start="start"
-      :records="records"
+      :records="recentRecords"
       :ongoing="ongoing || undefined"
     ></week-bars>
     <ongoing-record
