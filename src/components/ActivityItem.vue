@@ -1,74 +1,53 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { ActivityDoc } from 'src/types/documents';
-import { useRecordStore } from 'src/stores/record-store';
 import { useRouter } from 'vue-router';
-import ActivityForm from 'src/components/ActivityForm.vue';
-import { useCategoryStore } from 'src/stores/category-store';
+import { storeToRefs } from 'pinia';
+import { CachedActivity } from 'src/types/documents';
 import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
-import { storeToRefs } from 'pinia';
+import { useRecordStore } from 'src/stores/record-store';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useOngoingStore } from 'src/stores/ongoing-store';
+import { useCacheStore } from 'src/stores/cache-store';
+import ActivityForm from 'src/components/ActivityForm.vue';
 
 // =========================== Properties/Emitters =============================
 interface Props {
-  doc: ActivityDoc;
+  act: CachedActivity;
 }
 const props = defineProps<Props>();
 
 // =========================== Use stores/composables ==========================
-const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
 const ongoingStore = useOngoingStore();
+const cacheStore = useCacheStore();
 const router = useRouter();
-
-// =========================== Computed properties =============================
-const categoryName = computed(() => {
-  const cid = props.doc.data.cid;
-  if (cid) {
-    const data = idToCategory.value[cid];
-    if (data) return data.label;
-  }
-  return defaultCategoryName;
-});
-
-const categoryColor = computed(() => {
-  const cid = props.doc.data.cid;
-  if (cid) {
-    const data = idToCategory.value[cid];
-    if (data) return data.color;
-  }
-  return defaultCategoryColor;
-});
-
-const numRecords = computed(() => {
-  const cache = props.doc.data.cache;
-  if (cache && cache.numRecords) {
-    return cache.numRecords;
-  }
-  return 0;
-});
-
-const totalHours = computed(() => {
-  const cache = props.doc.data.cache;
-  if (cache && cache.elapsedTime) {
-    return (cache.elapsedTime / (60 * 60 * 1000)).toFixed(1);
-  }
-  return '0';
-});
 
 // =========================== Refs ============================================
 const editing = ref(false);
 const confirm = ref(false);
-const { idToCategory } = storeToRefs(categoryStore);
+const { idToCategory } = storeToRefs(cacheStore);
+
+// =========================== Computed properties =============================
+const categoryName = computed(() => {
+  return idToCategory.value[props.act.data.cid].label || defaultCategoryName;
+});
+const categoryColor = computed(() => {
+  return idToCategory.value[props.act.data.cid].color || defaultCategoryColor;
+});
+const numRecords = computed(() => {
+  return props.act.data.count;
+});
+const totalHours = computed(() => {
+  return (props.act.data.duration / (60 * 60 * 1000)).toFixed(1);
+});
 
 // =========================== Methods =========================================
 async function startActivity() {
-  await ongoingStore.start(props.doc.id);
+  await ongoingStore.start(props.act.id);
   router.push('/');
 }
 
@@ -81,7 +60,7 @@ async function startDeleteActivity() {
 }
 
 async function deleteActivity() {
-  const aid = props.doc.id;
+  const aid = props.act.id;
   await recordStore.deleteRecordsByActivityId(aid);
   await activityStore.deleteActivity(aid);
 }
@@ -107,14 +86,14 @@ async function deleteActivity() {
         categoryName
       }}</q-item-label>
       <q-item-label class="activity-name">
-        {{ props.doc.data.label }}
+        {{ props.act.data.label }}
       </q-item-label>
     </q-item-section>
     <q-item-section side>
       <q-item-label caption>Records</q-item-label>
       <q-item-label v-if="!!numRecords" class="records-num">
         <router-link
-          :to="{ name: 'ActivityRecords', params: { aid: props.doc.id } }"
+          :to="{ name: 'ActivityRecords', params: { aid: props.act.id } }"
           >{{ numRecords }}
         </router-link>
       </q-item-label>
@@ -139,7 +118,7 @@ async function deleteActivity() {
   </q-item>
 
   <q-dialog v-model="editing">
-    <ActivityForm :doc="props.doc" @on-updated="editing = false" />
+    <ActivityForm :act="props.act" @on-updated="editing = false" />
   </q-dialog>
 
   <q-dialog v-model="confirm">

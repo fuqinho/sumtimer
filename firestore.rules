@@ -38,5 +38,10 @@ service cloud.firestore {
     	allow read: if isAuthenticated(userId);
       allow write: if isAuthenticated(userId);
     }
+
+    match /cache/{userId} {
+    	allow read: if isAuthenticated(userId);
+      allow write: if isAuthenticated(userId);
+    }
   }
 }

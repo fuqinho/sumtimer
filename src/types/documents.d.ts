@@ -28,7 +28,7 @@ export interface OngoingDocumentData extends DocumentData {
 export interface ActivityDocumentData extends DocumentData {
   uid: string;
   label: string;
-  cid?: string;
+  cid: string;
   progress?: {
     progressMax?: number;
     progressUnit?: string;
@@ -62,7 +62,7 @@ export interface ActivityChange {
 
 export interface RecordDocumentData extends DocumentData {
   uid: string;
-  aid?: string;
+  aid: string;
   start: Timestamp;
   end: Timestamp;
   duration: number;
@@ -86,9 +86,48 @@ export interface RecordChange {
   memo?: string;
 }
 
-// This might be necesary to reduce document reads.
-export interface WeekCacheDocumentData extends DocumentData {
-  uid: string;
-  start: Timestamp;
-  cache: RecordDocumentData[];
+export interface CachedCategoryData {
+  label: string;
+  color: string;
+  order: number;
+  duration: number;
+}
+
+export interface CachedCategory {
+  id: string;
+  data: CachedCategoryData;
+}
+
+export interface CategoryChange {
+  label?: string;
+  color?: string;
+  order?: number;
+}
+
+export interface CachedActivityData {
+  label: string;
+  cid: string;
+  duration: number;
+  count: number;
+  updated: Timestamp;
+}
+
+export interface CachedActivity {
+  id: string;
+  data: CachedActivityData;
+}
+
+export interface ActivityChange {
+  label?: string;
+  cid?: string;
+  updated?: Timestamp;
+}
+
+export interface CacheDocumentData extends DocumentData {
+  categories: {
+    [key: string]: CachedCategoryData;
+  };
+  activities: {
+    [key: string]: CachedActivityData;
+  };
 }

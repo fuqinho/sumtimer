@@ -6,7 +6,7 @@ export interface PortableCategory {
 
 export interface PortableActivity {
   id: string;
-  categoryId?: string;
+  categoryId: string;
   label: string;
 }
 

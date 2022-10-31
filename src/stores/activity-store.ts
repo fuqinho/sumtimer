@@ -9,25 +9,29 @@ import {
   updateDoc,
   doc,
   orderBy,
-  addDoc,
   Timestamp,
-  deleteDoc,
   writeBatch,
   getDocs,
   QuerySnapshot,
   Unsubscribe,
+  DocumentReference,
+  getDoc,
+  WriteBatch,
 } from 'firebase/firestore';
 import {
   ActivityDocumentData,
   ActivityDoc,
   RecordDocumentData,
+  ActivityChange,
 } from 'src/types/documents';
 import { PortableActivity } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
+import { useCacheStore } from './cache-store';
 
 export const useActivityStore = defineStore('activities', () => {
   console.log('Setup activityStore start');
   const authStore = useAuthStore();
+  const cacheStore = useCacheStore();
   const { uid } = storeToRefs(authStore);
   const activities = ref([] as ActivityDoc[]);
   const idToActivity = computed(() => {
@@ -58,6 +62,7 @@ export const useActivityStore = defineStore('activities', () => {
       where('uid', '==', uid),
       orderBy('updated', 'desc')
     );
+    console.log('==== onSnapshot uid:', uid);
     unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
@@ -157,32 +162,55 @@ export const useActivityStore = defineStore('activities', () => {
     return idToActivity.value[id];
   }
 
-  async function addActivity(label: string, cid?: string) {
+  async function addActivity(
+    label: string,
+    cid: string,
+    aid?: string,
+    inBatch?: WriteBatch
+  ) {
     const data: ActivityDocumentData = {
       uid: uid.value,
       label: label,
+      cid: cid,
       updated: Timestamp.now(),
     };
-    if (cid) {
-      data.cid = cid;
-    }
-    await addDoc(collection(getFirestore(), 'activities'), data);
+    const batch = inBatch || writeBatch(getFirestore());
+    const colRef = collection(getFirestore(), 'activities');
+    const docRef = aid ? doc(colRef, aid) : doc(colRef);
+    cacheStore.onActivityAdded(batch, docRef.id, data);
+    batch.set(docRef, data);
+    if (!inBatch) await batch.commit();
   }
 
   async function deleteActivity(id: string) {
-    await deleteDoc(doc(getFirestore(), 'activities', id));
-  }
-
-  async function deleteActivities(ids: string[]) {
-    const batch = writeBatch(getFirestore());
-    for (const id of ids) {
-      batch.delete(doc(getFirestore(), 'activities', id));
+    const colRef = collection(getFirestore(), 'activities');
+    const docRef = doc(colRef, id) as DocumentReference<ActivityDocumentData>;
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) {
+      console.error('Trying to delete an activity which does not exist.');
+      return;
     }
+    const oldData = snapshot.data();
+    const batch = writeBatch(getFirestore());
+    cacheStore.onActivityDeleted(batch, id, oldData);
+    batch.delete(docRef);
     await batch.commit();
   }
 
-  async function updateActivity(id: string, change: object) {
-    await updateDoc(doc(getFirestore(), 'activities', id), change);
+  async function updateActivity(id: string, change: ActivityChange) {
+    const colRef = collection(getFirestore(), 'activities');
+    const docRef = doc(colRef, id) as DocumentReference<ActivityDocumentData>;
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) {
+      console.error('Trying to update an activity which does not exist.');
+      return;
+    }
+    const oldData = snapshot.data();
+    const newData = { ...oldData, ...change };
+    const batch = writeBatch(getFirestore());
+    cacheStore.onActivityUpdated(batch, id, oldData, newData);
+    batch.set(docRef, newData);
+    await batch.commit();
   }
 
   async function exportActivities() {
@@ -208,25 +236,16 @@ export const useActivityStore = defineStore('activities', () => {
   async function importActivities(acts: PortableActivity[]) {
     const batch = writeBatch(getFirestore());
     for (const act of acts) {
-      const data: ActivityDocumentData = {
-        uid: uid.value,
-        label: act.label,
-        updated: Timestamp.now(),
-      };
-      if (act.categoryId) data.cid = act.categoryId;
-      batch.set(doc(getFirestore(), 'activities', act.id), data);
+      await addActivity(act.label, act.categoryId, act.id, batch);
     }
     await batch.commit();
   }
 
   console.log('Setup activityStore end');
   return {
-    activities,
-    idToActivity,
     docData,
     addActivity,
     deleteActivity,
-    deleteActivities,
     updateActivity,
     onRecordAdded,
     onRecordDeleted,

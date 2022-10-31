@@ -3,26 +3,26 @@ import ActivityForm from 'src/components/ActivityForm.vue';
 import ActivityList from 'src/components/ActivityList.vue';
 import CategoryTab from 'src/components/CategoryTab.vue';
 import { computed, ref } from 'vue';
-import { useCategoryStore } from 'src/stores/category-store';
 import { storeToRefs } from 'pinia';
 import CategoryForm from 'src/components/CategoryForm.vue';
-import { CategoryDoc } from 'src/types/documents';
+import { CachedCategoryData } from 'src/types/documents';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useRoute } from 'vue-router';
+import { useCacheStore } from 'src/stores/cache-store';
 
 const route = useRoute();
 const authStore = useAuthStore();
-const categoryStore = useCategoryStore();
+const cacheStore = useCacheStore();
 
 const { uid } = storeToRefs(authStore);
-const { categories } = storeToRefs(categoryStore);
+const { categories } = storeToRefs(cacheStore);
 
 const creatingCategory = ref(false);
 const creatingActivity = ref(false);
 const editingCategory = ref(false);
 const splitterModel = ref(20);
 const tab = ref('');
-const currentCategory = ref(undefined as CategoryDoc | undefined);
+const currentCategory = ref(undefined as CachedCategoryData | undefined);
 
 const cid = computed(() => {
   if (typeof route.params.cid === 'string') return route.params.cid;
@@ -37,7 +37,7 @@ function onEditCategoryClicked(cid: string) {
       break;
     }
   }
-  currentCategory.value = category;
+  currentCategory.value = category?.data;
   editingCategory.value = true;
 }
 </script>
@@ -58,7 +58,7 @@ function onEditCategoryClicked(cid: string) {
             <CategoryTab
               v-for="category in categories"
               :key="category.id"
-              :doc="category"
+              :cat="category"
               @on-edit="onEditCategoryClicked"
             />
           </q-tabs>

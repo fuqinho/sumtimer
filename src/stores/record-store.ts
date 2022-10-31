@@ -1,18 +1,17 @@
 import { computed, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
   getDocs,
   getFirestore,
-  limit,
   limitToLast,
   onSnapshot,
   orderBy,
   query,
   QuerySnapshot,
+  setDoc,
   Timestamp,
   Unsubscribe,
   updateDoc,
@@ -23,14 +22,17 @@ import { RecordDocumentData, RecordDoc } from 'src/types/documents';
 import { PortableRecord } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useActivityStore } from 'src/stores/activity-store';
+import { useCacheStore } from './cache-store';
 
 export const useRecordStore = defineStore('records', () => {
   console.log('Setup recordStore start');
   const authStore = useAuthStore();
   const activityStore = useActivityStore();
-  const { uid } = storeToRefs(authStore);
+  const cacheStore = useCacheStore();
 
+  const { uid } = storeToRefs(authStore);
   const records = ref([] as RecordDoc[]);
+
   const idToRecord = computed(() => {
     return records.value.reduce((res, item) => {
       res[item.id] = item.data;
@@ -94,8 +96,10 @@ export const useRecordStore = defineStore('records', () => {
   }
 
   async function addRecord(docData: RecordDocumentData) {
+    const docRef = doc(collection(getFirestore(), 'records'));
+    await cacheStore.onRecordAdded(docRef.id, docData);
     await activityStore.onRecordAdded(docData);
-    await addDoc(collection(getFirestore(), 'records'), docData);
+    await setDoc(docRef, docData);
   }
 
   async function updateRecord(id: string, change: object) {

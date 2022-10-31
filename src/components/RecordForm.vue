@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Timestamp } from '@firebase/firestore';
-import { ActivityDoc, RecordDoc, RecordChange } from 'src/types/documents';
-import { useActivityStore } from 'src/stores/activity-store';
+import { RecordDoc, RecordChange } from 'src/types/documents';
 import { useRecordStore } from 'src/stores/record-store';
-import { useCategoryStore } from 'src/stores/category-store';
 import TimeInput from 'src/components/TimeInput.vue';
+import { useCacheStore } from 'src/stores/cache-store';
+import { storeToRefs } from 'pinia';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -15,21 +15,22 @@ const props = defineProps<Props>();
 const emit = defineEmits(['onSaved']);
 
 // =========================== Use stores/composables ==========================
-const categoryStore = useCategoryStore();
 const recordStore = useRecordStore();
-const activityStore = useActivityStore();
+const cacheStore = useCacheStore();
 
 // =========================== Refs ============================================
+const { idToCategory, activities } = storeToRefs(cacheStore);
 const selectedActivity = ref(null as { aid: string; label: string } | null);
-const activityOptions = ref(
-  activityStore.activities.map((activity) => {
+const activityOptions = computed(() => {
+  return activities.value.map((activity) => {
     return {
       aid: activity.id,
       label: activity.data.label,
-      category: categoryName(activity),
+      category: idToCategory.value[activity.data.cid].label,
     };
-  })
-);
+  });
+});
+
 const memo = ref(props.doc && props.doc.data.memo ? props.doc.data.memo : '');
 const frames = ref(
   !props.doc
@@ -95,16 +96,6 @@ async function updateRecord() {
   }
   await recordStore.updateRecord(props.doc.id, change);
   emit('onSaved');
-}
-
-function categoryName(activity: ActivityDoc) {
-  if (activity.data.cid) {
-    const data = categoryStore.docData(activity.data.cid);
-    if (data && data.label) {
-      return data.label;
-    }
-  }
-  return undefined;
 }
 
 async function updateFrameStart(index: number, time: Date) {

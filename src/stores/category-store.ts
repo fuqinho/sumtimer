@@ -1,94 +1,28 @@
-import { computed, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import {
-  addDoc,
   collection,
-  deleteDoc,
   doc,
   getDocs,
   getFirestore,
-  onSnapshot,
   orderBy,
   query,
-  Unsubscribe,
-  updateDoc,
   where,
   QuerySnapshot,
   writeBatch,
+  getDoc,
+  DocumentReference,
 } from 'firebase/firestore';
-import { CategoryDocumentData, CategoryDoc } from 'src/types/documents';
+import { CategoryChange, CategoryDocumentData } from 'src/types/documents';
 import { PortableCategory } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
+import { useCacheStore } from 'src/stores/cache-store';
 
 export const useCategoryStore = defineStore('catgories', () => {
   console.log('Setup categoryStore start');
   const authStore = useAuthStore();
+  const cacheStore = useCacheStore();
   const { uid } = storeToRefs(authStore);
-
-  const categories = ref([] as CategoryDoc[]);
-  const idToCategory = computed(() => {
-    return categories.value.reduce((res, item) => {
-      res[item.id] = item.data;
-      return res;
-    }, {} as { [key: string]: CategoryDocumentData });
-  });
-
-  let unsubscribe = null as Unsubscribe | null;
-  onUpdateUid();
-  watch(uid, onUpdateUid);
-
-  function onUpdateUid() {
-    console.log('categoryStore::onUpdateUid():', uid.value);
-    if (uid.value) {
-      startWatchCategories(uid.value);
-    } else {
-      stopWatchCatgories();
-    }
-  }
-
-  function startWatchCategories(uid: string) {
-    stopWatchCatgories();
-
-    const q = query(
-      collection(getFirestore(), 'categories'),
-      where('uid', '==', uid),
-      orderBy('order', 'asc')
-    );
-    unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === 'removed') {
-          categories.value.splice(change.oldIndex, 1);
-        } else {
-          const newItem = {
-            id: change.doc.id,
-            data: change.doc.data() as CategoryDocumentData,
-          };
-          if (change.type === 'added') {
-            categories.value.splice(change.newIndex, 0, newItem);
-          } else if (change.type === 'modified') {
-            if (change.newIndex !== change.oldIndex) {
-              categories.value.splice(change.oldIndex, 1);
-              categories.value.splice(change.newIndex, 0, newItem);
-            } else {
-              categories.value[change.newIndex] = newItem;
-            }
-          }
-        }
-      });
-    });
-  }
-
-  function stopWatchCatgories() {
-    if (unsubscribe) {
-      unsubscribe();
-      unsubscribe = null;
-    }
-    categories.value = [];
-  }
-
-  function docData(id: string) {
-    return idToCategory.value[id];
-  }
+  const { categories } = storeToRefs(cacheStore);
 
   async function addCategory(label: string, color: string) {
     const lastCategory = categories.value[categories.value.length - 1];
@@ -99,15 +33,36 @@ export const useCategoryStore = defineStore('catgories', () => {
       color: color,
       order: lastOrder + 1,
     };
-    await addDoc(collection(getFirestore(), 'categories'), data);
+    const batch = writeBatch(getFirestore());
+    const docRef = doc(collection(getFirestore(), 'categories'));
+    cacheStore.onCategoryAdded(batch, docRef.id, data);
+    batch.set(docRef, data);
+    await batch.commit();
   }
 
   async function deleteCategory(id: string) {
-    await deleteDoc(doc(getFirestore(), 'categories', id));
+    const colRef = collection(getFirestore(), 'categories');
+    const docRef = doc(colRef, id) as DocumentReference<CategoryDocumentData>;
+    const batch = writeBatch(getFirestore());
+    cacheStore.onCategoryDeleted(batch, docRef.id);
+    batch.delete(docRef);
+    await batch.commit();
   }
 
-  async function updateCategory(id: string, change: object) {
-    await updateDoc(doc(getFirestore(), 'categories', id), change);
+  async function updateCategory(id: string, change: CategoryChange) {
+    const colRef = collection(getFirestore(), 'categories');
+    const docRef = doc(colRef, id) as DocumentReference<CategoryDocumentData>;
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) {
+      console.error('Trying to update a category which does not exist.');
+      return;
+    }
+    const oldData = snapshot.data();
+    const newData = { ...oldData, ...change };
+    const batch = writeBatch(getFirestore());
+    cacheStore.onCategoryUpdated(batch, id, oldData, newData);
+    batch.set(docRef, newData);
+    await batch.commit();
   }
 
   async function moveUp(id: string) {
@@ -122,10 +77,7 @@ export const useCategoryStore = defineStore('catgories', () => {
       const order0 =
         index - 2 >= 0 ? categories.value[index - 2].data.order : 0;
       const order1 = categories.value[index - 1].data.order;
-      const newOrder = (order0 + order1) / 2;
-      await updateDoc(doc(getFirestore(), 'categories', id), {
-        order: newOrder,
-      });
+      await updateCategory(id, { order: (order0 + order1) / 2 });
     }
   }
 
@@ -143,10 +95,7 @@ export const useCategoryStore = defineStore('catgories', () => {
         index + 2 < categories.value.length
           ? categories.value[index + 2].data.order
           : categories.value[index + 1].data.order + 2;
-      const newOrder = (order0 + order1) / 2;
-      await updateDoc(doc(getFirestore(), 'categories', id), {
-        order: newOrder,
-      });
+      await updateCategory(id, { order: (order0 + order1) / 2 });
     }
   }
 
@@ -184,10 +133,8 @@ export const useCategoryStore = defineStore('catgories', () => {
   }
 
   console.log('Setup categoryStore end');
+
   return {
-    categories,
-    idToCategory,
-    docData,
     addCategory,
     deleteCategory,
     updateCategory,

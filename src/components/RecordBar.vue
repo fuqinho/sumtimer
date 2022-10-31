@@ -7,9 +7,8 @@ import {
   defaultCategoryColor,
 } from 'src/common/constants';
 import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
-import { useActivityStore } from 'src/stores/activity-store';
-import { useCategoryStore } from 'src/stores/category-store';
 import { computed } from 'vue';
+import { useCacheStore } from 'src/stores/cache-store';
 
 interface Props {
   dayStart: number;
@@ -20,11 +19,9 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const categoryStore = useCategoryStore();
-const activityStore = useActivityStore();
+const cacheStore = useCacheStore();
 
-const { idToCategory } = storeToRefs(categoryStore);
-const { idToActivity } = storeToRefs(activityStore);
+const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 
 const activity = computed(() => {
   const aid =

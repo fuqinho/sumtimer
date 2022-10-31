@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { RecordDoc } from 'src/types/documents';
-import { useActivityStore } from 'src/stores/activity-store';
 import RecordForm from 'src/components/RecordForm.vue';
-import { useCategoryStore } from 'src/stores/category-store';
 import {
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
 import { storeToRefs } from 'pinia';
 import { useRecordStore } from 'src/stores/record-store';
+import { useCacheStore } from 'src/stores/cache-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -18,9 +17,13 @@ interface Props {
 const props = defineProps<Props>();
 
 // =========================== Use stores/composables ==========================
-const categoryStore = useCategoryStore();
-const activityStore = useActivityStore();
+
 const recordStore = useRecordStore();
+const cacheStore = useCacheStore();
+
+// =========================== Refs ============================================
+const { idToCategory, idToActivity } = storeToRefs(cacheStore);
+const editing = ref(false);
 
 // =========================== Computed properties =============================
 const activityName = computed(() => {
@@ -63,11 +66,6 @@ const hours = computed(() => {
   const duration_h = props.doc.data.duration / (60 * 60 * 1000);
   return (Math.ceil(duration_h * 100) / 100).toFixed(2);
 });
-
-// =========================== Refs ============================================
-const { idToCategory } = storeToRefs(categoryStore);
-const { idToActivity } = storeToRefs(activityStore);
-const editing = ref(false);
 
 // =========================== Methods =========================================
 async function deleteRecord() {

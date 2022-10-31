@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { CategoryDoc } from 'src/types/documents';
+import { CachedCategory } from 'src/types/documents';
 import { useCategoryStore } from 'src/stores/category-store';
 import { computed } from 'vue';
 
 interface Props {
-  doc?: CategoryDoc;
+  cat?: CachedCategory;
 }
 const props = defineProps<Props>();
 interface Emits {
@@ -15,27 +15,27 @@ const emit = defineEmits<Emits>();
 const categoryStore = useCategoryStore();
 
 const color = computed(() => {
-  return props.doc ? props.doc.data.color : '#444';
+  return props.cat ? props.cat.data.color : '#444';
 });
 
 const label = computed(() => {
-  return props.doc ? props.doc.data.label : 'All activities';
+  return props.cat ? props.cat.data.label : 'All activities';
 });
 
 const name = computed(() => {
-  return props.doc ? props.doc.id : '';
+  return props.cat ? props.cat.id : '';
 });
 
 const icon = computed(() => {
-  return props.doc ? 'folder' : 'storage';
+  return props.cat ? 'folder' : 'storage';
 });
 
 const toTarget = computed(() => {
-  if (props.doc) {
+  if (props.cat) {
     return {
       name: 'CategoryActivities',
       params: {
-        cid: props.doc.id,
+        cid: props.cat.id,
       },
     };
   } else {
@@ -44,11 +44,11 @@ const toTarget = computed(() => {
 });
 
 async function moveUp() {
-  if (props.doc) await categoryStore.moveUp(props.doc.id);
+  if (props.cat) await categoryStore.moveUp(props.cat.id);
 }
 
 async function moveDown() {
-  if (props.doc) await categoryStore.moveDown(props.doc.id);
+  if (props.cat) await categoryStore.moveDown(props.cat.id);
 }
 </script>
 
@@ -69,7 +69,7 @@ async function moveDown() {
         <div class="text-ellipsis">{{ label }}</div>
       </q-item-section>
       <q-space />
-      <q-item-section v-if="!!props.doc" class="actions" side>
+      <q-item-section v-if="!!props.cat" class="actions" side>
         <div class="row">
           <q-btn
             @click.prevent="emit('onEdit', name)"

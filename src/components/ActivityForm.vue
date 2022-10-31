@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { ActivityDoc, ActivityChange } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
-import { useCategoryStore } from 'src/stores/category-store';
+import { useCacheStore } from 'src/stores/cache-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -14,8 +14,15 @@ const props = defineProps<Props>();
 const emit = defineEmits(['onCreated', 'onUpdated']);
 
 // =========================== Use stores/composables ==========================
-const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
+const cacheStore = useCacheStore();
+
+// =========================== Refs ============================================
+const { categories, idToCategory } = storeToRefs(cacheStore);
+const selectedCategory = ref(
+  null as { cid: string; label: string; color: string } | null
+);
+const activityName = ref('');
 
 // =========================== Computed properties =============================
 const categoryOptions = computed(() => {
@@ -28,18 +35,12 @@ const categoryOptions = computed(() => {
   });
 });
 
-// =========================== Refs ============================================
-const { categories, idToCategory } = storeToRefs(categoryStore);
-const selectedCategory = ref(
-  null as { cid: string; label: string; color: string } | null
-);
-const activityName = ref('');
-
 // =========================== Methods =========================================
 async function addActivity() {
+  if (!selectedCategory.value) return;
   await activityStore.addActivity(
     activityName.value,
-    selectedCategory.value ? selectedCategory.value.cid : undefined
+    selectedCategory.value.cid
   );
   emit('onCreated');
 }
@@ -81,7 +82,7 @@ if (props.doc) {
       selectedCategory.value = option;
     }
   }
-  activityName.value = idToCategory.value[props.initialCategory].labels;
+  activityName.value = idToCategory.value[props.initialCategory].label;
 }
 </script>
 

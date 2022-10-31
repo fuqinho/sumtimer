@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { UpdateData } from '@firebase/firestore';
-import { CategoryDocumentData, CategoryDoc } from 'src/types/documents';
+import { CachedCategory } from 'src/types/documents';
 import {
   defaultColorPalette,
   defaultCategoryColor,
@@ -10,7 +9,7 @@ import { useCategoryStore } from 'src/stores/category-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
-  doc?: CategoryDoc;
+  cat?: CachedCategory;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
@@ -20,8 +19,8 @@ const categoryStore = useCategoryStore();
 
 // =========================== Computed properties =============================
 // =========================== Refs ============================================
-const name = ref(props.doc ? props.doc.data.label : '');
-const color = ref(props.doc ? props.doc.data.color : defaultCategoryColor);
+const name = ref(props.cat ? props.cat.data.label : '');
+const color = ref(props.cat ? props.cat.data.color : defaultCategoryColor);
 
 // =========================== Methods =========================================
 async function add() {
@@ -30,23 +29,23 @@ async function add() {
 }
 
 async function update() {
-  if (!props.doc) {
+  if (!props.cat) {
     console.error('CategoryForm.update is called without base document data.');
     return;
   }
-  const change = {} as UpdateData<CategoryDocumentData>;
-  change.label = name.value;
-  change.color = color.value;
-  await categoryStore.updateCategory(props.doc.id, change);
+  const newData = { ...props.cat.data };
+  newData.label = name.value;
+  newData.color = color.value;
+  await categoryStore.updateCategory(props.cat.id, newData);
   emit('onUpdated');
 }
 
 async function deleteCategory() {
-  if (!props.doc) {
+  if (!props.cat) {
     console.error('CategoryForm.delete is called without base document data.');
     return;
   }
-  await categoryStore.deleteCategory(props.doc.id);
+  await categoryStore.deleteCategory(props.cat.id);
   emit('onDeleted');
 }
 // =========================== Additional setup ================================
@@ -54,7 +53,7 @@ async function deleteCategory() {
 
 <template>
   <q-card>
-    <q-card-section v-if="props.doc">Modify category</q-card-section>
+    <q-card-section v-if="props.cat">Modify category</q-card-section>
     <q-card-section v-else>Create category</q-card-section>
     <q-separator />
     <q-card-section>
@@ -82,7 +81,7 @@ async function deleteCategory() {
     </q-card-section>
     <q-card-actions>
       <q-btn
-        v-if="props.doc"
+        v-if="props.cat"
         flat
         round
         icon="delete"
@@ -91,7 +90,7 @@ async function deleteCategory() {
       />
       <q-space />
       <q-btn label="Cancel" flat v-close-popup></q-btn>
-      <q-btn label="Save" v-if="props.doc" color="primary" @click="update" />
+      <q-btn label="Save" v-if="props.cat" color="primary" @click="update" />
       <q-btn label="Add" v-else color="primary" @click="add" />
     </q-card-actions>
   </q-card>

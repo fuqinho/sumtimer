@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserRecord } from 'firebase-admin/lib/auth/user-record';
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
@@ -63,6 +64,25 @@ async function onCreateUser(user: UserRecord) {
 
     const categoryCollection = admin.firestore().collection('categories');
     const activityCollection = admin.firestore().collection('activities');
+    const cacheDoc = {
+      categories: {} as {
+        [key: string]: {
+          label: string;
+          color: string;
+          order: number;
+          duration: number;
+        };
+      },
+      activities: {} as {
+        [key: string]: {
+          label: string;
+          cid: string;
+          duration: number;
+          count: number;
+          updated: FieldValue;
+        };
+      },
+    };
     for (let i = presetCategories.length - 1; i >= 0; i--) {
       const category = presetCategories[i];
       const categoryDoc = {
@@ -74,6 +94,13 @@ async function onCreateUser(user: UserRecord) {
       const newCategoryRef = categoryCollection.doc();
       await newCategoryRef.set(categoryDoc);
 
+      cacheDoc.categories[newCategoryRef.id] = {
+        label: categoryDoc.label,
+        color: categoryDoc.color,
+        order: categoryDoc.order,
+        duration: 0,
+      };
+
       for (const activity of category.activities) {
         const activityDoc = {
           uid: user.uid,
@@ -81,8 +108,20 @@ async function onCreateUser(user: UserRecord) {
           cid: newCategoryRef.id,
           updated: admin.firestore.FieldValue.serverTimestamp(),
         };
-        await activityCollection.add(activityDoc);
+        const newActivityRef = activityCollection.doc();
+        await newActivityRef.set(activityDoc);
+
+        cacheDoc.activities[newActivityRef.id] = {
+          label: activityDoc.label,
+          cid: activityDoc.cid,
+          duration: 0,
+          count: 0,
+          updated: activityDoc.updated,
+        };
       }
+
+      const cacheDocRef = admin.firestore().collection('cache').doc(user.uid);
+      await cacheDocRef.set(cacheDoc);
     }
     functions.logger.log('Successfully added presert for ' + user.uid);
   } catch (e) {
@@ -98,7 +137,6 @@ async function onDeleteUser(user: UserRecord) {
         ' name:' +
         user.displayName
     );
-    await admin.firestore().collection('users').doc(user.uid).delete();
 
     const records = await admin
       .firestore()
@@ -126,6 +164,9 @@ async function onDeleteUser(user: UserRecord) {
     for (const doc of categories.docs) {
       await doc.ref.delete();
     }
+
+    await admin.firestore().collection('cache').doc(user.uid).delete();
+    await admin.firestore().collection('users').doc(user.uid).delete();
 
     functions.logger.log('Successfully deleted data for ' + user.uid);
   } catch (e) {
