@@ -11,11 +11,13 @@ import {
   writeBatch,
   getDoc,
   DocumentReference,
+  WriteBatch,
 } from 'firebase/firestore';
 import { CategoryChange, CategoryDocumentData } from 'src/types/documents';
 import { PortableCategory } from 'src/types/portable';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useCacheStore } from 'src/stores/cache-store';
+import { computed } from 'vue';
 
 export const useCategoryStore = defineStore('catgories', () => {
   console.log('Setup categoryStore start');
@@ -24,20 +26,30 @@ export const useCategoryStore = defineStore('catgories', () => {
   const { uid } = storeToRefs(authStore);
   const { categories } = storeToRefs(cacheStore);
 
-  async function addCategory(label: string, color: string) {
-    const lastCategory = categories.value[categories.value.length - 1];
-    const lastOrder = lastCategory ? lastCategory.data.order : 0;
+  const lastOrder = computed(() => {
+    if (!categories.value || categories.value.length == 0) return 0;
+    return categories.value[categories.value.length - 1].data.order;
+  });
+
+  async function addCategory(
+    label: string,
+    color: string,
+    cid?: string,
+    order?: number,
+    inBatch?: WriteBatch
+  ) {
     const data: CategoryDocumentData = {
       uid: uid.value,
       label: label,
       color: color,
-      order: lastOrder + 1,
+      order: order !== undefined ? order : lastOrder.value + 1,
     };
-    const batch = writeBatch(getFirestore());
-    const docRef = doc(collection(getFirestore(), 'categories'));
+    const batch = inBatch || writeBatch(getFirestore());
+    const colRef = collection(getFirestore(), 'categories');
+    const docRef = cid ? doc(colRef, cid) : doc(colRef);
     cacheStore.onCategoryAdded(batch, docRef.id, data);
     batch.set(docRef, data);
-    await batch.commit();
+    if (!inBatch) await batch.commit();
   }
 
   async function deleteCategory(id: string) {
@@ -121,13 +133,8 @@ export const useCategoryStore = defineStore('catgories', () => {
   async function importCategories(cats: PortableCategory[]) {
     const batch = writeBatch(getFirestore());
     for (let i = 0; i < cats.length; i++) {
-      const data: CategoryDocumentData = {
-        uid: uid.value,
-        label: cats[i].label,
-        color: cats[i].color,
-        order: i + 1,
-      };
-      batch.set(doc(getFirestore(), 'categories', cats[i].id), data);
+      const order = lastOrder.value + 1 + i;
+      await addCategory(cats[i].label, cats[i].color, cats[i].id, order, batch);
     }
     await batch.commit();
   }
