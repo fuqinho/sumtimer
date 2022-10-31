@@ -4,6 +4,7 @@ import { CachedCategory } from 'src/types/documents';
 import {
   defaultColorPalette,
   defaultCategoryColor,
+  defaultCategoryName,
 } from 'src/common/constants';
 import { useCategoryStore } from 'src/stores/category-store';
 
@@ -17,10 +18,11 @@ const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
 // =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 
-// =========================== Computed properties =============================
 // =========================== Refs ============================================
-const name = ref(props.cat ? props.cat.data.label : '');
+const name = ref(props.cat ? props.cat.data.label : defaultCategoryName);
 const color = ref(props.cat ? props.cat.data.color : defaultCategoryColor);
+
+// =========================== Computed properties =============================
 
 // =========================== Methods =========================================
 async function add() {

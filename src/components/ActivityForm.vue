@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { ActivityDoc, ActivityChange } from 'src/types/documents';
+import { ActivityChange, CachedActivity } from 'src/types/documents';
 import { useActivityStore } from 'src/stores/activity-store';
 import { useCacheStore } from 'src/stores/cache-store';
 
 // =========================== Properties/Emitters =============================
 interface Props {
-  doc?: ActivityDoc;
+  act?: CachedActivity;
   initialCategory?: string;
 }
 const props = defineProps<Props>();
@@ -46,7 +46,7 @@ async function addActivity() {
 }
 
 async function updateActivity() {
-  if (!props.doc) {
+  if (!props.act) {
     console.error('updateActivity is called without document data.');
     return;
   }
@@ -54,20 +54,20 @@ async function updateActivity() {
   if (
     selectedCategory.value &&
     selectedCategory.value.cid &&
-    selectedCategory.value.cid !== props.doc.data.cid
+    selectedCategory.value.cid !== props.act.data.cid
   ) {
     change.cid = selectedCategory.value.cid;
   }
-  if (activityName.value !== props.doc.data.label) {
+  if (activityName.value !== props.act.data.label) {
     change.label = activityName.value;
   }
-  await activityStore.updateActivity(props.doc.id, change);
+  await activityStore.updateActivity(props.act.id, change);
   emit('onUpdated');
 }
 
 // =========================== Additional setup ================================
-if (props.doc) {
-  const data = activityStore.docData(props.doc.id);
+if (props.act) {
+  const data = activityStore.docData(props.act.id);
   if (data) {
     for (const option of categoryOptions.value) {
       if (option.cid == data.cid) {
@@ -88,7 +88,7 @@ if (props.doc) {
 
 <template>
   <q-card>
-    <q-card-section v-if="!!props.doc">Modify activity</q-card-section>
+    <q-card-section v-if="!!props.act">Modify activity</q-card-section>
     <q-card-section v-else>Create activity</q-card-section>
     <q-separator />
     <q-card-section>
@@ -111,7 +111,7 @@ if (props.doc) {
     <q-card-actions align="right">
       <q-btn label="Cancel" flat v-close-popup></q-btn>
       <q-btn
-        v-if="!!props.doc"
+        v-if="!!props.act"
         label="Save"
         color="primary"
         @click="updateActivity"

@@ -5,7 +5,7 @@ import CategoryTab from 'src/components/CategoryTab.vue';
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import CategoryForm from 'src/components/CategoryForm.vue';
-import { CachedCategoryData } from 'src/types/documents';
+import { CachedCategory } from 'src/types/documents';
 import { useAuthStore } from 'src/stores/auth-store';
 import { useRoute } from 'vue-router';
 import { useCacheStore } from 'src/stores/cache-store';
@@ -22,7 +22,7 @@ const creatingActivity = ref(false);
 const editingCategory = ref(false);
 const splitterModel = ref(20);
 const tab = ref('');
-const currentCategory = ref(undefined as CachedCategoryData | undefined);
+const currentCategory = ref(undefined as CachedCategory | undefined);
 
 const cid = computed(() => {
   if (typeof route.params.cid === 'string') return route.params.cid;
@@ -37,7 +37,7 @@ function onEditCategoryClicked(cid: string) {
       break;
     }
   }
-  currentCategory.value = category?.data;
+  currentCategory.value = category;
   editingCategory.value = true;
 }
 </script>
@@ -103,7 +103,7 @@ function onEditCategoryClicked(cid: string) {
     <CategoryForm
       @on-updated="editingCategory = false"
       @on-deleted="editingCategory = false"
-      :doc="currentCategory"
+      :cat="currentCategory"
     />
   </q-dialog>
 </template>
