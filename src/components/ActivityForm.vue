@@ -18,7 +18,7 @@ const activityStore = useActivityStore();
 const cacheStore = useCacheStore();
 
 // =========================== Refs ============================================
-const { categories, idToCategory } = storeToRefs(cacheStore);
+const { categories, idToCategory, idToActivity } = storeToRefs(cacheStore);
 const selectedCategory = ref(
   null as { cid: string; label: string; color: string } | null
 );
@@ -67,7 +67,7 @@ async function updateActivity() {
 
 // =========================== Additional setup ================================
 if (props.act) {
-  const data = activityStore.docData(props.act.id);
+  const data = idToActivity.value[props.act.id];
   if (data) {
     for (const option of categoryOptions.value) {
       if (option.cid == data.cid) {
