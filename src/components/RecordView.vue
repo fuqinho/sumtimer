@@ -7,6 +7,7 @@ import { useUtil } from 'src/composables/util';
 import TimeSectionInput from 'src/components/TimeSectionInput.vue';
 import { useRecordStore } from 'src/stores/record-store';
 import { Timestamp } from '@firebase/firestore';
+import ActivityPicker from 'src/components/ActivityPicker.vue';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -31,6 +32,7 @@ const subs = ref(
   ]
 );
 const memo = ref(props.doc.data.memo);
+const editingActivity = ref(false);
 
 // =========================== Computed properties =============================
 const activity = computed(() => idToActivity.value[aid.value]);
@@ -91,6 +93,10 @@ function onChangeEnd(index: number, time: Date) {
   subs.value[index].end = Timestamp.fromDate(time);
 }
 
+function onSelectActivity(activityId: string) {
+  aid.value = activityId;
+}
+
 // =========================== Additional setup ================================
 </script>
 
@@ -102,7 +108,14 @@ function onChangeEnd(index: number, time: Date) {
       </q-badge>
       <div class="row items-center">
         <div class="activity-label">{{ activity.label }}</div>
-        <q-icon name="edit" class="edit-act-icon" size="xs" />
+        <q-btn
+          flat
+          round
+          icon="edit"
+          color="grey"
+          size="sm"
+          @click="editingActivity = true"
+        />
       </div>
     </q-card-section>
     <q-separator />
@@ -133,6 +146,10 @@ function onChangeEnd(index: number, time: Date) {
       />
     </q-card-actions>
   </q-card>
+
+  <q-dialog v-model="editingActivity">
+    <ActivityPicker :aid="props.doc.data.aid" @on-select="onSelectActivity" />
+  </q-dialog>
 </template>
 
 <style scoped>
