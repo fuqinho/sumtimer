@@ -2,11 +2,11 @@
 import { ref } from 'vue';
 import { CachedCategory } from 'src/types/documents';
 import {
-  defaultColorPalette,
   defaultCategoryColor,
   defaultCategoryName,
 } from 'src/common/constants';
 import { useCategoryStore } from 'src/stores/category-store';
+import ColorPalette from 'src/components/ColorPalette.vue';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -58,28 +58,17 @@ async function deleteCategory() {
     <q-card-section v-if="props.cat">Modify category</q-card-section>
     <q-card-section v-else>Create category</q-card-section>
     <q-separator />
+    <q-card-section class="row items-center">
+      <q-icon
+        name="folder"
+        size="md"
+        :style="{ color: color }"
+        class="q-mr-sm"
+      />
+      <q-input dense v-model="name" class="cat-name" />
+    </q-card-section>
     <q-card-section>
-      <q-input v-model="name" filled label="Category name" />
-      <q-input v-model="color" filled>
-        <template v-slot:append>
-          <q-icon name="colorize" class="cursor-pointer">
-            <q-popup-proxy
-              cover
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              <q-color
-                v-model="color"
-                no-header
-                default-view="palette"
-                class="cpicker"
-                :palette="defaultColorPalette"
-              />
-            </q-popup-proxy>
-          </q-icon>
-        </template>
-      </q-input>
-      <q-avatar :style="{ 'background-color': color }" />
+      <ColorPalette v-model="color" />
     </q-card-section>
     <q-card-actions>
       <q-btn
@@ -98,8 +87,8 @@ async function deleteCategory() {
   </q-card>
 </template>
 
-<style lang="scss">
-.cpicker {
-  max-width: 300px;
+<style lang="scss" scoped>
+.cat-name {
+  font-size: 18px;
 }
 </style>
