@@ -162,7 +162,7 @@ function actBarStyle(data: ActivityBarData) {
         <div class="row">
           <div class="activity-indent"></div>
           <div
-            class="activity-label"
+            class="activity-label ellipsis"
             :style="{ color: idToCategory[catData.cid].color }"
           >
             {{ idToActivity[actData.aid].label }}
