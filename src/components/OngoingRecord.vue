@@ -2,6 +2,7 @@
 import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
+import { maxPauseDurationMs } from 'src/common/constants';
 import { useOngoingStore } from 'src/stores/ongoing-store';
 import TimeDisplay from 'src/components/TimeDisplay.vue';
 import TimeInput from 'src/components/TimeInput.vue';
@@ -16,6 +17,7 @@ const { ongoing, activityName, categoryName, categoryColor } =
   storeToRefs(ongoingStore);
 const elapsed_ms = ref(0);
 const memo = ref('');
+const pausing_ms = ref(0);
 
 // =========================== Computed properties =============================
 const lightenedCategoryColor = computed(() => {
@@ -25,6 +27,10 @@ const lightenedCategoryColor = computed(() => {
 // =========================== Methods =========================================
 function updateElapsedTime() {
   elapsed_ms.value = ongoingStore.totalDuration();
+  pausing_ms.value = ongoingStore.pauseDuration();
+  if (pausing_ms.value > maxPauseDurationMs) {
+    ongoingStore.finish();
+  }
 }
 
 async function recordMemo() {
@@ -59,7 +65,19 @@ onUnmounted(() => {
         <div class="text-h6">{{ activityName }}</div>
       </div>
       <q-space />
-      <time-display :time="elapsed_ms"></time-display>
+      <div class="column items-end">
+        <time-display :time="elapsed_ms"></time-display>
+        <div
+          v-if="pausing_ms > 0"
+          class="row items-center"
+          style="opacity: 0.7"
+        >
+          <q-icon class="q-mx-xs" name="pause" color="pink-7" />
+          <time-display :time="pausing_ms" size="small"></time-display>
+          <span class="q-mx-xs">/</span>
+          <time-display :time="maxPauseDurationMs" size="small"></time-display>
+        </div>
+      </div>
     </q-card-section>
     <q-separator />
     <q-card-section class="row justify-end"> </q-card-section>

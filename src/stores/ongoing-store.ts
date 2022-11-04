@@ -234,6 +234,20 @@ export const useOngoingStore = defineStore('ongoing', () => {
     await updateDoc(docRef.value, { curStart: Timestamp.now() });
   }
 
+  function isInPause() {
+    if (!ongoing.value) return false;
+    return !ongoing.value.curStart;
+  }
+
+  function pauseDuration() {
+    if (!ongoing.value || ongoing.value.curStart) return 0;
+    if (!ongoing.value.subs) return 0;
+    const lastMs =
+      ongoing.value.subs[ongoing.value.subs.length - 1].end.toMillis();
+    const diff = Date.now() - lastMs;
+    return Math.max(0, diff);
+  }
+
   console.log('Setup ongoingStore start');
   return {
     ongoing,
@@ -252,5 +266,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
     finish,
     pause,
     resume,
+    isInPause,
+    pauseDuration,
   };
 });
