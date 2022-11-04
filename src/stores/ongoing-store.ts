@@ -15,6 +15,7 @@ import {
   defaultActivityName,
   defaultCategoryColor,
   defaultCategoryName,
+  maxPauseDurationMs,
 } from 'src/common/constants';
 import { OngoingDocumentData } from 'src/types/documents';
 import { useRecordStore } from 'src/stores/record-store';
@@ -22,15 +23,18 @@ import { useAuthStore } from 'src/stores/auth-store';
 import { computed, ref, watch } from 'vue';
 import { useCacheStore } from './cache-store';
 import { PortableRecord } from 'src/types/portable';
+import { useTimeStore } from './time-store';
 
 export const useOngoingStore = defineStore('ongoing', () => {
   console.log('Setup ongoingStore start');
   const authStore = useAuthStore();
   const recordStore = useRecordStore();
   const cacheStore = useCacheStore();
+  const timeStore = useTimeStore();
 
   const { uid } = storeToRefs(authStore);
   const { idToCategory, idToActivity } = storeToRefs(cacheStore);
+  const { nowMillis } = storeToRefs(timeStore);
 
   const ongoing = ref(null as OngoingDocumentData | null);
 
@@ -89,6 +93,27 @@ export const useOngoingStore = defineStore('ongoing', () => {
   const categoryColor = computed(() =>
     category.value ? category.value.color : defaultCategoryColor
   );
+  const elapsedMillis = computed(() => {
+    if (!ongoing.value) return 0;
+    let ms = 0;
+    if (ongoing.value.subs) {
+      for (const sub of ongoing.value.subs) {
+        ms += sub.end.toMillis() - sub.start.toMillis();
+      }
+    }
+    if (ongoing.value.curStart) {
+      ms += nowMillis.value - ongoing.value.curStart.toMillis();
+    }
+    return Math.max(ms, 0);
+  });
+  const pausedMillis = computed(() => {
+    if (!ongoing.value || ongoing.value.curStart) return 0;
+    if (!ongoing.value.subs) return 0;
+    const lastMs =
+      ongoing.value.subs[ongoing.value.subs.length - 1].end.toMillis();
+    const diff = nowMillis.value - lastMs;
+    return Math.max(0, diff);
+  });
 
   function totalDuration() {
     if (!ongoing.value) return 0;
@@ -234,21 +259,14 @@ export const useOngoingStore = defineStore('ongoing', () => {
     await updateDoc(docRef.value, { curStart: Timestamp.now() });
   }
 
-  function isInPause() {
-    if (!ongoing.value) return false;
-    return !ongoing.value.curStart;
-  }
+  watch(nowMillis, async () => {
+    if (ongoing.value && pausedMillis.value > maxPauseDurationMs) {
+      await finish();
+    }
+  });
 
-  function pauseDuration() {
-    if (!ongoing.value || ongoing.value.curStart) return 0;
-    if (!ongoing.value.subs) return 0;
-    const lastMs =
-      ongoing.value.subs[ongoing.value.subs.length - 1].end.toMillis();
-    const diff = Date.now() - lastMs;
-    return Math.max(0, diff);
-  }
+  console.log('Setup ongoingStore end');
 
-  console.log('Setup ongoingStore start');
   return {
     ongoing,
     recording,
@@ -257,6 +275,8 @@ export const useOngoingStore = defineStore('ongoing', () => {
     activityName,
     categoryName,
     categoryColor,
+    elapsedMillis,
+    pausedMillis,
     totalDuration,
     updateMemo,
     updateCurStart,
@@ -266,7 +286,5 @@ export const useOngoingStore = defineStore('ongoing', () => {
     finish,
     pause,
     resume,
-    isInPause,
-    pauseDuration,
   };
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, onUnmounted, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
 import { maxPauseDurationMs } from 'src/common/constants';
@@ -13,11 +13,15 @@ import TimeInput from 'src/components/TimeInput.vue';
 const ongoingStore = useOngoingStore();
 
 // =========================== Refs ============================================
-const { ongoing, activityName, categoryName, categoryColor } =
-  storeToRefs(ongoingStore);
-const elapsed_ms = ref(0);
+const {
+  ongoing,
+  activityName,
+  categoryName,
+  categoryColor,
+  elapsedMillis,
+  pausedMillis,
+} = storeToRefs(ongoingStore);
 const memo = ref('');
-const pausing_ms = ref(0);
 
 // =========================== Computed properties =============================
 const lightenedCategoryColor = computed(() => {
@@ -25,55 +29,32 @@ const lightenedCategoryColor = computed(() => {
 });
 
 // =========================== Methods =========================================
-function updateElapsedTime() {
-  elapsed_ms.value = ongoingStore.totalDuration();
-  pausing_ms.value = ongoingStore.pauseDuration();
-  if (pausing_ms.value > maxPauseDurationMs) {
-    ongoingStore.finish();
-  }
-}
-
 async function recordMemo() {
   await ongoingStore.updateMemo(memo.value);
 }
 
 // =========================== Additional setup ================================
-watch(ongoing, () => {
-  updateElapsedTime();
-});
-
-let timerId = 0;
-
-onBeforeMount(() => {
-  updateElapsedTime();
-  timerId = window.setInterval(updateElapsedTime, 1000);
-});
-
-onUnmounted(() => {
-  clearInterval(timerId);
-  timerId = 0;
-});
 </script>
 
 <template>
   <q-card v-if="ongoing" :style="{ backgroundColor: lightenedCategoryColor }">
     <q-card-section class="row">
       <div class="column items-start">
-        <q-badge :style="{ backgroundColor: categoryColor }">{{
-          categoryName
-        }}</q-badge>
+        <q-badge :style="{ backgroundColor: categoryColor }">
+          {{ categoryName }}
+        </q-badge>
         <div class="text-h6">{{ activityName }}</div>
       </div>
       <q-space />
       <div class="column items-end">
-        <time-display :time="elapsed_ms"></time-display>
+        <time-display :time="elapsedMillis"></time-display>
         <div
-          v-if="pausing_ms > 0"
+          v-if="pausedMillis > 0"
           class="row items-center"
           style="opacity: 0.7"
         >
           <q-icon class="q-mx-xs" name="pause" color="pink-7" />
-          <time-display :time="pausing_ms" size="small"></time-display>
+          <time-display :time="pausedMillis" size="small"></time-display>
           <span class="q-mx-xs">/</span>
           <time-display :time="maxPauseDurationMs" size="small"></time-display>
         </div>
