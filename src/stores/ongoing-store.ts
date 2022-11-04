@@ -166,7 +166,12 @@ export const useOngoingStore = defineStore('ongoing', () => {
   }
 
   async function start(aid: string) {
-    if (ongoing.value) return;
+    if (ongoing.value) {
+      if (ongoing.value.aid == aid) return;
+      // If the user is trying to start a different activity,
+      // the ongoing activity should be finished.
+      await finish();
+    }
 
     const docData = {
       aid: aid,
