@@ -18,12 +18,17 @@ export interface CategoryChange {
   order?: number;
 }
 
+export interface TimestampSection {
+  start: Timestamp;
+  end: Timestamp;
+}
+
 export interface OngoingDocumentData extends DocumentData {
   aid: string;
   recStart: Timestamp;
   curStart?: Timestamp;
   memo?: string;
-  subs?: { start: Timestamp; end: Timestamp }[];
+  subs?: TimestampSection[];
 }
 
 export interface ActivityDocumentData extends DocumentData {
@@ -45,7 +50,7 @@ export interface RecordDocumentData extends DocumentData {
   start: Timestamp;
   end: Timestamp;
   duration: number;
-  subs?: { start: Timestamp; end: Timestamp }[];
+  subs?: TimestampSection[];
   memo?: string;
 }
 
@@ -59,7 +64,7 @@ export interface RecordChange {
   start?: Timestamp;
   end?: Timestamp;
   duration?: number;
-  subs?: { start: Timestamp; end: Timestamp }[];
+  subs?: TimestampSection[];
   memo?: string;
 }
 

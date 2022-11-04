@@ -7,8 +7,9 @@ import {
   defaultCategoryColor,
 } from 'src/common/constants';
 import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useCacheStore } from 'src/stores/cache-store';
+import RecordView from 'src/components/RecordView.vue';
 
 interface Props {
   dayStart: number;
@@ -22,6 +23,7 @@ const props = defineProps<Props>();
 const cacheStore = useCacheStore();
 
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
+const editing = ref(false);
 
 const activity = computed(() => {
   const aid =
@@ -137,7 +139,7 @@ const subs = computed(() => {
 </script>
 
 <template>
-  <div class="container" :style="containerStyle">
+  <div class="container" :style="containerStyle" @click="editing = true">
     <div
       class="sub"
       v-for="(sub, i) in subs"
@@ -148,6 +150,10 @@ const subs = computed(() => {
     <div class="sub"></div>
     <q-tooltip>{{ activityName }}</q-tooltip>
   </div>
+
+  <q-dialog v-if="props.doc" v-model="editing">
+    <RecordView :doc="props.doc" />
+  </q-dialog>
 </template>
 
 <style lang="scss" scoped>
