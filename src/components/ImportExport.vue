@@ -74,6 +74,7 @@ function isValid(data: PortableData) {
     if (!a.id) return false;
     if (!a.label) return false;
     if (a.categoryId && !categoryIds.has(a.categoryId)) return false;
+    if (a.updatedAt && !isDate(a.updatedAt)) return false;
     if (activityIds.has(a.id)) return false;
     activityIds.add(a.id);
   }

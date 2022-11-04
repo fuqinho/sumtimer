@@ -200,6 +200,7 @@ export const useActivityStore = defineStore('activities', () => {
         id: doc.id,
         categoryId: doc.data().cid,
         label: doc.data().label,
+        updatedAt: doc.data().updated.toDate(),
       });
     }
     return res;
@@ -211,7 +212,9 @@ export const useActivityStore = defineStore('activities', () => {
       const data: ActivityDocumentData = {
         uid: uid.value,
         label: act.label,
-        updated: Timestamp.now(),
+        updated: act.updatedAt
+          ? Timestamp.fromDate(act.updatedAt)
+          : Timestamp.now(),
       };
       if (act.categoryId) data.cid = act.categoryId;
       batch.set(doc(getFirestore(), 'activities', act.id), data);
