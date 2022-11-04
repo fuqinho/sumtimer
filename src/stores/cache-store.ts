@@ -120,7 +120,7 @@ export const useCacheStore = defineStore('cache', () => {
         cid: data.cid,
         duration: 0,
         count: 0,
-        updated: Timestamp.now(),
+        updated: data.updated,
       },
     });
   }

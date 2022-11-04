@@ -29,13 +29,14 @@ export const useActivityStore = defineStore('activities', () => {
     label: string,
     cid: string,
     aid?: string,
+    updatedAt?: Date,
     inBatch?: WriteBatch
   ) {
     const data: ActivityDocumentData = {
       uid: uid.value,
       label: label,
       cid: cid,
-      updated: Timestamp.now(),
+      updated: updatedAt ? Timestamp.fromDate(updatedAt) : Timestamp.now(),
     };
     const batch = inBatch || writeBatch(getFirestore());
     const colRef = collection(getFirestore(), 'activities');
@@ -85,6 +86,7 @@ export const useActivityStore = defineStore('activities', () => {
         id: doc.id,
         categoryId: doc.data().cid,
         label: doc.data().label,
+        updatedAt: doc.data().updated.toDate(),
       });
     }
     return res;
@@ -93,7 +95,13 @@ export const useActivityStore = defineStore('activities', () => {
   async function importActivities(acts: PortableActivity[]) {
     const batch = writeBatch(getFirestore());
     for (const act of acts) {
-      await addActivity(act.label, act.categoryId, act.id, batch);
+      await addActivity(
+        act.label,
+        act.categoryId,
+        act.id,
+        act.updatedAt,
+        batch
+      );
     }
     await batch.commit();
   }
