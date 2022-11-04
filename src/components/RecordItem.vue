@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { RecordDoc } from 'src/types/documents';
-import RecordForm from 'src/components/RecordForm.vue';
 import {
   defaultCategoryColor,
   defaultCategoryName,
@@ -9,6 +8,7 @@ import {
 import { storeToRefs } from 'pinia';
 import { useRecordStore } from 'src/stores/record-store';
 import { useCacheStore } from 'src/stores/cache-store';
+import RecordView from 'src/components/RecordView.vue';
 
 // =========================== Properties/Emitters =============================
 interface Props {
@@ -109,6 +109,6 @@ async function deleteRecord() {
     </q-item-section>
   </q-item>
   <q-dialog v-model="editing">
-    <RecordForm :doc="props.doc" @on-saved="editing = false" />
+    <RecordView :doc="props.doc" />
   </q-dialog>
 </template>

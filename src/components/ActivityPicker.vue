@@ -55,7 +55,7 @@ const acts = computed(() => {
 
 <style scoped>
 .container {
-  height: 100%;
+  height: 80%;
   width: 100%;
   background-color: white;
 }
