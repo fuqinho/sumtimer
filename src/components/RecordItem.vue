@@ -6,6 +6,7 @@ import {
   defaultCategoryName,
 } from 'src/common/constants';
 import { storeToRefs } from 'pinia';
+import { colors } from 'quasar';
 import { useRecordStore } from 'src/stores/record-store';
 import { useCacheStore } from 'src/stores/cache-store';
 import RecordView from 'src/components/RecordView.vue';
@@ -62,6 +63,8 @@ const categoryName = computed(() => {
   return defaultCategoryName;
 });
 
+const bgColor = computed(() => colors.lighten(categoryColor.value, 90));
+
 const hours = computed(() => {
   const duration_h = props.doc.data.duration / (60 * 60 * 1000);
   return (Math.ceil(duration_h * 100) / 100).toFixed(2);
@@ -76,7 +79,7 @@ async function deleteRecord() {
 </script>
 
 <template>
-  <q-item>
+  <q-item :style="{ backgroundColor: bgColor }">
     <q-item-section>
       <q-item-label
         ><q-badge

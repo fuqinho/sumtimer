@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 import { useCacheStore } from 'src/stores/cache-store';
 import { RecordChange, RecordDoc } from 'src/types/documents';
 import { computed, ref } from 'vue';
+import { colors } from 'quasar';
 import { useUtil } from 'src/composables/util';
 import TimeSectionInput from 'src/components/TimeSectionInput.vue';
 import { useRecordStore } from 'src/stores/record-store';
@@ -37,6 +38,7 @@ const editingActivity = ref(false);
 // =========================== Computed properties =============================
 const activity = computed(() => idToActivity.value[aid.value]);
 const category = computed(() => idToCategory.value[activity.value.cid]);
+const bgColor = computed(() => colors.lighten(category.value.color, 90));
 const hasChange = computed(() => {
   if (props.doc.data.aid != aid.value) return true;
   if (props.doc.data.memo != memo.value) return true;
@@ -101,7 +103,7 @@ function onSelectActivity(activityId: string) {
 </script>
 
 <template>
-  <q-card class="root">
+  <q-card class="root" :style="{ backgroundColor: bgColor }">
     <q-card-section>
       <q-badge :style="{ backgroundColor: category.color }">
         {{ category.label }}
