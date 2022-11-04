@@ -82,10 +82,13 @@ async function deleteActivity() {
       icon="play_arrow"
     />
     <q-item-section>
-      <q-item-label caption :style="{ color: categoryColor }">{{
-        categoryName
-      }}</q-item-label>
-      <q-item-label class="activity-name">
+      <q-item-label
+        caption
+        class="ellipsis"
+        :style="{ color: categoryColor }"
+        >{{ categoryName }}</q-item-label
+      >
+      <q-item-label class="activity-name ellipsis">
         {{ props.act.data.label }}
       </q-item-label>
     </q-item-section>
