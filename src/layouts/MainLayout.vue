@@ -7,10 +7,28 @@ import {
 } from 'firebase/auth';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from 'stores/auth-store';
+import { useCacheStore } from 'src/stores/cache-store';
+import { useOngoingStore } from 'src/stores/ongoing-store';
+import { computed } from 'vue';
 
 const authStore = useAuthStore();
+const cacheStore = useCacheStore();
+const ongoingStore = useOngoingStore();
 const { isSignedIn, userDisplayName, userProfilePicUrl } =
   storeToRefs(authStore);
+const { idToCategory, idToActivity } = storeToRefs(cacheStore);
+const { ongoing } = storeToRefs(ongoingStore);
+
+const bgColor = computed(() => {
+  if (ongoing.value) {
+    const activity = idToActivity.value[ongoing.value.aid];
+    if (activity) {
+      const category = idToCategory.value[activity.cid];
+      if (category) return category.color;
+    }
+  }
+  return '#757575';
+});
 
 function signInWithGoolge() {
   signInWithPopup(getAuth(), new GoogleAuthProvider());
@@ -23,7 +41,13 @@ function signOutUser() {
 
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header reveal bordered class="bg-grey-7 text-white" height-hint="98">
+    <q-header
+      reveal
+      bordered
+      class="text-white"
+      :style="{ backgroundColor: bgColor }"
+      height-hint="98"
+    >
       <q-toolbar>
         <q-toolbar-title>
           <q-avatar>
