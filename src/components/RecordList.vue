@@ -176,14 +176,28 @@ watch(currentSnapshot, async (snapshot) => {
 
 <template>
   <div>
-    <q-list bordered separator>
+    <q-list bordered separator class="q-mb-sm">
       <RecordItem
         v-for="record in records"
         :key="record.id"
         :doc="record"
       ></RecordItem>
     </q-list>
-    <q-btn @click="loadPrev" :disable="!hasPrev">Prev</q-btn>
-    <q-btn @click="loadNext" :disable="!hasNext">Next</q-btn>
+    <div class="row items-center justify-center">
+      <q-btn
+        @click="loadPrev"
+        icon="navigate_before"
+        :disable="!hasPrev"
+        size="md"
+        padding="xs"
+      />
+      <q-btn
+        @click="loadNext"
+        icon="navigate_next"
+        :disable="!hasNext"
+        size="md"
+        padding="xs"
+      />
+    </div>
   </div>
 </template>
