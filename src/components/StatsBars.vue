@@ -55,6 +55,7 @@ const durationInfo = computed(() => {
     if (duration < 0) {
       console.log('data:', rec.data, 'start:', start.value, 'end:', end.value);
     }
+    if (duration <= 0) continue;
     const aid = rec.data.aid;
     const cid = idToActivity.value[aid].cid;
     if (!cats[cid]) {
