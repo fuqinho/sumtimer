@@ -72,6 +72,30 @@ export const useOngoingStore = defineStore('ongoing', () => {
     ongoing.value = null;
   }
 
+  let wakeLock = null as WakeLockSentinel | null;
+
+  const requestWakeLock = async () => {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => {
+        console.log('Wake lock was released.');
+      });
+      console.log('Wake lock is active');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const releaseWakeLock = async () => {
+    if (!wakeLock) return;
+    try {
+      await wakeLock.release();
+      wakeLock = null;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const docRef = computed(() => doc(getFirestore(), 'ongoings', uid.value));
   const recording = computed(() => !!ongoing.value);
   const activity = computed(() =>
@@ -204,9 +228,12 @@ export const useOngoingStore = defineStore('ongoing', () => {
       curStart: Timestamp.now(),
     };
     await setDoc(docRef.value, docData);
+    await requestWakeLock();
   }
 
   async function finish() {
+    await releaseWakeLock();
+
     if (!ongoing.value) return;
 
     const timeFrames = [];
