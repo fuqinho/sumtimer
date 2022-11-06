@@ -86,7 +86,16 @@ function signOutUser() {
                 </q-item-section>
               </q-item>
               <q-item clickable v-close-popup>
-                <q-item-section @click="signOutUser"> Sign out </q-item-section>
+                <q-item-section side>
+                  <q-icon name="settings" />
+                </q-item-section>
+                <q-item-section>Settings</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section side>
+                  <q-icon name="logout" />
+                </q-item-section>
+                <q-item-section @click="signOutUser">Sign out</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
