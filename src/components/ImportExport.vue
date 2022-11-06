@@ -207,22 +207,49 @@ async function exportTogglCSV(paid: boolean) {
 
 <template>
   <div class="q-pa-md column items-start">
-    <q-btn @click="exportJson" class="q-my-md" label="Export as JSON file" />
-    <q-file
-      style="max-width: 300px"
-      v-model="fileToImport"
-      :max-file-size="uploadSizeLimit"
-      @rejected="onUploadRejected"
+    <div class="text-subtitle2">Export / Import JSON file</div>
+    <div class="text-body2">
+      Export and import data as JSON file, which include all the data recorded
+      in this app.
+    </div>
+    <q-btn
+      @click="exportJson"
+      size="md"
+      class="q-mt-md"
+      no-caps
+      label="Export JSON"
     />
-    <q-btn @click="importJson" class="q-my-md" label="Impont JSON file" />
+    <div class="row">
+      <q-file
+        dense
+        class="q-mr-md"
+        v-model="fileToImport"
+        :max-file-size="uploadSizeLimit"
+        @rejected="onUploadRejected"
+      />
+      <q-btn
+        @click="importJson"
+        size="md"
+        class="q-my-xs"
+        no-caps
+        label="Impont JSON"
+      />
+    </div>
+    <div class="text-subtitle2 q-mt-md">Export CSV file</div>
+    <div class="text-body2">
+      Export records as Toggl-compatible CSV data. Some data specific to this
+      app's features will be missing.
+    </div>
     <q-btn
       @click="exportTogglCSV(false)"
       class="q-my-md"
+      no-caps
       label="Export as Toggl CSV (for free plan)"
     />
     <q-btn
       @click="exportTogglCSV(true)"
       class="q-my-md"
+      no-caps
       label="Export as Toggl CSV (for paid plan)"
     />
   </div>

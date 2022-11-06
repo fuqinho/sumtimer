@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import {
@@ -14,6 +14,7 @@ import { useCacheStore } from 'src/stores/cache-store';
 import { useOngoingStore } from 'src/stores/ongoing-store';
 
 import TimeDisplay from 'src/components/TimeDisplay.vue';
+import SettingsForm from 'src/components/SettingsForm.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -23,6 +24,8 @@ const { isSignedIn, userProfilePicUrl, userDisplayName, userEmail } =
   storeToRefs(authStore);
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 const { ongoing, elapsedMillis } = storeToRefs(ongoingStore);
+
+const inSettings = ref(false);
 
 const bgColor = computed(() => {
   if (ongoing.value) {
@@ -85,7 +88,7 @@ function signOutUser() {
                   <q-item-label caption>{{ userEmail }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup>
+              <q-item clickable v-close-popup @click="inSettings = true">
                 <q-item-section side>
                   <q-icon name="settings" />
                 </q-item-section>
@@ -127,6 +130,9 @@ function signOutUser() {
       <router-view />
     </q-page-container>
   </q-layout>
+  <q-dialog v-model="inSettings">
+    <SettingsForm />
+  </q-dialog>
 </template>
 
 <style scoped>
