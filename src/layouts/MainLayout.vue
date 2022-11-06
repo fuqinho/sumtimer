@@ -19,7 +19,8 @@ const router = useRouter();
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const ongoingStore = useOngoingStore();
-const { isSignedIn, userProfilePicUrl } = storeToRefs(authStore);
+const { isSignedIn, userProfilePicUrl, userDisplayName, userEmail } =
+  storeToRefs(authStore);
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 const { ongoing, elapsedMillis } = storeToRefs(ongoingStore);
 
@@ -74,7 +75,16 @@ function signOutUser() {
             <q-avatar> <img :src="userProfilePicUrl" /> </q-avatar>
           </q-item-section>
           <q-menu>
-            <q-list style="min-width: 100px">
+            <q-list>
+              <q-item>
+                <q-item-section avatar>
+                  <q-avatar> <img :src="userProfilePicUrl" /></q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ userDisplayName }}</q-item-label>
+                  <q-item-label caption>{{ userEmail }}</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item clickable v-close-popup>
                 <q-item-section @click="signOutUser"> Sign out </q-item-section>
               </q-item>

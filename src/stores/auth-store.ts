@@ -15,6 +15,9 @@ export const useAuthStore = defineStore('auth', () => {
     if (user.value && user.value.photoURL) return user.value.photoURL;
     return undefined;
   });
+  const userEmail = computed(() => {
+    return user.value && user.value.email;
+  });
 
   function setCurrentUser(currentUser: User | null) {
     user.value = currentUser;
@@ -29,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
     isSignedIn,
     userDisplayName,
     userProfilePicUrl,
+    userEmail,
     setCurrentUser,
   };
 });
