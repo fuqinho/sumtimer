@@ -43,8 +43,8 @@ function goNextWeek() {
 
 <template>
   <q-page class="q-pa-md col items-center justify-evenly">
-    <q-btn @click="goPrevWeek">Prev</q-btn>
-    <q-btn @click="goNextWeek">Next</q-btn>
+    <q-btn @click="goPrevWeek" icon="navigate_before" size="sm" padding="xs" />
+    <q-btn @click="goNextWeek" icon="navigate_next" size="sm" padding="xs" />
     <WeekBars
       :start="start"
       :records="requestedRecords"
