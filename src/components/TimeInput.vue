@@ -45,9 +45,15 @@ function clearEditedTime() {
 </script>
 
 <template>
-  <div class="start-time row items-center">
-    <div v-if="!props.startTime" class="row items-start">
-      <q-icon name="event" class="cursor-pointer" size="14px" color="grey">
+  <div class="start-time row items-center input-container">
+    <div v-if="!props.startTime" class="row items-center day-container">
+      <div class="day-str">{{ dayStr }}</div>
+      <q-icon
+        name="event"
+        class="cursor-pointer day-icon"
+        size="14px"
+        color="grey"
+      >
         <q-popup-proxy
           @hide="clearEditedTime"
           cover
@@ -74,12 +80,12 @@ function clearEditedTime() {
           </q-date>
         </q-popup-proxy>
       </q-icon>
-      <div class="day-str">{{ dayStr }}</div>
     </div>
-    <div class="row items-start">
+    <div class="row items-center time-container">
+      <div class="time-str" color="light-green-10">{{ timeStr }}</div>
       <q-icon
         name="access_time"
-        class="cursor-pointer"
+        class="cursor-pointer time-icon"
         size="14px"
         color="grey"
       >
@@ -114,22 +120,25 @@ function clearEditedTime() {
           </q-time>
         </q-popup-proxy>
       </q-icon>
-      <div class="time-str" color="light-green-10">{{ timeStr }}</div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.input-container {
+  padding: 0;
+}
+
 .day-str {
   font-size: 20px;
-  margin-left: 2px;
-  margin-right: 14px;
   color: #444;
 }
 
+.day-container {
+  margin-right: 16px;
+}
+
 .time-str {
-  margin-left: 2px;
   font-size: 20px;
-  margin-right: 4px;
 }
 </style>
