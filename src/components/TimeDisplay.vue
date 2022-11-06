@@ -5,6 +5,7 @@ import { computed } from 'vue';
 interface Props {
   time: number;
   size?: string;
+  whity?: boolean;
 }
 const props = defineProps<Props>();
 
@@ -24,7 +25,7 @@ const second = computed(() => Math.floor((props.time % minuteMs) / secondMs));
 </script>
 
 <template>
-  <div :class="{ small: props.size === 'small' }">
+  <div :class="{ small: props.size === 'small', whity: props.whity }">
     <span v-if="hour" class="digit hour self-end">{{ hour }}</span>
     <span v-if="hour" class="colon hour self-end">:</span>
     <span v-if="hour" class="digit minute">
@@ -66,5 +67,16 @@ const second = computed(() => Math.floor((props.time % minuteMs) / secondMs));
 
 .small .colon {
   padding: 0 1px;
+}
+
+.whity .digit,
+.whity .colon {
+  color: #eee;
+}
+
+.whity .digit.second,
+.whity .colon.minute {
+  font-size: 22px;
+  color: #ccc;
 }
 </style>

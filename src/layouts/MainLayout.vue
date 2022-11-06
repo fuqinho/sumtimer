@@ -1,23 +1,28 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { storeToRefs } from 'pinia';
+
 import { useAuthStore } from 'stores/auth-store';
 import { useCacheStore } from 'src/stores/cache-store';
 import { useOngoingStore } from 'src/stores/ongoing-store';
-import { computed } from 'vue';
 
+import TimeDisplay from 'src/components/TimeDisplay.vue';
+
+const router = useRouter();
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const ongoingStore = useOngoingStore();
 const { isSignedIn, userDisplayName, userProfilePicUrl } =
   storeToRefs(authStore);
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
-const { ongoing } = storeToRefs(ongoingStore);
+const { ongoing, elapsedMillis } = storeToRefs(ongoingStore);
 
 const bgColor = computed(() => {
   if (ongoing.value) {
@@ -55,6 +60,15 @@ function signOutUser() {
           </q-avatar>
           Sumtimer
         </q-toolbar-title>
+
+        <q-item v-if="ongoing" class="q-py-none">
+          <TimeDisplay
+            class="ongoing"
+            :time="elapsedMillis"
+            whity
+            @click="router.push('/')"
+          />
+        </q-item>
 
         <q-item v-if="isSignedIn" clickable v-ripple>
           <q-item-section v-if="!!userProfilePicUrl" avatar>
@@ -97,3 +111,9 @@ function signOutUser() {
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped>
+.ongoing {
+  cursor: pointer;
+}
+</style>
