@@ -42,13 +42,13 @@ const second = computed(() => Math.floor((props.time % minuteMs) / secondMs));
 .colon {
   font-size: 32px;
   vertical-align: baseline;
-  color: #333;
+  color: rgba(0, 0, 0, 0.75);
 }
 
 .digit.second,
 .colon.minute {
   font-size: 22px;
-  color: #555;
+  color: rgba(0, 0, 0, 0.65);
 }
 
 .colon {
@@ -71,12 +71,12 @@ const second = computed(() => Math.floor((props.time % minuteMs) / secondMs));
 
 .whity .digit,
 .whity .colon {
-  color: #eee;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .whity .digit.second,
 .whity .colon.minute {
   font-size: 22px;
-  color: #ccc;
+  color: rgba(255, 255, 255, 0.8);
 }
 </style>
