@@ -238,19 +238,20 @@ async function exportTogglCSV(paid: boolean) {
     <div class="text-subtitle2 q-mt-md">Export CSV file</div>
     <div class="text-body2">
       Export records as Toggl-compatible CSV data. Some data specific to this
-      app's features will be missing.
+      app's features will be missing. For Toggl paid plan, Sumtimer Activities
+      will be exported as Toggl Tasks.
     </div>
     <q-btn
       @click="exportTogglCSV(false)"
-      class="q-my-md"
+      class="q-my-xs"
       no-caps
-      label="Export as Toggl CSV (for free plan)"
+      label="Export CSV (for Toggl free plan)"
     />
     <q-btn
       @click="exportTogglCSV(true)"
-      class="q-my-md"
+      class="q-my-xs"
       no-caps
-      label="Export as Toggl CSV (for paid plan)"
+      label="Export CSV (for Toggl paid plan)"
     />
   </div>
 </template>

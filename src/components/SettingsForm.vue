@@ -41,5 +41,7 @@ function deleteAccount() {
 <style scoped>
 .container {
   width: 100%;
+  height: 80%;
+  background-color: white;
 }
 </style>
