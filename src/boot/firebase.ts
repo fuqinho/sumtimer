@@ -1,5 +1,11 @@
 import { boot } from 'quasar/wrappers';
 import { initializeApp } from 'firebase/app';
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  initializeFirestore,
+} from 'firebase/firestore';
+import { connectAuthEmulator, getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_SUMTIMER_FIREBASE_API_KEY,
@@ -12,5 +18,13 @@ const firebaseConfig = {
 };
 
 export default boot(({}) => {
-  initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+
+  if (import.meta.env.DEV) {
+    const db = initializeFirestore(app, {
+      experimentalForceLongPolling: true,
+    });
+    connectFirestoreEmulator(getFirestore(app), 'localhost', 8080);
+    connectAuthEmulator(getAuth(app), 'http://localhost:9099');
+  }
 });
