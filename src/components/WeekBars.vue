@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { date } from 'quasar';
-import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
-import DayBar from 'src/components/DayBar.vue';
+import type { OngoingDocumentData, RecordDoc } from '@/types/documents';
+import DayBar from '@/components/DayBar.vue';
 
 interface RowData {
   start: Date;
@@ -14,12 +14,11 @@ interface RowData {
 }
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   start: Date;
   records: RecordDoc[];
   ongoing?: OngoingDocumentData;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 const rows = computed(() => {

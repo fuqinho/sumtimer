@@ -1,8 +1,7 @@
 <script setup lang="ts">
-interface Props {
+const props = defineProps<{
   modelValue: string;
-}
-const props = defineProps<Props>();
+}>();
 const emit = defineEmits(['update:modelValue']);
 
 const COLORS = [

@@ -2,22 +2,18 @@
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { CachedActivity } from 'src/types/documents';
-import {
-  defaultCategoryColor,
-  defaultCategoryName,
-} from 'src/common/constants';
-import { useRecordStore } from 'src/stores/record-store';
-import { useActivityStore } from 'src/stores/activity-store';
-import { useOngoingStore } from 'src/stores/ongoing-store';
-import { useCacheStore } from 'src/stores/cache-store';
-import ActivityForm from 'src/components/ActivityForm.vue';
+import type { CachedActivity } from '@/types/documents';
+import { defaultCategoryColor, defaultCategoryName } from '@/common/constants';
+import { useRecordStore } from '@/stores/record-store';
+import { useActivityStore } from '@/stores/activity-store';
+import { useOngoingStore } from '@/stores/ongoing-store';
+import { useCacheStore } from '@/stores/cache-store';
+import ActivityForm from '@/components/ActivityForm.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   act: CachedActivity;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 const activityStore = useActivityStore();
@@ -75,11 +71,11 @@ async function deleteActivity() {
       }"
     ></div>
     <q-btn
-      @click="startActivity"
       round
       :style="{ color: categoryColor }"
       flat
       icon="play_arrow"
+      @click="startActivity"
     />
     <q-item-section>
       <q-item-label
@@ -110,13 +106,13 @@ async function deleteActivity() {
     </q-item-section>
     <q-item-section side>
       <div class="text-grey-7 q-gutter-xs">
-        <q-btn size="sm" @click="editing = true" round flat icon="edit" />
+        <q-btn size="sm" round flat icon="edit" @click="editing = true" />
         <q-btn
           size="sm"
-          @click="startDeleteActivity"
           round
           flat
           icon="delete"
+          @click="startDeleteActivity"
         />
       </div>
     </q-item-section>
@@ -135,13 +131,13 @@ async function deleteActivity() {
         </span>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn flat label="Cancel" color="primary" v-close-popup />
+        <q-btn v-close-popup flat label="Cancel" color="primary" />
         <q-btn
-          @click="deleteActivity"
+          v-close-popup
           flat
           label="Delete records"
           color="primary"
-          v-close-popup
+          @click="deleteActivity"
         />
       </q-card-actions>
     </q-card>

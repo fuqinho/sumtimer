@@ -14,21 +14,21 @@ import {
   query,
   QuerySnapshot,
   Timestamp,
-  Unsubscribe,
+  type Unsubscribe,
   where,
   WriteBatch,
   writeBatch,
 } from 'firebase/firestore';
-import {
+import type {
   RecordDocumentData,
   RecordDoc,
   RecordChange,
-} from 'src/types/documents';
-import { PortableRecord } from 'src/types/portable';
-import { useAuthStore } from 'src/stores/auth-store';
-import { useCacheStore } from 'src/stores/cache-store';
-import { useActivityStore } from 'src/stores/activity-store';
-import { useUtil } from 'src/composables/util';
+} from '@/types/documents';
+import type { PortableRecord } from '@/types/portable';
+import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
+import { useActivityStore } from '@/stores/activity-store';
+import { useUtil } from '@/composables/util';
 
 export const useRecordStore = defineStore('records', () => {
   console.log('Setup recordStore start');

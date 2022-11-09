@@ -1,24 +1,20 @@
 <script setup lang="ts">
-import { Timestamp } from '@firebase/firestore';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import {
-  defaultActivityName,
-  defaultCategoryColor,
-} from 'src/common/constants';
-import { OngoingDocumentData, RecordDoc } from 'src/types/documents';
-import { computed, ref } from 'vue';
-import { useCacheStore } from 'src/stores/cache-store';
-import RecordView from 'src/components/RecordView.vue';
+import { Timestamp } from 'firebase/firestore';
+import type { OngoingDocumentData, RecordDoc } from '@/types/documents';
+import { defaultActivityName, defaultCategoryColor } from '@/common/constants';
+import { useCacheStore } from '@/stores/cache-store';
+import RecordView from '@/components/RecordView.vue';
 
-interface Props {
+const props = defineProps<{
   dayStart: number;
   dayEnd: number;
   doc?: RecordDoc;
   ongoing?: OngoingDocumentData;
   now?: number;
-}
-const props = defineProps<Props>();
+}>();
 
 const cacheStore = useCacheStore();
 
@@ -141,9 +137,9 @@ const subs = computed(() => {
 <template>
   <div class="container" :style="containerStyle" @click="editing = true">
     <div
-      class="sub"
       v-for="(sub, i) in subs"
       :key="sub.start.toMillis()"
+      class="sub"
       :style="subStyles[i]"
     ></div>
 

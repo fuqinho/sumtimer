@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { RecordDoc } from 'src/types/documents';
-import {
-  defaultCategoryColor,
-  defaultCategoryName,
-} from 'src/common/constants';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import { useRecordStore } from 'src/stores/record-store';
-import { useCacheStore } from 'src/stores/cache-store';
-import RecordView from 'src/components/RecordView.vue';
+import type { RecordDoc } from '@/types/documents';
+import { defaultCategoryColor, defaultCategoryName } from '@/common/constants';
+import { useRecordStore } from '@/stores/record-store';
+import { useCacheStore } from '@/stores/cache-store';
+import RecordView from '@/components/RecordView.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   doc: RecordDoc;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 
@@ -105,10 +101,10 @@ async function deleteRecord() {
     </q-item-section>
     <q-item-section>{{ hours }}</q-item-section>
     <q-item-section side>
-      <q-btn @click="editing = true" round color="gray" flat icon="edit" />
+      <q-btn round color="gray" flat icon="edit" @click="editing = true" />
     </q-item-section>
     <q-item-section side>
-      <q-btn @click="deleteRecord" round color="gray" flat icon="delete" />
+      <q-btn round color="gray" flat icon="delete" @click="deleteRecord" />
     </q-item-section>
   </q-item>
   <q-dialog v-model="editing">

@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import TimeInput from 'src/components/TimeInput.vue';
-import TimeDisplay from 'src/components/TimeDisplay.vue';
 import { computed } from 'vue';
+import TimeInput from '@/components/TimeInput.vue';
+import TimeDisplay from '@/components/TimeDisplay.vue';
 
-interface Props {
+const props = defineProps<{
   start: Date;
   end: Date;
   min?: Date;
   max?: Date;
-}
-const props = defineProps<Props>();
+}>();
 interface Emits {
   (e: 'onChangeStart', time: Date): void;
   (e: 'onChangeEnd', time: Date): void;
@@ -27,7 +26,7 @@ const duration = computed(() => {
     <div class="nyoro">~</div>
     <TimeInput
       :time="props.end"
-      :startTime="props.start"
+      :start-time="props.start"
       @on-change="emit('onChangeEnd', $event)"
     />
     <q-space />

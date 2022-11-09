@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import ImportExport from 'src/components/ImportExport.vue';
+import ImportExport from '@/components/ImportExport.vue';
 
 const $q = useQuasar();
 

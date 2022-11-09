@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { recordsPerPage } from 'src/common/constants';
-import RecordItem from 'src/components/RecordItem.vue';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { Unsubscribe } from '@firebase/util';
 import {
   collection,
   endBefore,
@@ -16,15 +13,17 @@ import {
   QuerySnapshot,
   startAfter,
   where,
-} from '@firebase/firestore';
-import { RecordDoc, RecordDocumentData } from 'src/types/documents';
+  type Unsubscribe,
+} from 'firebase/firestore';
+import type { RecordDoc, RecordDocumentData } from '@/types/documents';
+import { recordsPerPage } from '@/common/constants';
+import RecordItem from '@/components/RecordItem.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   uid: string;
   aid?: string;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 
@@ -185,18 +184,18 @@ watch(currentSnapshot, async (snapshot) => {
     </q-list>
     <div class="row items-center justify-center">
       <q-btn
-        @click="loadPrev"
         icon="navigate_before"
         :disable="!hasPrev"
         size="md"
         padding="xs"
+        @click="loadPrev"
       />
       <q-btn
-        @click="loadNext"
         icon="navigate_next"
         :disable="!hasNext"
         size="md"
         padding="xs"
+        @click="loadNext"
       />
     </div>
   </div>

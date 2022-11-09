@@ -1,3 +1,4 @@
+import { computed } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import {
   collection,
@@ -13,11 +14,10 @@ import {
   DocumentReference,
   WriteBatch,
 } from 'firebase/firestore';
-import { CategoryChange, CategoryDocumentData } from 'src/types/documents';
-import { PortableCategory } from 'src/types/portable';
-import { useAuthStore } from 'src/stores/auth-store';
-import { useCacheStore } from 'src/stores/cache-store';
-import { computed } from 'vue';
+import type { CategoryChange, CategoryDocumentData } from '@/types/documents';
+import type { PortableCategory } from '@/types/portable';
+import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
 
 export const useCategoryStore = defineStore('catgories', () => {
   console.log('Setup categoryStore start');

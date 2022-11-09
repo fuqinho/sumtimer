@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import ActivityList from 'src/components/ActivityList.vue';
-import OngoingRecord from 'src/components/OngoingRecord.vue';
-import WeekBars from 'src/components/WeekBars.vue';
-import { useRecordStore } from 'src/stores/record-store';
 import { storeToRefs } from 'pinia';
-import { useOngoingStore } from 'src/stores/ongoing-store';
-import { useAuthStore } from 'src/stores/auth-store';
-import { useUtil } from 'src/composables/util';
+import { useUtil } from '@/composables/util';
+import { useRecordStore } from '@/stores/record-store';
+import { useOngoingStore } from '@/stores/ongoing-store';
+import { useAuthStore } from '@/stores/auth-store';
+import ActivityList from '@/components/ActivityList.vue';
+import OngoingRecord from '@/components/OngoingRecord.vue';
+import WeekBars from '@/components/WeekBars.vue';
 
 const authStore = useAuthStore();
 const { uid } = storeToRefs(authStore);

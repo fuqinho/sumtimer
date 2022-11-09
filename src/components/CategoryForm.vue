@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CachedCategory } from 'src/types/documents';
-import {
-  defaultCategoryColor,
-  defaultCategoryName,
-} from 'src/common/constants';
-import { useCategoryStore } from 'src/stores/category-store';
-import ColorPalette from 'src/components/ColorPalette.vue';
+import type { CachedCategory } from '@/types/documents';
+import { defaultCategoryColor, defaultCategoryName } from '@/common/constants';
+import { useCategoryStore } from '@/stores/category-store';
+import ColorPalette from '@/components/ColorPalette.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   cat?: CachedCategory;
-}
-const props = defineProps<Props>();
+}>();
 const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
 
 // =========================== Use stores/composables ==========================
@@ -65,7 +61,7 @@ async function deleteCategory() {
         :style="{ color: color }"
         class="q-mr-sm"
       />
-      <q-input dense v-model="name" class="cat-name" />
+      <q-input v-model="name" dense class="cat-name" />
     </q-card-section>
     <q-card-section>
       <ColorPalette v-model="color" />
@@ -80,9 +76,9 @@ async function deleteCategory() {
         @click="deleteCategory"
       />
       <q-space />
-      <q-btn label="Cancel" flat v-close-popup></q-btn>
-      <q-btn label="Save" v-if="props.cat" color="primary" @click="update" />
-      <q-btn label="Add" v-else color="primary" @click="add" />
+      <q-btn v-close-popup label="Cancel" flat></q-btn>
+      <q-btn v-if="props.cat" label="Save" color="primary" @click="update" />
+      <q-btn v-else label="Add" color="primary" @click="add" />
     </q-card-actions>
   </q-card>
 </template>

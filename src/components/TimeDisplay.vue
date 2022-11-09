@@ -2,12 +2,11 @@
 import { computed } from 'vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   time: number;
   size?: string;
   whity?: boolean;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 // =========================== Computed properties =============================

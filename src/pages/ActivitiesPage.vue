@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import ActivityForm from 'src/components/ActivityForm.vue';
-import ActivityList from 'src/components/ActivityList.vue';
-import CategoryTab from 'src/components/CategoryTab.vue';
 import { computed, ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import CategoryForm from 'src/components/CategoryForm.vue';
-import { CachedCategory } from 'src/types/documents';
-import { useAuthStore } from 'src/stores/auth-store';
 import { useRoute } from 'vue-router';
-import { useCacheStore } from 'src/stores/cache-store';
+import { storeToRefs } from 'pinia';
+import type { CachedCategory } from '@/types/documents';
+import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
+import ActivityForm from '@/components/ActivityForm.vue';
+import ActivityList from '@/components/ActivityList.vue';
+import CategoryTab from '@/components/CategoryTab.vue';
+import CategoryForm from '@/components/CategoryForm.vue';
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -45,7 +45,7 @@ function onEditCategoryClicked(cid: string) {
 <template>
   <div class="q-py-md q-pr-md">
     <q-splitter v-model="splitterModel">
-      <template v-slot:before>
+      <template #before>
         <div>
           <q-tabs
             v-model="tab"
@@ -63,7 +63,6 @@ function onEditCategoryClicked(cid: string) {
             />
           </q-tabs>
           <q-btn
-            @click="creatingCategory = true"
             color="grey"
             outline
             rounded
@@ -71,13 +70,13 @@ function onEditCategoryClicked(cid: string) {
             label="Add category"
             size="md"
             style="margin: 12px 8px"
+            @click="creatingCategory = true"
           />
         </div>
       </template>
-      <template v-slot:after>
+      <template #after>
         <ActivityList v-if="uid" :uid="uid" :cid="cid" />
         <q-btn
-          @click="creatingActivity = true"
           color="grey"
           outline
           rounded
@@ -85,6 +84,7 @@ function onEditCategoryClicked(cid: string) {
           label="Add activity"
           size="md"
           style="margin: 0 16px"
+          @click="creatingActivity = true"
         />
       </template>
     </q-splitter>
@@ -101,9 +101,9 @@ function onEditCategoryClicked(cid: string) {
   </q-dialog>
   <q-dialog v-model="editingCategory">
     <CategoryForm
+      :cat="currentCategory"
       @on-updated="editingCategory = false"
       @on-deleted="editingCategory = false"
-      :cat="currentCategory"
     />
   </q-dialog>
 </template>

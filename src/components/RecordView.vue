@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useCacheStore } from 'src/stores/cache-store';
-import { RecordChange, RecordDoc } from 'src/types/documents';
 import { computed, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import { useUtil } from 'src/composables/util';
-import TimeSectionInput from 'src/components/TimeSectionInput.vue';
-import { useRecordStore } from 'src/stores/record-store';
-import { Timestamp } from '@firebase/firestore';
-import ActivityPicker from 'src/components/ActivityPicker.vue';
+import { Timestamp } from 'firebase/firestore';
+import type { RecordChange, RecordDoc } from '@/types/documents';
+import { useUtil } from '@/composables/util';
+import { useCacheStore } from '@/stores/cache-store';
+import { useRecordStore } from '@/stores/record-store';
+import TimeSectionInput from '@/components/TimeSectionInput.vue';
+import ActivityPicker from '@/components/ActivityPicker.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   doc: RecordDoc;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();
@@ -132,18 +131,18 @@ function onSelectActivity(activityId: string) {
       </div>
     </q-card-section>
     <q-card-section>
-      <q-input label="memo" v-model="memo" dense clearable autogrow></q-input>
+      <q-input v-model="memo" label="memo" dense clearable autogrow></q-input>
     </q-card-section>
     <q-card-actions>
       <q-btn flat round icon="delete" color="negative" @click="deleteRecord" />
       <q-space />
-      <q-btn v-if="hasChange" label="Cancel" flat v-close-popup />
-      <q-btn v-else label="Close" flat v-close-popup />
+      <q-btn v-if="hasChange" v-close-popup label="Cancel" flat />
+      <q-btn v-else v-close-popup label="Close" flat />
       <q-btn
         v-if="hasChange"
+        v-close-popup
         label="Save"
         color="primary"
-        v-close-popup
         @click="save"
       />
     </q-card-actions>

@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore';
+import type { Timestamp } from 'firebase/firestore';
 
 export function useTimeUtil() {
   const second_ms = 1000;

@@ -14,10 +14,10 @@ import {
   getDoc,
   WriteBatch,
 } from 'firebase/firestore';
-import { ActivityDocumentData, ActivityChange } from 'src/types/documents';
-import { PortableActivity } from 'src/types/portable';
-import { useAuthStore } from 'src/stores/auth-store';
-import { useCacheStore } from 'src/stores/cache-store';
+import type { ActivityDocumentData, ActivityChange } from '@/types/documents';
+import type { PortableActivity } from '@/types/portable';
+import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
 
 export const useActivityStore = defineStore('activities', () => {
   console.log('Setup activityStore start');

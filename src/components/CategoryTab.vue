@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { CachedCategory } from 'src/types/documents';
-import { useCategoryStore } from 'src/stores/category-store';
 import { computed } from 'vue';
+import type { CachedCategory } from '@/types/documents';
+import { useCategoryStore } from '@/stores/category-store';
 
-interface Props {
+const props = defineProps<{
   cat?: CachedCategory;
-}
-const props = defineProps<Props>();
+}>();
 interface Emits {
   (e: 'onEdit', cid: string): void;
 }
@@ -72,12 +71,12 @@ async function moveDown() {
       <q-item-section v-if="!!props.cat" class="actions" side>
         <div class="row">
           <q-btn
-            @click.prevent="emit('onEdit', name)"
             size="sm"
             round
             flat
             icon="edit"
             class="self-center"
+            @click.prevent="emit('onEdit', name)"
           ></q-btn>
           <div class="column">
             <q-icon

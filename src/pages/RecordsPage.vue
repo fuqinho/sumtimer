@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import RecordList from 'src/components/RecordList.vue';
 import { computed } from 'vue';
-import { useAuthStore } from 'src/stores/auth-store';
+import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import { useAuthStore } from '@/stores/auth-store';
+import RecordList from '@/components/RecordList.vue';
 
 const route = useRoute();
 const authStore = useAuthStore();

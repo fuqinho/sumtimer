@@ -1,3 +1,5 @@
+import { computed, ref, watch } from 'vue';
+import { defineStore, storeToRefs } from 'pinia';
 import {
   arrayUnion,
   deleteDoc,
@@ -7,23 +9,21 @@ import {
   onSnapshot,
   setDoc,
   Timestamp,
-  Unsubscribe,
+  type Unsubscribe,
   updateDoc,
 } from 'firebase/firestore';
-import { defineStore, storeToRefs } from 'pinia';
+import type { OngoingDocumentData } from '@/types/documents';
+import type { PortableRecord } from '@/types/portable';
 import {
   defaultActivityName,
   defaultCategoryColor,
   defaultCategoryName,
   maxPauseDurationMs,
-} from 'src/common/constants';
-import { OngoingDocumentData } from 'src/types/documents';
-import { useRecordStore } from 'src/stores/record-store';
-import { useAuthStore } from 'src/stores/auth-store';
-import { computed, ref, watch } from 'vue';
-import { useCacheStore } from './cache-store';
-import { PortableRecord } from 'src/types/portable';
-import { useTimeStore } from './time-store';
+} from '@/common/constants';
+import { useRecordStore } from '@/stores/record-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
+import { useTimeStore } from '@/stores/time-store';
 
 export const useOngoingStore = defineStore('ongoing', () => {
   console.log('Setup ongoingStore start');

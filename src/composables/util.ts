@@ -1,6 +1,6 @@
 import { date } from 'quasar';
-import { startDayOfWeek, startHourOfDay } from 'src/common/constants';
-import { RecordDocumentData } from 'src/types/documents';
+import { startDayOfWeek, startHourOfDay } from '@/common/constants';
+import type { RecordDocumentData } from '@/types/documents';
 
 export function useUtil() {
   function startOfDay(time: Date) {

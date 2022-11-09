@@ -2,11 +2,10 @@
 import { computed, ref } from 'vue';
 import { date } from 'quasar';
 
-interface Props {
+const props = defineProps<{
   time: Date;
   startTime?: Date;
-}
-const props = defineProps<Props>();
+}>();
 interface Emits {
   (e: 'onChange', time: Date): void;
 }
@@ -55,26 +54,26 @@ function clearEditedTime() {
         color="grey"
       >
         <q-popup-proxy
-          @hide="clearEditedTime"
           cover
           transition-show="scale"
           transition-hide="scale"
+          @hide="clearEditedTime"
         >
           <q-date v-model="model" mask="YYYY-MM-DD HH:mm:ss" today-btn>
             <div class="row items-center justify-end">
               <q-btn
-                @click="clearEditedTime"
                 v-close-popup
                 label="Cancel"
                 color="grey-8"
                 flat
+                @click="clearEditedTime"
               />
               <q-btn
-                @click="commitEditedTime"
                 v-close-popup
                 label="Set"
                 color="primary"
                 flat
+                @click="commitEditedTime"
               />
             </div>
           </q-date>
@@ -90,10 +89,10 @@ function clearEditedTime() {
         color="grey"
       >
         <q-popup-proxy
-          @hide="clearEditedTime"
           cover
           transition-show="scale"
           transition-hide="scale"
+          @hide="clearEditedTime"
         >
           <q-time
             v-model="model"
@@ -103,18 +102,18 @@ function clearEditedTime() {
           >
             <div class="row items-center justify-end">
               <q-btn
-                @click="clearEditedTime"
                 v-close-popup
                 label="Cancel"
                 color="grey-8"
                 flat
+                @click="clearEditedTime"
               />
               <q-btn
-                @click="commitEditedTime"
                 v-close-popup
                 label="Set"
                 color="primary"
                 flat
+                @click="commitEditedTime"
               />
             </div>
           </q-time>

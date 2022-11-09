@@ -7,19 +7,21 @@ import {
   DocumentReference,
   getFirestore,
   onSnapshot,
-  Unsubscribe,
+  type Unsubscribe,
   WriteBatch,
   Timestamp,
   increment,
   FieldValue,
 } from 'firebase/firestore';
-import {
+import type {
   ActivityDocumentData,
+  CachedCategory,
+  CachedActivity,
   CacheDocumentData,
   CategoryDocumentData,
   RecordDocumentData,
-} from 'src/types/documents';
-import { useAuthStore } from 'src/stores/auth-store';
+} from '@/types/documents';
+import { useAuthStore } from '@/stores/auth-store';
 
 export const useCacheStore = defineStore('cache', () => {
   // =========================== Use stores/composables ==========================
@@ -34,19 +36,21 @@ export const useCacheStore = defineStore('cache', () => {
   const colRef = computed(() => collection(db.value, 'cache'));
   const docRef = computed(() => doc(colRef.value, uid.value));
   const categories = computed(() => {
-    if (!cache.value) return [];
+    if (!cache.value) return [] as CachedCategory[];
     return Object.entries(cache.value.categories)
       .map((item) => ({ id: item[0], data: item[1] }))
-      .sort((a, b) => a.data.order - b.data.order);
+      .sort((a, b) => a.data.order - b.data.order) as CachedCategory[];
   });
   const idToCategory = computed(() => {
     return cache.value ? cache.value.categories : {};
   });
   const activities = computed(() => {
-    if (!cache.value) return [];
+    if (!cache.value) return [] as CachedActivity[];
     return Object.entries(cache.value.activities)
       .map((item) => ({ id: item[0], data: item[1] }))
-      .sort((a, b) => b.data.updated.toMillis() - a.data.updated.toMillis());
+      .sort(
+        (a, b) => b.data.updated.toMillis() - a.data.updated.toMillis()
+      ) as CachedActivity[];
   });
   const idToActivity = computed(() => {
     return cache.value ? cache.value.activities : {};

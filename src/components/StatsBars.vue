@@ -1,18 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import { useCacheStore } from 'src/stores/cache-store';
-import { RecordDoc } from 'src/types/documents';
-import { computed } from 'vue';
-import { useUtil } from 'src/composables/util';
+import type { RecordDoc } from '@/types/documents';
+import { useCacheStore } from '@/stores/cache-store';
+import { useUtil } from '@/composables/util';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   start: Date;
   end: Date;
   records: RecordDoc[];
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { maxMemoLength, maxTimeFrames } from 'src/common/constants';
-import { date, useQuasar } from 'quasar';
-import { useActivityStore } from 'src/stores/activity-store';
-import { useCategoryStore } from 'src/stores/category-store';
-import { useRecordStore } from 'src/stores/record-store';
 import { ref } from 'vue';
-import { useAuthStore } from 'src/stores/auth-store';
-import {
+import { date, useQuasar } from 'quasar';
+import type {
   PortableCategory,
   PortableActivity,
   PortableData,
-} from 'src/types/portable';
+} from '@/types/portable';
+import { maxMemoLength, maxTimeFrames } from '@/common/constants';
+import { useActivityStore } from '@/stores/activity-store';
+import { useCategoryStore } from '@/stores/category-store';
+import { useRecordStore } from '@/stores/record-store';
+import { useAuthStore } from '@/stores/auth-store';
 
 const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
@@ -213,26 +213,26 @@ async function exportTogglCSV(paid: boolean) {
       in this app.
     </div>
     <q-btn
-      @click="exportJson"
       size="md"
       class="q-mt-md"
       no-caps
       label="Export JSON"
+      @click="exportJson"
     />
     <div class="row">
       <q-file
+        v-model="fileToImport"
         dense
         class="q-mr-md"
-        v-model="fileToImport"
         :max-file-size="uploadSizeLimit"
         @rejected="onUploadRejected"
       />
       <q-btn
-        @click="importJson"
         size="md"
         class="q-my-xs"
         no-caps
         label="Impont JSON"
+        @click="importJson"
       />
     </div>
     <div class="text-subtitle2 q-mt-md">Export CSV file</div>
@@ -242,16 +242,16 @@ async function exportTogglCSV(paid: boolean) {
       will be exported as Toggl Tasks.
     </div>
     <q-btn
-      @click="exportTogglCSV(false)"
       class="q-my-xs"
       no-caps
       label="Export CSV (for Toggl free plan)"
+      @click="exportTogglCSV(false)"
     />
     <q-btn
-      @click="exportTogglCSV(true)"
       class="q-my-xs"
       no-caps
       label="Export CSV (for Toggl paid plan)"
+      @click="exportTogglCSV(true)"
     />
   </div>
 </template>

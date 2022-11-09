@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { date } from 'quasar';
-import { useUtil } from 'src/composables/util';
-import { useRecordStore } from 'src/stores/record-store';
 import { storeToRefs } from 'pinia';
-
-import { useAuthStore } from 'src/stores/auth-store';
-import { useOngoingStore } from 'src/stores/ongoing-store';
-import WeekBars from 'src/components/WeekBars.vue';
-import StatsBars from 'src/components/StatsBars.vue';
+import { date } from 'quasar';
+import { useUtil } from '@/composables/util';
+import { useRecordStore } from '@/stores/record-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useOngoingStore } from '@/stores/ongoing-store';
+import WeekBars from '@/components/WeekBars.vue';
+import StatsBars from '@/components/StatsBars.vue';
 
 const authStore = useAuthStore();
 const recordStore = useRecordStore();
@@ -43,8 +42,8 @@ function goNextWeek() {
 
 <template>
   <q-page class="q-pa-md col items-center justify-evenly">
-    <q-btn @click="goPrevWeek" icon="navigate_before" size="sm" padding="xs" />
-    <q-btn @click="goNextWeek" icon="navigate_next" size="sm" padding="xs" />
+    <q-btn icon="navigate_before" size="sm" padding="xs" @click="goPrevWeek" />
+    <q-btn icon="navigate_next" size="sm" padding="xs" @click="goNextWeek" />
     <WeekBars
       :start="start"
       :records="requestedRecords"

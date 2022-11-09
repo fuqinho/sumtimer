@@ -8,13 +8,11 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-
-import { useAuthStore } from 'stores/auth-store';
-import { useCacheStore } from 'src/stores/cache-store';
-import { useOngoingStore } from 'src/stores/ongoing-store';
-
-import TimeDisplay from 'src/components/TimeDisplay.vue';
-import SettingsForm from 'src/components/SettingsForm.vue';
+import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
+import { useOngoingStore } from '@/stores/ongoing-store';
+import TimeDisplay from '@/components/TimeDisplay.vue';
+import SettingsForm from '@/components/SettingsForm.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -73,7 +71,7 @@ function signOutUser() {
           />
         </q-item>
 
-        <q-item v-if="isSignedIn" clickable v-ripple>
+        <q-item v-if="isSignedIn" v-ripple clickable>
           <q-item-section v-if="!!userProfilePicUrl" avatar class="profile-pic">
             <q-avatar> <img :src="userProfilePicUrl" /> </q-avatar>
           </q-item-section>
@@ -88,13 +86,13 @@ function signOutUser() {
                   <q-item-label caption>{{ userEmail }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup @click="inSettings = true">
+              <q-item v-close-popup clickable @click="inSettings = true">
                 <q-item-section side>
                   <q-icon name="settings" />
                 </q-item-section>
                 <q-item-section>Settings</q-item-section>
               </q-item>
-              <q-item clickable v-close-popup>
+              <q-item v-close-popup clickable>
                 <q-item-section side>
                   <q-icon name="logout" />
                 </q-item-section>
@@ -107,7 +105,7 @@ function signOutUser() {
         <q-btn v-else color="primary" label="Sign in">
           <q-menu>
             <q-list style="min-width: 100px">
-              <q-item clickable v-close-popup>
+              <q-item v-close-popup clickable>
                 <q-item-section @click="signInWithGoolge">
                   Sign in with Google
                 </q-item-section>

@@ -3,10 +3,9 @@ import { computed } from 'vue';
 import { date } from 'quasar';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   time: Date;
-}
-const props = defineProps<Props>();
+}>();
 const emit = defineEmits(['update:time']);
 
 // =========================== Use stores/composables ==========================
@@ -26,7 +25,7 @@ const model = computed({
 
 <template>
   <q-input v-model="model">
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="event" class="cursor-pointer">
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
           <q-date v-model="model" mask="YYYY-MM-DD HH:mm">
@@ -38,7 +37,7 @@ const model = computed({
       </q-icon>
     </template>
 
-    <template v-slot:append>
+    <template #append>
       <q-icon name="access_time" class="cursor-pointer">
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
           <q-time v-model="model" mask="YYYY-MM-DD HH:mm">

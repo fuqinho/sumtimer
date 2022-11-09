@@ -2,10 +2,10 @@
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
-import { maxPauseDurationMs } from 'src/common/constants';
-import { useOngoingStore } from 'src/stores/ongoing-store';
-import TimeDisplay from 'src/components/TimeDisplay.vue';
-import TimeInput from 'src/components/TimeInput.vue';
+import { maxPauseDurationMs } from '@/common/constants';
+import { useOngoingStore } from '@/stores/ongoing-store';
+import TimeDisplay from '@/components/TimeDisplay.vue';
+import TimeInput from '@/components/TimeInput.vue';
 
 // =========================== Properties/Emitters =============================
 
@@ -76,7 +76,7 @@ async function recordMemo() {
           <div class="time-str">~</div>
           <TimeInput
             :time="sub.end.toDate()"
-            :startTime="sub.start.toDate()"
+            :start-time="sub.start.toDate()"
             @on-change="ongoingStore.updateSubEnd(i, $event)"
           />
         </div>

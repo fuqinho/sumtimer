@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import { User } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 export const useAuthStore = defineStore('auth', () => {
   console.log('Setup authStore start');

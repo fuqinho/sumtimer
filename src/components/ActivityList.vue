@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import ActivityItem from 'src/components/ActivityItem.vue';
 import { computed } from 'vue';
-import { useCacheStore } from 'src/stores/cache-store';
 import { storeToRefs } from 'pinia';
+import { useCacheStore } from '@/stores/cache-store';
+import ActivityItem from '@/components/ActivityItem.vue';
 
 // =========================== Properties/Emitters =============================
-interface Props {
+const props = defineProps<{
   uid: string;
   cid?: string;
-}
-const props = defineProps<Props>();
+}>();
 
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();

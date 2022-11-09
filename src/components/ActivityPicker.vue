@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useCacheStore } from 'src/stores/cache-store';
 import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useCacheStore } from '@/stores/cache-store';
 
-interface Props {
+const props = defineProps<{
   aid: string;
-}
-const props = defineProps<Props>();
+}>();
 interface Emits {
   (e: 'onSelect', aid: string): void;
 }
