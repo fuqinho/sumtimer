@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n';
-import { Quasar } from 'quasar';
+import { Quasar, Notify } from 'quasar';
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import {
@@ -69,7 +69,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
-app.use(Quasar, { plugins: {} });
+app.use(Quasar, { plugins: { Notify } });
 app.use(i18n);
 
 app.mount('#app');
