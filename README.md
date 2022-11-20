@@ -2,7 +2,9 @@
 
 A timer app to record daily activities.
 
-## Install the dependencies
+## How to build and run
+
+### Install the dependencies
 
 ```bash
 npm install
@@ -32,6 +34,19 @@ npm run build
 npm run deploy
 ```
 
-### Customize the configuration
+### Test the app (unit tests)
 
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+```bash
+npm run test:unit
+```
+
+### Test the app (e2e tests with Firebase emulator)
+
+```bash
+npm run test:e2e:dev:emulator # Open the UI to run tests separately.
+```
+
+```bash
+npm run build:emulator
+npm run test:e2e:emulator # Run all tests on the built app.
+```

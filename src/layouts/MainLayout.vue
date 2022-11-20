@@ -102,7 +102,7 @@ function signOutUser() {
           </q-menu>
         </q-item>
 
-        <q-btn v-else color="primary" label="Sign in">
+        <q-btn v-else id="btn-signin" color="primary" label="Sign in">
           <q-menu>
             <q-list style="min-width: 100px">
               <q-item v-close-popup clickable>

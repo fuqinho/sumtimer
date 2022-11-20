@@ -18,5 +18,5 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
   },
-  ignorePatterns: ['functions/'],
+  ignorePatterns: ['functions/', 'cypress/**/*.cy.js'],
 };

@@ -42,3 +42,7 @@ firebase-debug.log
 firestore-debug.log
 ui-debug.log
 firebase_export
+
+# Cypress
+/cypress/videos
+/cypress/screenshots
