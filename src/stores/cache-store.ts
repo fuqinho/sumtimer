@@ -12,12 +12,19 @@ import {
   Timestamp,
   increment,
   FieldValue,
+  query,
+  where,
+  getDocs,
+  QuerySnapshot,
+  setDoc,
 } from 'firebase/firestore';
 import type {
   ActivityDocumentData,
   CachedCategory,
   CachedActivity,
   CacheDocumentData,
+  CachedCategoryData,
+  CachedActivityData,
   CategoryDocumentData,
   RecordDocumentData,
 } from '@/types/documents';
@@ -218,6 +225,58 @@ export const useCacheStore = defineStore('cache', () => {
     }
   }
 
+  async function recomputeCache() {
+    const docData = {
+      categories: {} as { [key: string]: CachedCategoryData },
+      activities: {} as { [key: string]: CachedActivityData },
+    } as CacheDocumentData;
+
+    // Read all categories from collection.
+    const snapCats = (await getDocs(
+      query(
+        collection(getFirestore(), 'categories'),
+        where('uid', '==', uid.value)
+      )
+    )) as QuerySnapshot<CategoryDocumentData>;
+    for (const cat of snapCats.docs) {
+      docData.categories[cat.id] = {
+        label: cat.data().label,
+        color: cat.data().color,
+        order: cat.data().order,
+      };
+    }
+    // Read all activities from collection.
+    const snapActs = (await getDocs(
+      query(
+        collection(getFirestore(), 'activities'),
+        where('uid', '==', uid.value)
+      )
+    )) as QuerySnapshot<ActivityDocumentData>;
+    for (const act of snapActs.docs) {
+      docData.activities[act.id] = {
+        label: act.data().label,
+        cid: act.data().cid,
+        duration: 0,
+        count: 0,
+        updated: act.data().updated,
+      };
+    }
+    // Read all records from collection.
+    const snapRecs = (await getDocs(
+      query(
+        collection(getFirestore(), 'records'),
+        where('uid', '==', uid.value)
+      )
+    )) as QuerySnapshot<RecordDocumentData>;
+    for (const rec of snapRecs.docs) {
+      const aid = rec.data().aid;
+      docData.activities[aid].duration += rec.data().duration;
+      docData.activities[aid].count++;
+    }
+    // Replace the cache with the newly computed one.
+    await setDoc(docRef.value, docData);
+  }
+
   // =========================== Additional setup ================================
   let unsubscribe = null as Unsubscribe | null;
   onUpdateUid();
@@ -268,5 +327,6 @@ export const useCacheStore = defineStore('cache', () => {
     onRecordAdded,
     onRecordDeleted,
     onRecordUpdated,
+    recomputeCache,
   };
 });

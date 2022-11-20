@@ -11,11 +11,13 @@ import { useActivityStore } from '@/stores/activity-store';
 import { useCategoryStore } from '@/stores/category-store';
 import { useRecordStore } from '@/stores/record-store';
 import { useAuthStore } from '@/stores/auth-store';
+import { useCacheStore } from '@/stores/cache-store';
 
 const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
 const activityStore = useActivityStore();
 const recordStore = useRecordStore();
+const cacheStore = useCacheStore();
 const $q = useQuasar();
 
 const currentVersion = 1;
@@ -130,6 +132,7 @@ async function importJson() {
   await categoryStore.importCategories(data.categories);
   await activityStore.importActivities(data.activities);
   await recordStore.importRecords(data.records);
+  await cacheStore.recomputeCache();
   $q.notify({
     type: 'positive',
     message: `Successfully imported ${data.categories.length} categories, ${data.activities.length} activities, and ${data.records.length} records.`,
