@@ -100,20 +100,24 @@ async function deleteActivity() {
       </q-item-label>
       <q-item-label v-else class="records-num"> 0 </q-item-label>
     </q-item-section>
-    <q-item-section side>
+    <q-item-section side style="min-width: 50px; padding-left: 4px">
       <q-item-label caption>Hours</q-item-label>
       <q-item-label class="total-hours">{{ totalHours }}</q-item-label>
     </q-item-section>
-    <q-item-section side>
+    <q-item-section side style="padding-left: 6px">
       <div class="text-grey-7 q-gutter-xs">
-        <q-btn size="sm" round flat icon="edit" @click="editing = true" />
-        <q-btn
-          size="sm"
-          round
-          flat
-          icon="delete"
-          @click="startDeleteActivity"
-        />
+        <q-btn size="sm" round flat icon="more_vert">
+          <q-menu>
+            <q-list dense>
+              <q-item v-close-popup clickable @click="editing = true">
+                <q-item-section>Edit</q-item-section>
+              </q-item>
+              <q-item v-close-popup clickable @click="startDeleteActivity">
+                <q-item-section>Delete</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </div>
     </q-item-section>
   </q-item>
