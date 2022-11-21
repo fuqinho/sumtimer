@@ -6,11 +6,6 @@ import { useCategoryStore } from '@/stores/category-store';
 const props = defineProps<{
   cat?: CachedCategory;
 }>();
-interface Emits {
-  (e: 'onEdit', cid: string): void;
-}
-const emit = defineEmits<Emits>();
-
 const categoryStore = useCategoryStore();
 
 const color = computed(() => {
@@ -62,7 +57,7 @@ async function moveDown() {
   >
     <q-item class="">
       <q-item-section class="folder-icon">
-        <q-icon size="sm" :name="icon" />
+        <q-icon size="22px" :name="icon" />
       </q-item-section>
       <q-item-section class="category-name">
         <div class="text-ellipsis">{{ label }}</div>
@@ -70,14 +65,6 @@ async function moveDown() {
       <q-space />
       <q-item-section v-if="!!props.cat" class="actions" side>
         <div class="row">
-          <q-btn
-            size="sm"
-            round
-            flat
-            icon="edit"
-            class="self-center"
-            @click.prevent="emit('onEdit', name)"
-          ></q-btn>
           <div class="column">
             <q-icon
               name="arrow_drop_up"
@@ -94,8 +81,6 @@ async function moveDown() {
       </q-item-section>
     </q-item>
   </q-route-tab>
-
-  <q-dialog> </q-dialog>
 </template>
 
 <style>

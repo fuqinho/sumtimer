@@ -9,6 +9,7 @@ import ActivityForm from '@/components/ActivityForm.vue';
 import ActivityList from '@/components/ActivityList.vue';
 import CategoryTab from '@/components/CategoryTab.vue';
 import CategoryForm from '@/components/CategoryForm.vue';
+import CategoryItem from '@/components/CategoryItem.vue';
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -20,7 +21,7 @@ const { categories } = storeToRefs(cacheStore);
 const creatingCategory = ref(false);
 const creatingActivity = ref(false);
 const editingCategory = ref(false);
-const splitterModel = ref(20);
+const splitterModel = ref(25);
 const tab = ref('');
 const currentCategory = ref(undefined as CachedCategory | undefined);
 
@@ -75,6 +76,7 @@ function onEditCategoryClicked(cid: string) {
         </div>
       </template>
       <template #after>
+        <CategoryItem v-if="cid" :cid="cid" @on-edit="onEditCategoryClicked" />
         <ActivityList v-if="uid" :uid="uid" :cid="cid" />
         <q-btn
           color="grey"

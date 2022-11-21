@@ -70,12 +70,7 @@ async function deleteCategory() {
         class="cat-name"
       >
         <template #prepend>
-          <q-icon
-            name="folder"
-            size="md"
-            :style="{ color: color }"
-            class="q-mr-sm"
-          />
+          <q-icon name="folder" :style="{ color: color }" class="q-mr-sm" />
         </template>
       </q-input>
     </q-card-section>
