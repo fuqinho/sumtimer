@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { QInput } from 'quasar';
 import type { CachedCategory } from '@/types/documents';
-import { defaultCategoryColor, defaultCategoryName } from '@/common/constants';
+import { defaultCategoryColor } from '@/common/constants';
 import { useCategoryStore } from '@/stores/category-store';
 import ColorPalette from '@/components/ColorPalette.vue';
 
@@ -15,18 +16,23 @@ const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
 const categoryStore = useCategoryStore();
 
 // =========================== Refs ============================================
-const name = ref(props.cat ? props.cat.data.label : defaultCategoryName);
+const name = ref(props.cat ? props.cat.data.label : '');
+const nameRef = ref(null as QInput | null);
 const color = ref(props.cat ? props.cat.data.color : defaultCategoryColor);
 
 // =========================== Computed properties =============================
 
 // =========================== Methods =========================================
 async function add() {
+  if (nameRef.value) nameRef.value.validate();
+  if (nameRef.value?.hasError) return;
   await categoryStore.addCategory(name.value, color.value);
   emit('onAdded');
 }
 
 async function update() {
+  nameRef.value?.validate();
+  if (nameRef.value?.hasError) return;
   if (!props.cat) {
     console.error('CategoryForm.update is called without base document data.');
     return;
@@ -54,14 +60,24 @@ async function deleteCategory() {
     <q-card-section v-if="props.cat">Modify category</q-card-section>
     <q-card-section v-else>Create category</q-card-section>
     <q-separator />
-    <q-card-section class="row items-center">
-      <q-icon
-        name="folder"
-        size="md"
-        :style="{ color: color }"
-        class="q-mr-sm"
-      />
-      <q-input v-model="name" dense class="cat-name" />
+    <q-card-section class="row items-start">
+      <q-input
+        ref="nameRef"
+        v-model="name"
+        label="Category name *"
+        :rules="[(v) => !!v || 'Category name is required']"
+        clearable
+        class="cat-name"
+      >
+        <template #prepend>
+          <q-icon
+            name="folder"
+            size="md"
+            :style="{ color: color }"
+            class="q-mr-sm"
+          />
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-section>
       <ColorPalette v-model="color" />
@@ -83,8 +99,4 @@ async function deleteCategory() {
   </q-card>
 </template>
 
-<style lang="scss" scoped>
-.cat-name {
-  font-size: 18px;
-}
-</style>
+<style lang="scss" scoped></style>
