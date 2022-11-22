@@ -30,7 +30,7 @@ const cid = computed(() => {
   return undefined;
 });
 
-function onEditCategoryClicked(cid: string) {
+function onEditCategory(cid: string) {
   let category = undefined;
   for (const c of categories.value) {
     if (c.id === cid) {
@@ -60,32 +60,36 @@ function onEditCategoryClicked(cid: string) {
               v-for="category in categories"
               :key="category.id"
               :cat="category"
-              @on-edit="onEditCategoryClicked"
             />
           </q-tabs>
           <q-btn
             color="grey"
-            outline
+            flat
             rounded
             icon="add"
             label="Add category"
             size="md"
-            style="margin: 12px 8px"
+            class="q-ma-xs"
             @click="creatingCategory = true"
           />
         </div>
       </template>
       <template #after>
-        <CategoryItem v-if="cid" :cid="cid" @on-edit="onEditCategoryClicked" />
-        <ActivityList v-if="uid" :uid="uid" :cid="cid" />
+        <CategoryItem
+          v-if="cid"
+          :cid="cid"
+          class="q-pa-sm"
+          @on-edit="onEditCategory"
+        />
+        <ActivityList v-if="uid" :uid="uid" :cid="cid" class="q-ml-sm" />
         <q-btn
           color="grey"
-          outline
+          flat
           rounded
           icon="add"
           label="Add activity"
           size="md"
-          style="margin: 0 16px"
+          class="q-mx-sm q-my-xs"
           @click="creatingActivity = true"
         />
       </template>

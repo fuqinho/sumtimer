@@ -17,7 +17,7 @@ const category = computed(() => idToCategory.value[props.cid]);
 </script>
 
 <template>
-  <div class="row q-py-sm q-px-md">
+  <div class="row">
     <div class="text-h6" :style="{ color: category.color }">
       {{ category.label }}
     </div>
