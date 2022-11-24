@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { colors } from 'quasar';
+import { colors, date } from 'quasar';
 import type { RecordDoc } from '@/types/documents';
 import { defaultCategoryColor, defaultCategoryName } from '@/common/constants';
 import { useRecordStore } from '@/stores/record-store';
 import { useCacheStore } from '@/stores/cache-store';
 import RecordView from '@/components/RecordView.vue';
+import TimeDisplay from '@/components/TimeDisplay.vue';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -59,12 +60,20 @@ const categoryName = computed(() => {
   return defaultCategoryName;
 });
 
-const bgColor = computed(() => colors.lighten(categoryColor.value, 90));
+const startDateStr = computed(() =>
+  date.formatDate(props.doc.data.start.toDate(), 'M/D')
+);
 
-const hours = computed(() => {
-  const duration_h = props.doc.data.duration / (60 * 60 * 1000);
-  return (Math.ceil(duration_h * 100) / 100).toFixed(2);
-});
+function timeStr(time: Date) {
+  let hour = time.getHours();
+  const minute = time.getMinutes();
+  //  if (hour < startHourOfDay) hour += 24;
+  return hour + ':' + ('00' + minute).slice(-2);
+}
+const startTimeStr = computed(() => timeStr(props.doc.data.start.toDate()));
+const endTimeStr = computed(() => timeStr(props.doc.data.end.toDate()));
+
+const bgColor = computed(() => colors.lighten(categoryColor.value, 90));
 
 // =========================== Methods =========================================
 async function deleteRecord() {
@@ -76,7 +85,7 @@ async function deleteRecord() {
 
 <template>
   <q-item :style="{ backgroundColor: bgColor }">
-    <q-item-section>
+    <q-item-section class="activity-name col-auto">
       <q-item-label
         ><q-badge
           :style="{
@@ -87,27 +96,61 @@ async function deleteRecord() {
       >
       <q-item-label>{{ activityName }}</q-item-label>
     </q-item-section>
-    <q-item-section>
-      <q-item-label caption>
-        {{ props.doc.data.start.toDate().toLocaleDateString() }}
-      </q-item-label>
-      <q-item-label caption>
-        {{ props.doc.data.start.toDate().toLocaleTimeString() }} -
-        {{ props.doc.data.end.toDate().toLocaleTimeString() }}
+    <q-item-section class="col">
+      <q-item-label v-if="props.doc.data.memo" top>
+        <q-icon name="notes" size="xs" color="grey" class="q-mr-xs"></q-icon>
+        <span class="text-memo">{{ props.doc.data.memo }}</span>
       </q-item-label>
     </q-item-section>
-    <q-item-section>
-      {{ props.doc.data.memo }}
+    <q-item-section side class="record-time">
+      <q-item-label overline>{{ startDateStr }}</q-item-label>
+      <q-item-label>{{ startTimeStr }} - {{ endTimeStr }}</q-item-label>
     </q-item-section>
-    <q-item-section>{{ hours }}</q-item-section>
-    <q-item-section side>
-      <q-btn round color="gray" flat icon="edit" @click="editing = true" />
+    <q-item-section side class="record-duration">
+      <TimeDisplay :time="props.doc.data.duration" size="small" />
     </q-item-section>
     <q-item-section side>
-      <q-btn round color="gray" flat icon="delete" @click="deleteRecord" />
+      <q-btn
+        dense
+        round
+        color="gray"
+        flat
+        icon="edit"
+        size="sm"
+        @click="editing = true"
+      />
+    </q-item-section>
+    <q-item-section side>
+      <q-btn
+        dense
+        round
+        color="gray"
+        flat
+        icon="delete"
+        size="sm"
+        @click="deleteRecord"
+      />
     </q-item-section>
   </q-item>
   <q-dialog v-model="editing">
     <RecordView :doc="props.doc" />
   </q-dialog>
 </template>
+
+<style scoped>
+.activity-name {
+  min-width: 160px;
+}
+
+.text-memo {
+  font-size: 12px;
+  color: #444;
+}
+
+.record-time {
+  min-width: 100px;
+}
+.record-duration {
+  width: 90px;
+}
+</style>
