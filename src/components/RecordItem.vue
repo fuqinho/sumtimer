@@ -145,6 +145,7 @@ async function deleteRecord() {
 .text-memo {
   font-size: 12px;
   color: #444;
+  white-space: pre-line;
 }
 
 .record-time {
