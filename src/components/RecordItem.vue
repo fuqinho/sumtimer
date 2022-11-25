@@ -148,6 +148,7 @@ async function deleteRecord() {
 }
 
 .record-time {
+  align-items: flex-start;
   min-width: 100px;
 }
 .record-duration {
