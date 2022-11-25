@@ -152,6 +152,7 @@ export const useRecordStore = defineStore('records', () => {
     rec: PortableRecord,
     rid?: string,
     skipUpdateTimestamp?: boolean,
+    skipUpdateCache?: boolean,
     inBatch?: WriteBatch
   ) {
     const frameNum = rec.timeFrames.length;
@@ -183,7 +184,7 @@ export const useRecordStore = defineStore('records', () => {
     const docRef = rid ? doc(colRef, rid) : doc(colRef);
     if (!skipUpdateTimestamp)
       activityStore.updateActivity(data.aid, { updated: Timestamp.now() });
-    cacheStore.onRecordAdded(batch, docRef.id, data);
+    if (!skipUpdateCache) cacheStore.onRecordAdded(batch, docRef.id, data);
     batch.set(docRef, data);
     if (!inBatch) await batch.commit();
   }
@@ -285,11 +286,15 @@ export const useRecordStore = defineStore('records', () => {
   }
 
   async function importRecords(recs: PortableRecord[]) {
-    const batch = writeBatch(getFirestore());
-    for (const rec of recs) {
-      addRecord(rec, rec.id, true, batch);
+    const numRecs = recs.length;
+    const maxRecsInBatch = 500;
+    for (let i = 0; i < numRecs; i += maxRecsInBatch) {
+      const batch = writeBatch(getFirestore());
+      for (let j = 0; i + j < numRecs && j < maxRecsInBatch; j++) {
+        addRecord(recs[i + j], recs[i + j].id, true, true, batch);
+      }
+      await batch.commit();
     }
-    await batch.commit();
   }
 
   console.log('Setup recordStore end');
