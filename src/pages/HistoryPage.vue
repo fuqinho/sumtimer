@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
 import WeekBars from '@/components/WeekBars.vue';
 import StatsBars from '@/components/StatsBars.vue';
+import RecordList from '@/components/RecordList.vue';
 
 const authStore = useAuthStore();
 const recordStore = useRecordStore();
@@ -55,5 +56,7 @@ function goNextWeek() {
       :end="date.addToDate(start, { days: 7 })"
       :records="requestedRecords"
     />
+    <q-separator class="q-my-md" />
+    <RecordList v-if="uid" :uid="uid" :records="requestedRecords" />
   </q-page>
 </template>

@@ -23,6 +23,7 @@ import RecordItem from '@/components/RecordItem.vue';
 const props = defineProps<{
   uid: string;
   aid?: string;
+  records?: RecordDoc[];
 }>();
 
 // =========================== Use stores/composables ==========================
@@ -34,6 +35,9 @@ const hasPrev = ref(false);
 
 // =========================== Computed properties =============================
 const records = computed(() => {
+  if (props.records) {
+    return props.records;
+  }
   if (currentSnapshot.value) {
     return currentSnapshot.value.docs.map((d) => {
       return { id: d.id, data: d.data() };
@@ -139,38 +143,40 @@ function buildQuery(
 
 let unsubscribe = null as Unsubscribe | null;
 
-onMounted(() => {
-  if (unsubscribe) {
-    unsubscribe();
-    unsubscribe = null;
-  }
-  const q = buildQuery(props.aid);
-  unsubscribe = onSnapshot(q, (snapshot) => {
-    currentSnapshot.value = snapshot as QuerySnapshot<RecordDocumentData>;
+if (!props.records) {
+  onMounted(() => {
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+    const q = buildQuery(props.aid);
+    unsubscribe = onSnapshot(q, (snapshot) => {
+      currentSnapshot.value = snapshot as QuerySnapshot<RecordDocumentData>;
+    });
   });
-});
 
-onUnmounted(() => {
-  if (unsubscribe) {
-    unsubscribe();
-    unsubscribe = null;
-  }
-});
+  onUnmounted(() => {
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+  });
 
-watch(currentSnapshot, async (snapshot) => {
-  if (snapshot) {
-    const qNext = buildQuery(props.aid, true, false, 1);
-    const docsNext = await getDocs(qNext);
-    hasNext.value = docsNext.docs.length > 0;
+  watch(currentSnapshot, async (snapshot) => {
+    if (snapshot) {
+      const qNext = buildQuery(props.aid, true, false, 1);
+      const docsNext = await getDocs(qNext);
+      hasNext.value = docsNext.docs.length > 0;
 
-    const qPrev = buildQuery(props.aid, false, true, 1);
-    const docsPrev = await getDocs(qPrev);
-    hasPrev.value = docsPrev.docs.length > 0;
-  } else {
-    hasNext.value = false;
-    hasPrev.value = false;
-  }
-});
+      const qPrev = buildQuery(props.aid, false, true, 1);
+      const docsPrev = await getDocs(qPrev);
+      hasPrev.value = docsPrev.docs.length > 0;
+    } else {
+      hasNext.value = false;
+      hasPrev.value = false;
+    }
+  });
+}
 </script>
 
 <template>
@@ -182,7 +188,7 @@ watch(currentSnapshot, async (snapshot) => {
         :doc="record"
       ></RecordItem>
     </q-list>
-    <div class="row items-center justify-center">
+    <div v-if="!props.records" class="row items-center justify-center">
       <q-btn
         icon="navigate_before"
         :disable="!hasPrev"
