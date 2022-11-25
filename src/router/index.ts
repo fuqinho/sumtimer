@@ -14,22 +14,20 @@ const router = createRouter({
         {
           name: 'Activities',
           path: 'activities',
-          component: () => import('@/pages/ActivitiesPage.vue'),
           children: [
+            {
+              name: 'AllActivities',
+              path: '',
+              component: () => import('@/pages/ActivitiesPage.vue'),
+            },
             {
               name: 'CategoryActivities',
               path: 'c/:cid',
               component: () => import('@/pages/ActivitiesPage.vue'),
             },
-          ],
-        },
-        {
-          path: 'records',
-          component: () => import('@/pages/RecordsPage.vue'),
-          children: [
             {
               name: 'ActivityRecords',
-              path: 'a/:aid',
+              path: 'a/:aid/records',
               component: () => import('@/pages/RecordsPage.vue'),
             },
           ],
