@@ -188,7 +188,7 @@ if (!props.records) {
         :doc="record"
       ></RecordItem>
     </q-list>
-    <div v-if="!props.records" class="row items-center justify-center">
+    <div v-if="hasPrev || hasNext" class="row items-center justify-center">
       <q-btn
         icon="navigate_before"
         :disable="!hasPrev"
