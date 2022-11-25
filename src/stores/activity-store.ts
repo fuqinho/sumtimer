@@ -14,15 +14,26 @@ import {
   getDoc,
   WriteBatch,
 } from 'firebase/firestore';
-import type { ActivityDocumentData, ActivityChange } from '@/types/documents';
+import type {
+  ActivityDocumentData,
+  ActivityChange,
+  ActivityDoc,
+} from '@/types/documents';
 import type { PortableActivity } from '@/types/portable';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCacheStore } from '@/stores/cache-store';
+import { useRecordStore } from './record-store';
+
+export const enum DeleteActivityResult {
+  Success,
+  ErrorHasRecords,
+}
 
 export const useActivityStore = defineStore('activities', () => {
   console.log('Setup activityStore start');
   const authStore = useAuthStore();
   const cacheStore = useCacheStore();
+  const recordStore = useRecordStore();
   const { uid } = storeToRefs(authStore);
 
   async function addActivity(
@@ -46,13 +57,19 @@ export const useActivityStore = defineStore('activities', () => {
     if (!inBatch) await batch.commit();
   }
 
-  async function deleteActivity(id: string) {
+  async function deleteActivity(id: string): Promise<DeleteActivityResult> {
+    // Check if the specified activity has records.
+    const recordsCount = await recordStore.countRecords(id);
+    if (recordsCount > 0) {
+      return DeleteActivityResult.ErrorHasRecords;
+    }
     const colRef = collection(getFirestore(), 'activities');
     const docRef = doc(colRef, id) as DocumentReference<ActivityDocumentData>;
     const batch = writeBatch(getFirestore());
     cacheStore.onActivityDeleted(batch, id);
     batch.delete(docRef);
     await batch.commit();
+    return DeleteActivityResult.Success;
   }
 
   async function updateActivity(id: string, change: ActivityChange) {
@@ -69,6 +86,18 @@ export const useActivityStore = defineStore('activities', () => {
     cacheStore.onActivityUpdated(batch, id, oldData, newData);
     batch.set(docRef, newData);
     await batch.commit();
+  }
+
+  async function getActivitiesByCategory(cid: string): Promise<ActivityDoc[]> {
+    const q = query(
+      collection(getFirestore(), 'activities'),
+      where('uid', '==', uid.value),
+      where('cid', '==', cid)
+    );
+    const snapshot = (await getDocs(q)) as QuerySnapshot<ActivityDocumentData>;
+    return snapshot.docs.map((d) => {
+      return { id: d.id, data: d.data() };
+    });
   }
 
   async function exportActivities() {
@@ -111,6 +140,7 @@ export const useActivityStore = defineStore('activities', () => {
     addActivity,
     deleteActivity,
     updateActivity,
+    getActivitiesByCategory,
     exportActivities,
     importActivities,
   };

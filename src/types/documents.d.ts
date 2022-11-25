@@ -38,6 +38,11 @@ export interface ActivityDocumentData extends DocumentData {
   updated: Timestamp;
 }
 
+export interface ActivityDoc {
+  id: string;
+  data: ActivityDocumentData;
+}
+
 export interface ActivityChange {
   label?: string;
   cid?: string;

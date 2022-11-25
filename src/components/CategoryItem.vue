@@ -18,7 +18,7 @@ const category = computed(() => idToCategory.value[props.cid]);
 
 <template>
   <div class="row">
-    <div class="text-h6" :style="{ color: category.color }">
+    <div v-if="category" class="text-h6" :style="{ color: category.color }">
       {{ category.label }}
     </div>
     <q-btn

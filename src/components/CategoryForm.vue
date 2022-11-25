@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { QInput } from 'quasar';
+import { QInput, useQuasar } from 'quasar';
 import type { CachedCategory } from '@/types/documents';
 import { defaultCategoryColor } from '@/common/constants';
-import { useCategoryStore } from '@/stores/category-store';
+import {
+  useCategoryStore,
+  DeleteCategoryResult,
+} from '@/stores/category-store';
 import ColorPalette from '@/components/ColorPalette.vue';
 
 // =========================== Properties/Emitters =============================
@@ -14,6 +17,7 @@ const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
 
 // =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
+const $q = useQuasar();
 
 // =========================== Refs ============================================
 const name = ref(props.cat ? props.cat.data.label : '');
@@ -49,7 +53,15 @@ async function deleteCategory() {
     console.error('CategoryForm.delete is called without base document data.');
     return;
   }
-  await categoryStore.deleteCategory(props.cat.id);
+  const result = await categoryStore.deleteCategory(props.cat.id);
+  if (result == DeleteCategoryResult.ErrorHasRecords) {
+    $q.notify({
+      type: 'negative',
+      message:
+        'There are activities/records in this category. Delete them or move them out before deleting this.',
+    });
+    return;
+  }
   emit('onDeleted');
 }
 // =========================== Additional setup ================================

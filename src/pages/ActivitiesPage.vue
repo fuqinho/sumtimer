@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import type { CachedCategory } from '@/types/documents';
 import { useAuthStore } from '@/stores/auth-store';
@@ -14,6 +14,7 @@ import CategoryItem from '@/components/CategoryItem.vue';
 const route = useRoute();
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
+const router = useRouter();
 
 const { uid } = storeToRefs(authStore);
 const { categories } = storeToRefs(cacheStore);
@@ -40,6 +41,11 @@ function onEditCategory(cid: string) {
   }
   currentCategory.value = category;
   editingCategory.value = true;
+}
+
+function onCategoryDeleted() {
+  editingCategory.value = false;
+  router.push('/activities');
 }
 </script>
 
@@ -109,7 +115,7 @@ function onEditCategory(cid: string) {
     <CategoryForm
       :cat="currentCategory"
       @on-updated="editingCategory = false"
-      @on-deleted="editingCategory = false"
+      @on-deleted="onCategoryDeleted"
     />
   </q-dialog>
 </template>

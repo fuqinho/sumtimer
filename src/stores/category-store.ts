@@ -18,11 +18,21 @@ import type { CategoryChange, CategoryDocumentData } from '@/types/documents';
 import type { PortableCategory } from '@/types/portable';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCacheStore } from '@/stores/cache-store';
+import {
+  DeleteActivityResult,
+  useActivityStore,
+} from '@/stores/activity-store';
+
+export const enum DeleteCategoryResult {
+  Success,
+  ErrorHasRecords,
+}
 
 export const useCategoryStore = defineStore('catgories', () => {
   console.log('Setup categoryStore start');
   const authStore = useAuthStore();
   const cacheStore = useCacheStore();
+  const activityStore = useActivityStore();
   const { uid } = storeToRefs(authStore);
   const { categories } = storeToRefs(cacheStore);
 
@@ -52,13 +62,23 @@ export const useCategoryStore = defineStore('catgories', () => {
     if (!inBatch) await batch.commit();
   }
 
-  async function deleteCategory(id: string) {
+  async function deleteCategory(id: string): Promise<DeleteCategoryResult> {
+    const activities = await activityStore.getActivitiesByCategory(id);
+    if (activities.length > 0) {
+      for (const act of activities) {
+        const result = await activityStore.deleteActivity(act.id);
+        if (result != DeleteActivityResult.Success) {
+          return DeleteCategoryResult.ErrorHasRecords;
+        }
+      }
+    }
     const colRef = collection(getFirestore(), 'categories');
     const docRef = doc(colRef, id) as DocumentReference<CategoryDocumentData>;
     const batch = writeBatch(getFirestore());
     cacheStore.onCategoryDeleted(batch, docRef.id);
     batch.delete(docRef);
     await batch.commit();
+    return DeleteCategoryResult.Success;
   }
 
   async function updateCategory(id: string, change: CategoryChange) {

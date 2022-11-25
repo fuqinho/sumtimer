@@ -18,6 +18,7 @@ import {
   where,
   WriteBatch,
   writeBatch,
+  getCountFromServer,
 } from 'firebase/firestore';
 import type {
   RecordDocumentData,
@@ -242,6 +243,16 @@ export const useRecordStore = defineStore('records', () => {
     await batch.commit();
   }
 
+  async function countRecords(aid: string): Promise<number> {
+    const q = query(
+      collection(getFirestore(), 'records'),
+      where('uid', '==', uid.value),
+      where('aid', '==', aid)
+    );
+    const snapshot = await getCountFromServer(q);
+    return snapshot.data().count;
+  }
+
   function requestRecords(startTime: Date) {
     if (uid.value) {
       const start = startOfWeek(startTime);
@@ -306,6 +317,7 @@ export const useRecordStore = defineStore('records', () => {
     deleteRecord,
     deleteRecords,
     deleteRecordsByActivityId,
+    countRecords,
     requestRecords,
     exportRecords,
     importRecords,
