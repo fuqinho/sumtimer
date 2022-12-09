@@ -286,6 +286,12 @@ export const useOngoingStore = defineStore('ongoing', () => {
     await updateDoc(docRef.value, { curStart: Timestamp.now() });
   }
 
+  async function reset() {
+    await releaseWakeLock();
+    if (!ongoing.value) return;
+    await deleteDoc(docRef.value);
+  }
+
   watch(nowMillis, async () => {
     if (ongoing.value && pausedMillis.value > maxPauseDurationMs) {
       await finish();
@@ -313,5 +319,6 @@ export const useOngoingStore = defineStore('ongoing', () => {
     finish,
     pause,
     resume,
+    reset,
   };
 });

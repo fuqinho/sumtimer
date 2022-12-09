@@ -95,6 +95,14 @@ async function recordMemo() {
     <q-separator dark />
     <q-card-actions align="right">
       <q-btn
+        flat
+        round
+        icon="delete"
+        color="negative"
+        @click="ongoingStore.reset()"
+      />
+      <q-space />
+      <q-btn
         v-if="ongoing.curStart"
         round
         color="primary"
