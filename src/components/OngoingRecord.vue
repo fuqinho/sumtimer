@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { colors } from 'quasar';
 import { maxPauseDurationMs } from '@/common/constants';
@@ -21,7 +21,7 @@ const {
   elapsedMillis,
   pausedMillis,
 } = storeToRefs(ongoingStore);
-const memo = ref('');
+const memo = ref((ongoing.value && ongoing.value.memo) || '');
 
 // =========================== Computed properties =============================
 const lightenedCategoryColor = computed(() => {
@@ -34,6 +34,13 @@ async function recordMemo() {
 }
 
 // =========================== Additional setup ================================
+watch(ongoing, async (newOngoing) => {
+  if (!newOngoing) return;
+  const newMemo = newOngoing.memo || '';
+  if (newMemo !== memo.value) {
+    memo.value = newMemo;
+  }
+});
 </script>
 
 <template>
