@@ -25,6 +25,7 @@ export interface TimestampSection {
 
 export interface OngoingDocumentData extends DocumentData {
   aid: string;
+  cid: string;
   recStart: Timestamp;
   curStart?: Timestamp;
   memo?: string;

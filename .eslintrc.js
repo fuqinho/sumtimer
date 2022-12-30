@@ -19,4 +19,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   ignorePatterns: ['functions/', 'cypress/**/*.cy.js'],
+  globals: {
+    chrome: true,
+  },
 };

@@ -183,3 +183,9 @@ export const deleteDetaForUser = functions
   .region(region)
   .auth.user()
   .onDelete(onDeleteUser);
+export const createCustomToken = functions
+  .region(region)
+  .https.onCall((data, context) => {
+    if (!context.auth) return '';
+    return admin.auth().createCustomToken(context.auth.uid);
+  });

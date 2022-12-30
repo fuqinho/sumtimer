@@ -224,6 +224,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
 
     const docData = {
       aid: aid,
+      cid: idToActivity.value[aid].cid,
       recStart: Timestamp.now(),
       curStart: Timestamp.now(),
     };

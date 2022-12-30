@@ -41,6 +41,10 @@ const router = createRouter({
           path: 'history',
           component: () => import('@/pages/HistoryPage.vue'),
         },
+        {
+          path: 'settings',
+          component: () => import('@/pages/SettingsPage.vue'),
+        },
       ],
     },
     {
