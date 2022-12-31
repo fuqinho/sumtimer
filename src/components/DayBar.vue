@@ -95,14 +95,13 @@ const separatorStyles = computed(() => {
 
 <template>
   <div class="container">
-    <q-icon
+    <div
       v-for="sep in separatorStyles"
       :key="sep.id"
-      name="circle"
-      size="4px"
       class="bar-separator"
-      :style="sep"
-    />
+      :style="sep">
+      <span class="bar-separator-circle"></span>
+    </div>
     <RecordBar
       v-for="record in overlapRecords"
       :key="record.id"
@@ -145,9 +144,19 @@ const separatorStyles = computed(() => {
 }
 
 .bar-separator {
-  width: 0;
-  height: 0;
-  top: -3px;
-  color: rgba(0, 0, 0, 0.1);
+  width: 0px;
+  height: 0px;
+  top: 8px;
+  position: absolute;
+}
+
+.bar-separator-circle {
+  border-radius: 50%;
+  width: 4px;
+  height: 4px;
+  top: -2px;
+  left: -2px;
+  background-color: rgba(0, 0, 0, 0.07);
+  position: absolute;
 }
 </style>
