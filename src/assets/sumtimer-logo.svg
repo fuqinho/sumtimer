@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512px"
+   height="512px"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="SVGRoot"
+   sodipodi:docname="sumtimer-logo.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:export-filename="sumtimer-logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview641"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="0.914906"
+     inkscape:cx="101.10328"
+     inkscape:cy="385.83199"
+     inkscape:window-width="3840"
+     inkscape:window-height="2066"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs636" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="opacity:1;fill:#f2f2f2;stroke-width:0.7243"
+       id="path1027"
+       cx="257"
+       cy="267.20801"
+       r="190" />
+    <rect
+       style="opacity:1;fill:#00d455;stroke-width:1.06484"
+       id="rect708"
+       width="140"
+       height="60"
+       x="95.790894"
+       y="156" />
+    <rect
+       style="fill:#ff5555;stroke-width:1.06483"
+       id="rect708-5"
+       width="140"
+       height="60"
+       x="201.6601"
+       y="355.99997" />
+    <rect
+       style="fill:#ffcc00;stroke-width:0.804941"
+       id="rect708-5-02"
+       width="80"
+       height="60"
+       x="82.522148"
+       y="256" />
+    <rect
+       style="fill:#2ad4ff;stroke-width:1.27553"
+       id="rect708-5-0"
+       width="200.882"
+       height="60"
+       x="223.52022"
+       y="256" />
+    <rect
+       style="fill:#b380ff;stroke-width:0.804942"
+       id="rect708-5-0-9"
+       width="80"
+       height="60"
+       x="295.65878"
+       y="156" />
+    <path
+       id="path651"
+       style="opacity:1;fill:#b3b3b3;stroke-width:0.999906"
+       d="M 256,66 A 200,200 0 0 0 56,266 200,200 0 0 0 256,466 200,200 0 0 0 456,266 200,200 0 0 0 256,66 Z m 0,40 A 160,160 0 0 1 416,266 160,160 0 0 1 256,426 160,160 0 0 1 96,266 160,160 0 0 1 256,106 Z" />
+    <ellipse
+       style="opacity:1;fill:#b3b3b3;stroke-width:0.939057"
+       id="path903"
+       cx="256"
+       cy="40"
+       rx="32"
+       ry="24" />
+    <ellipse
+       style="fill:#b3b3b3;stroke-width:0.939057"
+       id="path903-7"
+       cx="392.56042"
+       cy="-120.14713"
+       rx="32"
+       ry="24"
+       transform="rotate(30)" />
+  </g>
+</svg>

@@ -57,7 +57,8 @@ function signOutUser() {
       <q-toolbar>
         <q-toolbar-title>
           <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+            <img src="../assets/sumtimer-logo.svg" />
+
           </q-avatar>
           Sumtimer
         </q-toolbar-title>
