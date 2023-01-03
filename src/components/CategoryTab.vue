@@ -33,7 +33,7 @@ const toTarget = computed(() => {
       },
     };
   } else {
-    return { name: 'Activities' };
+    return { name: 'AllActivities' };
   }
 });
 
