@@ -1,4 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import MainLayout from '@/layouts/MainLayout.vue';
+import IndexPage from '@/pages/IndexPage.vue';
+import ActivitiesPage from '@/pages/ActivitiesPage.vue';
+import RecordsPage from '@/pages/RecordsPage.vue';
+import HistoryPage from '@/pages/HistoryPage.vue';
+import SettingsPage from '@/pages/SettingsPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,11 +16,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: () => import('@/layouts/MainLayout.vue'),
+      component: MainLayout,
       children: [
         {
           path: '',
-          component: () => import('@/pages/IndexPage.vue'),
+          component: IndexPage,
         },
         {
           name: 'Activities',
@@ -23,27 +29,27 @@ const router = createRouter({
             {
               name: 'AllActivities',
               path: '',
-              component: () => import('@/pages/ActivitiesPage.vue'),
+              component: ActivitiesPage,
             },
             {
               name: 'CategoryActivities',
               path: 'c/:cid',
-              component: () => import('@/pages/ActivitiesPage.vue'),
+              component: ActivitiesPage,
             },
             {
               name: 'ActivityRecords',
               path: 'a/:aid/records',
-              component: () => import('@/pages/RecordsPage.vue'),
+              component: RecordsPage,
             },
           ],
         },
         {
           path: 'history',
-          component: () => import('@/pages/HistoryPage.vue'),
+          component: HistoryPage,
         },
         {
           path: 'settings',
-          component: () => import('@/pages/SettingsPage.vue'),
+          component: SettingsPage,
         },
       ],
     },
