@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import {
@@ -12,7 +12,6 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useCacheStore } from '@/stores/cache-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
 import TimeDisplay from '@/components/TimeDisplay.vue';
-import SettingsForm from '@/components/SettingsForm.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -22,8 +21,6 @@ const { isSignedIn, userProfilePicUrl, userDisplayName, userEmail } =
   storeToRefs(authStore);
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 const { ongoing, elapsedMillis } = storeToRefs(ongoingStore);
-
-const inSettings = ref(false);
 
 const bgColor = computed(() => {
   if (ongoing.value) {
@@ -58,7 +55,6 @@ function signOutUser() {
         <q-toolbar-title>
           <q-avatar>
             <img src="../assets/sumtimer-logo.svg" />
-
           </q-avatar>
           Sumtimer
         </q-toolbar-title>
@@ -87,7 +83,7 @@ function signOutUser() {
                   <q-item-label caption>{{ userEmail }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item v-close-popup clickable @click="inSettings = true">
+              <q-item v-close-popup clickable @click="router.push('/settings')">
                 <q-item-section side>
                   <q-icon name="settings" />
                 </q-item-section>
@@ -128,9 +124,6 @@ function signOutUser() {
       <router-view />
     </q-page-container>
   </q-layout>
-  <q-dialog v-model="inSettings">
-    <SettingsForm />
-  </q-dialog>
 </template>
 
 <style scoped>

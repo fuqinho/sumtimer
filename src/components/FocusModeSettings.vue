@@ -109,7 +109,7 @@ init();
 
 <template>
   <q-list>
-    <q-item v-ripple>
+    <q-item>
       <q-item-section>
         <q-item-label>Focus mode</q-item-label>
         <q-item-label caption>Chrome extension is required.</q-item-label>
