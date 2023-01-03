@@ -240,7 +240,7 @@ async function exportTogglCSV(paid: boolean) {
         />
       </q-item-section>
       <q-item-section side>
-        <q-btn color="primary" label="Import" @click="exportJson" />
+        <q-btn color="primary" label="Import" @click="importJson" />
       </q-item-section>
     </q-item>
     <q-item>
