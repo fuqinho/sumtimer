@@ -3,9 +3,11 @@ import { useCacheStore } from '@/stores/cache-store';
 import { useFocusModeStore } from '@/stores/focus-mode-store';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
+import { useQuasar } from 'quasar';
 
 const cacheStore = useCacheStore();
 const focusModeStore = useFocusModeStore();
+const $q = useQuasar();
 
 const { categories } = storeToRefs(cacheStore);
 
@@ -22,7 +24,7 @@ async function setExtensionSettings() {
     .map((v) => v.trim())
     .filter((v) => !!v);
   urlBlockListModel.value = urlPatterns.join('\n');
-  const urlResult = await focusModeStore.setUrlBlockPatterns(urlPatterns);
+  await focusModeStore.setUrlBlockPatterns(urlPatterns);
 
   // Block patterns (Page title)
   const titlePatterns = titleBlockListModel.value
@@ -30,14 +32,15 @@ async function setExtensionSettings() {
     .map((v) => v.trim())
     .filter((v) => !!v);
   titleBlockListModel.value = titlePatterns.join('\n');
-  const titleResult = await focusModeStore.setTitleBlockPatterns(titlePatterns);
+  await focusModeStore.setTitleBlockPatterns(titlePatterns);
 
   // Focus categories
-  const catsResult = await focusModeStore.setFocusCategories(
-    enabledCategories.value
-  );
+  await focusModeStore.setFocusCategories(enabledCategories.value);
 
-  console.log('setExtensionSettings: ', urlResult, titleResult, catsResult);
+  $q.notify({
+    type: 'positive',
+    message: `Successfully updated extension settings.`,
+  });
 }
 
 async function fillExtensionSetting() {
@@ -123,6 +126,24 @@ init();
       <q-item-section>
         <q-list>
           <q-item>
+            <div class="q-gutter-sm">
+              <div
+                v-for="cat in categories"
+                :key="cat.id"
+                class="cat-boxes shadow-1 q-pa-sm"
+              >
+                <span>
+                  <q-checkbox
+                    v-model="enabledCategories"
+                    :val="cat.id"
+                    size="xs"
+                  />
+                </span>
+                <span>{{ cat.data.label }}</span>
+              </div>
+            </div>
+          </q-item>
+          <q-item>
             <q-item-section>
               <q-input
                 v-model="urlBlockListModel"
@@ -144,20 +165,9 @@ init();
               />
             </q-item-section>
           </q-item>
+
           <q-item>
-            <q-list>
-              <q-item v-for="cat in categories" :key="cat.id">
-                <q-item-section>
-                  <q-item-label>{{ cat.data.label }}</q-item-label>
-                </q-item-section>
-                <q-item-section avatar>
-                  <q-checkbox v-model="enabledCategories" :val="cat.id" />
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-item>
-          <q-item>
-            <q-btn @click="setExtensionSettings">
+            <q-btn color="primary" @click="setExtensionSettings">
               Update extension settings
             </q-btn>
           </q-item>
@@ -167,3 +177,10 @@ init();
   </q-list>
   <q-separator />
 </template>
+
+<style scoped>
+.cat-boxes {
+  display: inline-flex;
+  align-items: center;
+}
+</style>
