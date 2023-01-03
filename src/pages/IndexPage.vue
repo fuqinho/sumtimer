@@ -34,5 +34,11 @@ const { ongoing } = storeToRefs(ongoingStore);
       :ongoing="ongoing"
     ></ongoing-record>
     <ActivityList v-if="uid" :uid="uid" class="q-mt-md" />
+    <q-separator class="q-my-sm" />
+    <div class="row justify-end">
+      <a href="privacypolicy.html">Privacy policy</a>
+      <span class="q-mx-sm">|</span>
+      <a href="tos.html">Terms & conditions</a>
+    </div>
   </q-page>
 </template>
