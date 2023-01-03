@@ -8,7 +8,7 @@ import ImportExport from '@/components/ImportExport.vue';
     <q-card>
       <FocusModeSettings />
     </q-card>
-    <q-card>
+    <q-card class="q-pb-sm">
       <ImportExport />
     </q-card>
   </q-page>

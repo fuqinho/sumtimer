@@ -209,52 +209,64 @@ async function exportTogglCSV(paid: boolean) {
 </script>
 
 <template>
-  <div class="q-pa-md column items-start">
-    <div class="text-subtitle2">Export / Import JSON file</div>
-    <div class="text-body2">
-      Export and import data as JSON file, which include all the data recorded
-      in this app.
-    </div>
-    <q-btn
-      size="md"
-      class="q-mt-md"
-      no-caps
-      label="Export JSON"
-      @click="exportJson"
-    />
-    <div class="row">
-      <q-file
-        v-model="fileToImport"
-        dense
-        class="q-mr-md"
-        :max-file-size="uploadSizeLimit"
-        @rejected="onUploadRejected"
-      />
-      <q-btn
-        size="md"
-        class="q-my-xs"
-        no-caps
-        label="Impont JSON"
-        @click="importJson"
-      />
-    </div>
-    <div class="text-subtitle2 q-mt-md">Export CSV file</div>
-    <div class="text-body2">
-      Export records as Toggl-compatible CSV data. Some data specific to this
-      app's features will be missing. For Toggl paid plan, Sumtimer Activities
-      will be exported as Toggl Tasks.
-    </div>
-    <q-btn
-      class="q-my-xs"
-      no-caps
-      label="Export CSV (for Toggl free plan)"
-      @click="exportTogglCSV(false)"
-    />
-    <q-btn
-      class="q-my-xs"
-      no-caps
-      label="Export CSV (for Toggl paid plan)"
-      @click="exportTogglCSV(true)"
-    />
-  </div>
+  <q-list>
+    <q-item-label header>Export / Import</q-item-label>
+    <q-item>
+      <q-item-section>
+        <q-item-label>Export JSON file</q-item-label>
+        <q-item-label caption>
+          Export all stored data as JSON file.
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-btn color="primary" label="Export" @click="exportJson" />
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
+        <q-item-label>Import JSON file</q-item-label>
+        <q-item-label caption>
+          Import data from a JSON file, which should be exported by the above
+          button.
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-file
+          v-model="fileToImport"
+          dense
+          class="q-mr-md"
+          :max-file-size="uploadSizeLimit"
+          @rejected="onUploadRejected"
+        />
+      </q-item-section>
+      <q-item-section side>
+        <q-btn color="primary" label="Import" @click="exportJson" />
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
+        <q-item-label>Export CSV file (for Toggle free plan)</q-item-label>
+        <q-item-label caption>
+          Export records as Toggl-compatible CSV data. Some imcompatible data
+          can be missing.
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-btn label="Export" @click="exportTogglCSV(false)" />
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
+        <q-item-label>Export CSV file (for Toggle paid plan)</q-item-label>
+        <q-item-label caption>
+          Export records as Toggl-compatible CSV data. Some imcompatible data
+          can be missing. Sumtimer activities will be exported as Toggle tasks,
+          which requires paid paln.
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-btn label="Export" @click="exportTogglCSV(true)" />
+      </q-item-section>
+    </q-item>
+  </q-list>
 </template>
