@@ -167,6 +167,7 @@ async function onDeleteUser(user: UserRecord) {
 
     await admin.firestore().collection('cache').doc(user.uid).delete();
     await admin.firestore().collection('users').doc(user.uid).delete();
+    await admin.firestore().collection('ongoings').doc(user.uid).delete();
 
     functions.logger.log('Successfully deleted data for ' + user.uid);
   } catch (e) {
