@@ -2,8 +2,10 @@
 import { onBeforeUnmount, onMounted } from 'vue';
 import { getAuth, onAuthStateChanged, type Unsubscribe } from '@firebase/auth';
 import { useAuthStore } from '@/stores/auth-store';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const router = useRouter();
 let unsubscribe = null as Unsubscribe | null;
 
 onMounted(() => {
@@ -15,6 +17,9 @@ onMounted(() => {
   unsubscribe = onAuthStateChanged(auth, (user) => {
     console.log('onAuthStateChanged. user:', user);
     authStore.setCurrentUser(user);
+    if (!user) {
+      router.push('/');
+    }
   });
 });
 
