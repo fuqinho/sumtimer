@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FocusModeSettings from '@/components/FocusModeSettings.vue';
 import ImportExport from '@/components/ImportExport.vue';
+import DangerSettings from '@/components/DangerSettings.vue';
 </script>
 
 <template>
@@ -10,6 +11,9 @@ import ImportExport from '@/components/ImportExport.vue';
     </q-card>
     <q-card class="q-pb-sm">
       <ImportExport />
+    </q-card>
+    <q-card class="q-pb-sm">
+      <DangerSettings />
     </q-card>
   </q-page>
 </template>
