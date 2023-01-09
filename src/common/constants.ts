@@ -8,3 +8,4 @@ export const maxTimeFrames = 20;
 export const recordsPerPage = 20;
 export const activitiesPerPage = 20;
 export const maxPauseDurationMs = 30 * 60 * 1000;
+export const maxRecentActRecords = 3;

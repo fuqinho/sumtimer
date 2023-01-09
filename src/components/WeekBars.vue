@@ -98,7 +98,7 @@ const hours = computed(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .date-label {
   width: 70px;
   font-size: 16px;

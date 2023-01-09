@@ -19,6 +19,7 @@ import {
   WriteBatch,
   writeBatch,
   getCountFromServer,
+  limit,
 } from 'firebase/firestore';
 import type {
   RecordDocumentData,
@@ -243,6 +244,18 @@ export const useRecordStore = defineStore('records', () => {
     await batch.commit();
   }
 
+  async function getRecentRecordsByActivityId(aid: string, maxSize: number) {
+    const q = query(
+      collection(getFirestore(), 'records'),
+      where('uid', '==', uid.value),
+      where('aid', '==', aid),
+      orderBy('end', 'desc'),
+      limit(maxSize)
+    );
+    const snapshot = (await getDocs(q)) as QuerySnapshot<RecordDocumentData>;
+    return snapshot.docs;
+  }
+
   async function countRecords(aid: string): Promise<number> {
     const q = query(
       collection(getFirestore(), 'records'),
@@ -317,6 +330,7 @@ export const useRecordStore = defineStore('records', () => {
     deleteRecord,
     deleteRecords,
     deleteRecordsByActivityId,
+    getRecentRecordsByActivityId,
     countRecords,
     requestRecords,
     exportRecords,

@@ -31,7 +31,7 @@ const { ongoing } = storeToRefs(ongoingStore);
     <ongoing-record
       v-if="ongoing"
       class="q-mt-md"
-      :ongoing="ongoing"
+      :data="ongoing"
     ></ongoing-record>
     <ActivityList v-if="uid" :uid="uid" class="q-mt-md" />
     <q-separator class="q-my-sm" />
