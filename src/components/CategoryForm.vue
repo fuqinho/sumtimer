@@ -86,7 +86,7 @@ async function deleteCategory() {
         </template>
       </q-input>
     </q-card-section>
-    <q-card-section>
+    <q-card-section class="q-pt-none">
       <ColorPalette v-model="color" />
     </q-card-section>
     <q-card-actions>

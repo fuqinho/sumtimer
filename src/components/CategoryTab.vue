@@ -55,7 +55,7 @@ async function moveDown() {
     content-class="content"
     active-class="tab-active"
   >
-    <q-item class="">
+    <q-item>
       <q-item-section class="folder-icon">
         <q-icon size="22px" :name="icon" />
       </q-item-section>

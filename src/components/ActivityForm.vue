@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import type { ActivityChange, CachedActivity } from '@/types/documents';
 import { useActivityStore } from '@/stores/activity-store';
 import { useCacheStore } from '@/stores/cache-store';
+import { useQuasar, type QInput, type QSelect } from 'quasar';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -15,13 +16,16 @@ const emit = defineEmits(['onCreated', 'onUpdated']);
 // =========================== Use stores/composables ==========================
 const activityStore = useActivityStore();
 const cacheStore = useCacheStore();
+const $q = useQuasar();
 
 // =========================== Refs ============================================
-const { categories, idToCategory, idToActivity } = storeToRefs(cacheStore);
+const { categories, idToActivity } = storeToRefs(cacheStore);
 const selectedCategory = ref(
   null as { cid: string; label: string; color: string } | null
 );
-const activityName = ref('');
+const categoryRef = ref(null as QSelect | null);
+const name = ref('');
+const nameRef = ref(null as QInput | null);
 
 // =========================== Computed properties =============================
 const categoryOptions = computed(() => {
@@ -36,11 +40,21 @@ const categoryOptions = computed(() => {
 
 // =========================== Methods =========================================
 async function addActivity() {
-  if (!selectedCategory.value) return;
-  await activityStore.addActivity(
-    activityName.value,
-    selectedCategory.value.cid
-  );
+  nameRef.value?.validate();
+  categoryRef.value?.validate();
+  if (
+    nameRef.value?.hasError ||
+    categoryRef.value?.hasError ||
+    !name.value ||
+    !selectedCategory.value
+  ) {
+    $q.notify({
+      type: 'negative',
+      message: 'Form has error(s).',
+    });
+    return;
+  }
+  await activityStore.addActivity(name.value, selectedCategory.value.cid);
   emit('onCreated');
 }
 
@@ -57,8 +71,8 @@ async function updateActivity() {
   ) {
     change.cid = selectedCategory.value.cid;
   }
-  if (activityName.value !== props.act.data.label) {
-    change.label = activityName.value;
+  if (name.value !== props.act.data.label) {
+    change.label = name.value;
   }
   await activityStore.updateActivity(props.act.id, change);
   emit('onUpdated');
@@ -73,7 +87,7 @@ if (props.act) {
         selectedCategory.value = option;
       }
     }
-    activityName.value = data.label;
+    name.value = data.label;
   }
 } else if (props.initialCategory) {
   for (const option of categoryOptions.value) {
@@ -81,31 +95,58 @@ if (props.act) {
       selectedCategory.value = option;
     }
   }
-  activityName.value = idToCategory.value[props.initialCategory].label;
 }
 </script>
 
 <template>
-  <q-card>
+  <q-card :style="{ width: '80%', maxWidth: '400px' }">
     <q-card-section v-if="!!props.act">Modify activity</q-card-section>
     <q-card-section v-else>Create activity</q-card-section>
     <q-separator />
-    <q-card-section>
+    <q-card-section class="q-pb-none">
       <q-select
+        ref="categoryRef"
         v-model="selectedCategory"
+        dense
         label="Category"
         :options="categoryOptions"
+        :rules="[(v) => !!v || 'Category is required.']"
       >
         <template #option="scope">
           <q-item v-bind="scope.itemProps" :style="{ color: scope.opt.color }">
-            {{ scope.opt.label }}
+            <q-item-section avatar>
+              <q-icon name="folder" />
+            </q-item-section>
+            <q-item-section class="category-name">
+              {{ scope.opt.label }}
+            </q-item-section>
           </q-item>
         </template>
         <template #selected-item="scope">
-          <span :style="{ color: scope.opt.color }">{{ scope.opt.label }}</span>
+          <div class="row items-center">
+            <q-icon
+              size="22px"
+              name="folder"
+              class="q-py-sm"
+              :style="{ color: scope.opt.color }"
+            />
+            <span class="q-pl-sm" :style="{ color: scope.opt.color }">
+              {{ scope.opt.label }}
+            </span>
+          </div>
         </template>
       </q-select>
-      <q-input v-model="activityName" label="Activity name"> </q-input>
+    </q-card-section>
+    <q-card-section class="q-pt-none">
+      <q-input
+        ref="nameRef"
+        v-model="name"
+        label="Activity name"
+        :rules="[(v) => !!v || 'Activity name is required.']"
+        autofocus
+        clearable
+      >
+      </q-input>
     </q-card-section>
     <q-card-actions align="right">
       <q-btn v-close-popup label="Cancel" flat></q-btn>
