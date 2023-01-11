@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { date } from 'quasar';
 import {
@@ -41,7 +41,18 @@ export const useRecordStore = defineStore('records', () => {
 
   const { uid } = storeToRefs(authStore);
   const recentRecords = ref([] as RecordDoc[]);
-  const requestedRecords = ref([] as RecordDoc[]);
+  const requestedRecordsToWatch = ref([] as RecordDoc[]);
+  let requestedStartMs = 0;
+  let requestedEndMs = 0;
+  const requestedRecords = computed(() =>
+    requestedRecordsToWatch.value.filter(
+      (doc) =>
+        !(
+          doc.data.end.toMillis() < requestedStartMs ||
+          doc.data.start.toMillis() > requestedEndMs
+        )
+    )
+  );
 
   let unsubRecent = null as Unsubscribe | null;
   let unsubRequested = null as Unsubscribe | null;
@@ -107,6 +118,9 @@ export const useRecordStore = defineStore('records', () => {
   function startWatchRequestedRecords(uid: string, start: Date) {
     stopWatchRequestedRecords();
 
+    requestedStartMs = start.getTime();
+    requestedEndMs = date.addToDate(start, { days: 7 }).getTime();
+
     const end = date.addToDate(start, { days: 8 });
 
     const q = query(
@@ -120,22 +134,22 @@ export const useRecordStore = defineStore('records', () => {
     unsubRequested = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
-          requestedRecords.value.splice(change.newIndex, 0, {
+          requestedRecordsToWatch.value.splice(change.newIndex, 0, {
             id: change.doc.id,
             data: change.doc.data() as RecordDocumentData,
           });
         } else if (change.type === 'removed') {
-          requestedRecords.value.splice(change.oldIndex, 1);
+          requestedRecordsToWatch.value.splice(change.oldIndex, 1);
         } else {
           const newItem = {
             id: change.doc.id,
             data: change.doc.data() as RecordDocumentData,
           };
           if (change.newIndex != change.oldIndex) {
-            requestedRecords.value.splice(change.oldIndex, 1);
-            requestedRecords.value.splice(change.newIndex, 0, newItem);
+            requestedRecordsToWatch.value.splice(change.oldIndex, 1);
+            requestedRecordsToWatch.value.splice(change.newIndex, 0, newItem);
           } else {
-            requestedRecords.value[change.newIndex] = newItem;
+            requestedRecordsToWatch.value[change.newIndex] = newItem;
           }
         }
       });
@@ -147,7 +161,9 @@ export const useRecordStore = defineStore('records', () => {
       unsubRequested();
       unsubRequested = null;
     }
-    requestedRecords.value = [];
+    requestedRecordsToWatch.value = [];
+    requestedStartMs = 0;
+    requestedEndMs = 0;
   }
 
   async function addRecord(
