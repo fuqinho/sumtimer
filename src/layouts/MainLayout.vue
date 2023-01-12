@@ -113,10 +113,10 @@ function signOutUser() {
       </q-toolbar>
 
       <q-tabs align="left">
-        <q-route-tab to="/" label="Home" />
-        <q-route-tab to="/activities" label="Activities" />
-        <q-route-tab to="/history" label="History" />
-        <q-route-tab to="/settings" label="Settings" />
+        <q-route-tab to="/" :label="$t('tabHome')" />
+        <q-route-tab to="/activities" :label="$t('tabActivities')" />
+        <q-route-tab to="/history" :label="$t('tabHistory')" />
+        <q-route-tab to="/settings" :label="$t('tabSettings')" />
       </q-tabs>
     </q-header>
 

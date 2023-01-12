@@ -73,7 +73,7 @@ function onCategoryDeleted() {
             flat
             rounded
             icon="add"
-            label="Add category"
+            :label="$t('addCategory')"
             size="md"
             class="q-ma-xs"
             @click="creatingCategory = true"
@@ -93,7 +93,7 @@ function onCategoryDeleted() {
           flat
           rounded
           icon="add"
-          label="Add activity"
+          :label="$t('addActivity')"
           size="md"
           class="q-mx-sm q-my-xs"
           @click="creatingActivity = true"

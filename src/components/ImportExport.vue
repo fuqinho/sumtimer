@@ -210,24 +210,23 @@ async function exportTogglCSV(paid: boolean) {
 
 <template>
   <q-list>
-    <q-item-label header>Export / Import</q-item-label>
+    <q-item-label header>{{ $t('stExportImport') }}</q-item-label>
     <q-item>
       <q-item-section>
-        <q-item-label>Export JSON file</q-item-label>
+        <q-item-label>{{ $t('stExportJson') }}</q-item-label>
         <q-item-label caption>
-          Export all stored data as JSON file.
+          {{ $t('stExportJsonDesc') }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <q-btn color="primary" label="Export" @click="exportJson" />
+        <q-btn color="primary" :label="$t('stExportBtn')" @click="exportJson" />
       </q-item-section>
     </q-item>
     <q-item>
       <q-item-section>
-        <q-item-label>Import JSON file</q-item-label>
+        <q-item-label>{{ $t('stImportJson') }}</q-item-label>
         <q-item-label caption>
-          Import data from a JSON file, which should be exported by the above
-          button.
+          {{ $t('stImportJsonDesc') }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -240,32 +239,29 @@ async function exportTogglCSV(paid: boolean) {
         />
       </q-item-section>
       <q-item-section side>
-        <q-btn color="primary" label="Import" @click="importJson" />
+        <q-btn color="primary" :label="$t('stImportBtn')" @click="importJson" />
       </q-item-section>
     </q-item>
     <q-item>
       <q-item-section>
-        <q-item-label>Export CSV file (for Toggle free plan)</q-item-label>
+        <q-item-label>{{ $t('stExportCsvTogglFree') }}</q-item-label>
         <q-item-label caption>
-          Export records as Toggl-compatible CSV data. Some imcompatible data
-          can be missing.
+          {{ $t('stExportCsvTogglFreeDesc') }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <q-btn label="Export" @click="exportTogglCSV(false)" />
+        <q-btn :label="$t('stExportBtn')" @click="exportTogglCSV(false)" />
       </q-item-section>
     </q-item>
     <q-item>
       <q-item-section>
-        <q-item-label>Export CSV file (for Toggle paid plan)</q-item-label>
+        <q-item-label>{{ $t('stExportCsvTogglPaid') }}</q-item-label>
         <q-item-label caption>
-          Export records as Toggl-compatible CSV data. Some imcompatible data
-          can be missing. Sumtimer activities will be exported as Toggle tasks,
-          which requires paid paln.
+          {{ $t('stExportCsvTogglPaidDesc') }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <q-btn label="Export" @click="exportTogglCSV(true)" />
+        <q-btn :label="$t('stExportBtn')" @click="exportTogglCSV(true)" />
       </q-item-section>
     </q-item>
   </q-list>

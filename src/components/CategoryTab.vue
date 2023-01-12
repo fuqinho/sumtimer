@@ -13,7 +13,7 @@ const color = computed(() => {
 });
 
 const label = computed(() => {
-  return props.cat ? props.cat.data.label : 'All activities';
+  return props.cat ? props.cat.data.label : '';
 });
 
 const name = computed(() => {
@@ -60,7 +60,9 @@ async function moveDown() {
         <q-icon size="22px" :name="icon" />
       </q-item-section>
       <q-item-section class="category-name">
-        <div class="text-ellipsis">{{ label }}</div>
+        <div class="text-ellipsis">
+          {{ label || $t('allActivities') }}
+        </div>
       </q-item-section>
       <q-space />
       <q-item-section v-if="!!props.cat" class="actions" side>

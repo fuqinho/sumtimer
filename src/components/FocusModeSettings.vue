@@ -111,7 +111,7 @@ init();
   <q-list>
     <q-item>
       <q-item-section>
-        <q-item-label>Focus mode</q-item-label>
+        <q-item-label>{{ $t('stFocusMode') }}</q-item-label>
         <q-item-label caption>Chrome extension is required.</q-item-label>
       </q-item-section>
       <q-item-section avatar>
@@ -149,7 +149,7 @@ init();
                 v-model="urlBlockListModel"
                 type="textarea"
                 filled
-                label="Block list (URL)"
+                :label="$t('stBlockListUrl')"
                 cledarable
               />
             </q-item-section>
@@ -160,7 +160,7 @@ init();
                 v-model="titleBlockListModel"
                 type="textarea"
                 filled
-                label="Block list (Page title)"
+                :label="$t('stBlockListPageTitle')"
                 cledarable
               />
             </q-item-section>
@@ -168,7 +168,7 @@ init();
 
           <q-item>
             <q-btn color="primary" @click="setExtensionSettings">
-              Update extension settings
+              {{ $t('stUpdateExtensionSettings') }}
             </q-btn>
           </q-item>
         </q-list>

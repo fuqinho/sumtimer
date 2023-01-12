@@ -55,14 +55,15 @@ async function deleteAccount() {
     <q-item-label header>Danger zone</q-item-label>
     <q-item>
       <q-item-section>
-        <q-item-label>Delete account</q-item-label>
+        <q-item-label>{{ $t('stDeleteAccount') }}</q-item-label>
         <q-item-label caption>
-          Delete your account from Sumtimer. It also deletes all stored data
-          such as records, activities, and categories permanently.
+          {{ $t('stDeleteAccountDesc') }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <q-btn color="red" @click="confirming = true">Delete account</q-btn>
+        <q-btn color="red" @click="confirming = true">{{
+          $t('stDeleteAccountBtn')
+        }}</q-btn>
       </q-item-section>
     </q-item>
   </q-list>
@@ -70,24 +71,24 @@ async function deleteAccount() {
   <q-dialog v-model="confirming" persistent>
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6" color="red">Delete data</div>
+        <div class="text-h6" color="red">{{ $t('stDeleteAccount') }}</div>
       </q-card-section>
       <q-card-section>
         <q-avatar icon="warning" color="white" text-color="red" />
         <span class="q-ml-sm">
-          Please enter your email address to delete all data.
+          {{ $t('stDeleteAccountConfirm') }}
         </span>
       </q-card-section>
       <q-card-section class="q-pt-none">
         <q-input v-model="emailModel" dense autofocus />
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn v-close-popup flat label="Cancel" />
+        <q-btn v-close-popup flat :label="$t('cancelBtn')" />
         <q-btn
           v-close-popup
           :disable="emailModel !== userEmail"
           flat
-          label="Delete"
+          :label="$t('deleteBtn')"
           color="red"
           @click="deleteAccount"
         />
