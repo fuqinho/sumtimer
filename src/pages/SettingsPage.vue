@@ -7,7 +7,6 @@ import UserPreference from '@/components/UserPreference.vue';
 
 <template>
   <q-page class="q-pa-lg q-gutter-lg">
-    <div>{{ $t('success') }}</div>
     <q-card>
       <UserPreference class="q-pb-sm" />
     </q-card>
