@@ -99,7 +99,8 @@ const separatorStyles = computed(() => {
       v-for="sep in separatorStyles"
       :key="sep.id"
       class="bar-separator"
-      :style="sep">
+      :style="sep"
+    >
       <span class="bar-separator-circle"></span>
     </div>
     <RecordBar
