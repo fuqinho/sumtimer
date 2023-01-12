@@ -9,6 +9,7 @@ import { useActivityStore } from '@/stores/activity-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
 import { useCacheStore } from '@/stores/cache-store';
 import ActivityForm from '@/components/ActivityForm.vue';
+import HoursLabel from '@/components/HoursLabel.vue';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -36,9 +37,6 @@ const categoryColor = computed(() => {
 });
 const numRecords = computed(() => {
   return props.act.data.count;
-});
-const totalHours = computed(() => {
-  return (props.act.data.duration / (60 * 60 * 1000)).toFixed(1);
 });
 
 // =========================== Methods =========================================
@@ -100,11 +98,11 @@ async function deleteActivity() {
       </q-item-label>
       <q-item-label v-else class="records-num"> 0 </q-item-label>
     </q-item-section>
-    <q-item-section side style="min-width: 50px; padding-left: 4px">
+    <q-item-section side style="min-width: 56px; padding-left: 6px">
       <q-item-label caption>Hours</q-item-label>
-      <q-item-label class="total-hours">{{ totalHours }}</q-item-label>
+      <HoursLabel :ms="props.act.data.duration" class="hours-label" />
     </q-item-section>
-    <q-item-section side style="padding-left: 6px">
+    <q-item-section side style="padding-left: 8px">
       <div class="text-grey-7 q-gutter-xs">
         <q-btn size="sm" round flat icon="more_vert">
           <q-menu>
@@ -160,14 +158,17 @@ async function deleteActivity() {
 }
 
 .activity-name,
-.records-num,
-.total-hours {
+.records-num {
   font-size: 16px;
   margin-top: 0 !important;
 }
 
-.records-num,
-.total-hours {
+.records-num {
   color: #444;
+}
+
+.hours-label {
+  margin-top: -4px;
+  height: 24px;
 }
 </style>
