@@ -68,7 +68,7 @@ function onRangeStart(from: { year: number; month: number; day: number }) {
 
 <template>
   <q-page class="q-pa-md col items-center justify-evenly">
-    <div class="row items-center">
+    <div v-if="uid" class="row items-center">
       <q-btn icon="event" size="sm" round flat>
         <q-popup-proxy
           ref="dateProxyRef"

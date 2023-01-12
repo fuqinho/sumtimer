@@ -112,7 +112,7 @@ function signOutUser() {
         </q-btn>
       </q-toolbar>
 
-      <q-tabs align="left">
+      <q-tabs v-if="isSignedIn" align="left">
         <q-route-tab to="/" :label="$t('tabHome')" />
         <q-route-tab to="/activities" :label="$t('tabActivities')" />
         <q-route-tab to="/history" :label="$t('tabHistory')" />
