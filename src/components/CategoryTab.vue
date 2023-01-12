@@ -61,7 +61,7 @@ async function moveDown() {
       </q-item-section>
       <q-item-section class="category-name">
         <div class="text-ellipsis">
-          {{ label || $t('allActivities') }}
+          {{ label || $t('allCategories') }}
         </div>
       </q-item-section>
       <q-space />

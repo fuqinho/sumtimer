@@ -10,7 +10,7 @@ export default {
   tabHistory: '履歴',
   tabSettings: '設定',
 
-  allActivities: '全アクティビティ',
+  allCategories: '全てのカテゴリー',
   addCategory: 'カテゴリーを追加',
   addActivity: 'アクティビティを追加',
 

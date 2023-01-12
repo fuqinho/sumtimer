@@ -10,7 +10,7 @@ export default {
   tabHistory: 'History',
   tabSettings: 'Settings',
 
-  allActivities: 'All activities',
+  allCategories: 'All categories',
   addCategory: 'Add category',
   addActivity: 'Add activity',
 
