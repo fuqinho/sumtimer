@@ -5,6 +5,7 @@ import { colors } from 'quasar';
 import type { RecordDoc } from '@/types/documents';
 import { useCacheStore } from '@/stores/cache-store';
 import { useUtil } from '@/composables/util';
+import HoursLabel from '@/components/HoursLabel.vue';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -15,7 +16,7 @@ const props = defineProps<{
 
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();
-const { computeDuration, hourStr } = useUtil();
+const { computeDuration } = useUtil();
 
 // =========================== Refs ============================================
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
@@ -119,6 +120,13 @@ function catBarStyle(data: CategoryBarData) {
   return res;
 }
 
+function catDurStyle(data: CategoryBarData) {
+  return {
+    left: (data.weekDuration * 100) / maxDuration.value + '%',
+    color: idToCategory.value[data.cid].color,
+  };
+}
+
 function actBarStyle(data: ActivityBarData) {
   const ccolor = idToCategory.value[idToActivity.value[data.aid].cid].color;
   const acolor = colors.lighten(ccolor, 80);
@@ -129,57 +137,74 @@ function actBarStyle(data: ActivityBarData) {
   return res;
 }
 
+function actDurStyle(data: ActivityBarData) {
+  const ccolor = idToCategory.value[idToActivity.value[data.aid].cid].color;
+  const acolor = colors.lighten(ccolor, 80);
+  return {
+    left: (data.weekDuration * 100) / maxDuration.value + '%',
+    color: acolor,
+  };
+}
+
 // =========================== Methods =========================================
 // =========================== Additional setup ================================
 </script>
 
 <template>
   <div class="column">
-    <div
-      v-for="catData in barData.catBars"
-      :key="catData.cid"
-      class="column cat-bar"
-    >
-      <div class="row">
-        <div
-          class="category-label"
-          :style="{ color: idToCategory[catData.cid].color }"
-        >
-          {{ idToCategory[catData.cid].label }}
+    <div v-for="catData in barData.catBars" :key="catData.cid" class="column">
+      <div class="row items-center cat-bar">
+        <div class="label-area row items-center">
+          <div
+            class="category-label ellipsis"
+            :style="{ color: idToCategory[catData.cid].color }"
+          >
+            {{ idToCategory[catData.cid].label }}
+          </div>
         </div>
-        <div class="category-duration">
-          {{ hourStr(catData.weekDuration) }}
-        </div>
+
         <div class="bar-container col">
           <div class="category-bar" :style="catBarStyle(catData)"></div>
+          <div class="category-dur" :style="catDurStyle(catData)">
+            <HoursLabel :ms="catData.weekDuration" class="q-px-sm" />
+          </div>
         </div>
+        <div class="duration-area"></div>
       </div>
       <div
         v-for="actData in catData.actBars"
         :key="actData.aid"
         class="column act-bar"
       >
-        <div class="row">
-          <div class="activity-indent"></div>
-          <div
-            class="activity-label ellipsis"
-            :style="{ color: idToCategory[catData.cid].color }"
-          >
-            {{ idToActivity[actData.aid].label }}
+        <div class="row items-center">
+          <div class="label-area row items-center">
+            <div class="activity-indent"></div>
+            <div
+              class="activity-label ellipsis"
+              :style="{ color: idToCategory[catData.cid].color }"
+            >
+              {{ idToActivity[actData.aid].label }}
+            </div>
           </div>
-          <div class="activity-duration">
-            {{ hourStr(actData.weekDuration) }}
-          </div>
-          <div class="bar-container col">
+          <div class="bar-container-act col">
             <div class="activity-bar" :style="actBarStyle(actData)"></div>
+            <div class="activity-dur" :style="actDurStyle(actData)">
+              <HoursLabel
+                :ms="actData.weekDuration"
+                :style="{ color: idToCategory[catData.cid].color }"
+                class="q-px-sm"
+                size="xs"
+              />
+            </div>
           </div>
+          <div class="duration-area"></div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .cat-bar {
   margin-top: 14px;
 }
@@ -188,33 +213,60 @@ function actBarStyle(data: ActivityBarData) {
   margin-top: 2px;
 }
 
+.label-area {
+  flex-wrap: nowrap;
+  width: 25%;
+  max-width: 160px;
+  min-width: 80px;
+}
+
+.duration-area {
+  width: 50px;
+  flex: none;
+}
+
 .category-label {
-  width: 160px;
+  flex: auto;
 }
 
 .activity-indent {
+  flex: none;
   width: 20px;
 }
 
 .activity-label {
-  width: 140px;
+  flex: auto;
+  font-size: 11px;
+  height: 14px;
+  opacity: 0.6;
 }
 
-.category-duration,
-.activity-duration {
-  width: 50px;
-  text-align: right;
-  padding-left: 8px;
-  padding-right: 8px;
-  color: #555;
+.category-dur {
+  position: absolute;
+  top: -3px;
+  font-weight: 500;
+}
+
+.activity-dur {
+  position: absolute;
+  top: -3px;
+  opacity: 0.6;
 }
 
 .bar-container {
   height: 20px;
+  position: relative;
 }
 
-.category-bar,
+.bar-container-act {
+  height: 14px;
+  position: relative;
+}
+
+.category-bar {
+  height: 20px;
+}
 .activity-bar {
-  height: 100%;
+  height: 14px;
 }
 </style>
