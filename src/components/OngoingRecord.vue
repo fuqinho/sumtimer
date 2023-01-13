@@ -45,7 +45,7 @@ const cachedActivity = computed(() => {
   return idToActivity.value[props.data.aid];
 });
 const numRecords = computed(() => {
-  return cachedActivity.value.count;
+  return cachedActivity.value ? cachedActivity.value.count : 0;
 });
 
 // =========================== Methods =========================================
