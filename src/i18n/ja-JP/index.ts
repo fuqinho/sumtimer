@@ -31,10 +31,10 @@ export default {
     '保存されている全ての記録をJSON形式でファイルにエクスポートします。',
   stImportJson: 'JSONファイルのインポート',
   stImportJsonDesc: '上記の機能で出力されたJSONファイルをインポートします。',
-  stExportCsvTogglFree: 'Toggl形式CSVファイルのエクスポート(フリープラン向け)',
+  stExportCsvTogglFree: 'CSVファイルのエクスポート(Togglフリープラン向け)',
   stExportCsvTogglFreeDesc:
     'Togglと互換性のある形式でCSVファイルをエクスポートします。Sumtimer独自で互換性の無いデータは出力されません。',
-  stExportCsvTogglPaid: 'Toggl形式CSVファイルのエクスポート(有料プラン向け)',
+  stExportCsvTogglPaid: 'CSVファイルのエクスポート(Toggl有料プラン向け)',
   stExportCsvTogglPaidDesc:
     'Togglと互換性のある形式でCSVファイルをエクスポートします。Sumtimer独自で互換性の無いデータは出力されません。各アクティビティはTogglタスクとして出力されます。',
   stExportBtn: 'エクスポート',
