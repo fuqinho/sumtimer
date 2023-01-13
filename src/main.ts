@@ -58,7 +58,7 @@ declare module 'vue-i18n' {
   export interface DefineNumberFormat {}
 }
 const i18n = createI18n({
-  locale: 'ja-JP',
+  locale: 'en-US',
   fallbackLocale: 'en-US',
   legacy: false,
   messages,

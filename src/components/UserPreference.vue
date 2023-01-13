@@ -1,17 +1,39 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-const { locale } = useI18n({ useScope: 'global' });
+import { useUserStore } from '@/stores/user-store';
+import { storeToRefs } from 'pinia';
+import { ref, watch, onMounted } from 'vue';
+
+const userStore = useUserStore();
+const { currentLocale } = storeToRefs(userStore);
+
 const localeOptions = [
   { value: 'en-US', label: 'English' },
   { value: 'ja-JP', label: '日本語' },
 ];
-const selectedOption = ref(
-  locale.value === 'en-US' ? localeOptions[0] : localeOptions[1]
-);
-locale.value = selectedOption.value.value;
-watch(selectedOption, (newLocale) => {
-  locale.value = newLocale.value;
+const selectedOption = ref(pickOption(currentLocale.value));
+
+function pickOption(locValue: string) {
+  for (const opt of localeOptions) {
+    if (opt.value === locValue) return opt;
+  }
+  return localeOptions[0];
+}
+
+onMounted(() => {
+  watch(currentLocale, (newLocale) => {
+    const newOption = pickOption(newLocale);
+    if (selectedOption.value.value != newOption.value) {
+      console.log('Set locale option to ', newOption.value);
+      selectedOption.value = newOption;
+    }
+  });
+
+  watch(selectedOption, (newLocale) => {
+    if (newLocale.value !== currentLocale.value) {
+      console.log('Change locale to ', newLocale.value);
+      userStore.setLocale(newLocale.value);
+    }
+  });
 });
 </script>
 

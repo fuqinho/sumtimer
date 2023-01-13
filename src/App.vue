@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeUnmount, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { getAuth, onAuthStateChanged, type Unsubscribe } from '@firebase/auth';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouter } from 'vue-router';
+import { useUserStore } from './stores/user-store';
+import { storeToRefs } from 'pinia';
 
+const { locale } = useI18n({ useScope: 'global' });
 const authStore = useAuthStore();
+const userStore = useUserStore();
 const router = useRouter();
+
+const { currentLocale } = storeToRefs(userStore);
+
 let unsubscribe = null as Unsubscribe | null;
 
 onMounted(() => {
@@ -19,6 +27,13 @@ onMounted(() => {
     authStore.setCurrentUser(user);
     if (!user) {
       router.push('/');
+    }
+  });
+
+  locale.value = currentLocale.value;
+  watch(currentLocale, (newLocale) => {
+    if (locale.value != newLocale) {
+      locale.value = newLocale;
     }
   });
 });

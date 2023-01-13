@@ -3,6 +3,7 @@ import { DocumentData, Timestamp } from '@firebase/firestore';
 export interface UserDocumentData extends DocumentData {
   displayName: string;
   email: string;
+  locale?: string;
 }
 
 export interface CategoryDocumentData extends DocumentData {
