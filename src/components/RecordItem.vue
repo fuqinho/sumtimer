@@ -8,6 +8,7 @@ import { useRecordStore } from '@/stores/record-store';
 import { useCacheStore } from '@/stores/cache-store';
 import RecordView from '@/components/RecordView.vue';
 import TimeDisplay from '@/components/TimeDisplay.vue';
+import { useUtil } from '@/composables/util';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -18,6 +19,7 @@ const props = defineProps<{
 
 const recordStore = useRecordStore();
 const cacheStore = useCacheStore();
+const { lcl } = useUtil();
 
 // =========================== Refs ============================================
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
@@ -91,10 +93,10 @@ async function deleteRecord() {
           :style="{
             'background-color': categoryColor,
           }"
-          >{{ categoryName }}</q-badge
+          >{{ lcl(categoryName) }}</q-badge
         ></q-item-label
       >
-      <q-item-label>{{ activityName }}</q-item-label>
+      <q-item-label>{{ lcl(activityName) }}</q-item-label>
     </q-item-section>
     <q-item-section class="col">
       <q-item-label v-if="props.doc.data.memo" top>

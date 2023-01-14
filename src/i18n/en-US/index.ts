@@ -44,4 +44,20 @@ export default {
   stDeleteAccountDesc:
     'Delete your account from Sumtimer. It also deletes all stored data such as records, activities, and categories permanently.',
   stDeleteAccountBtn: 'Delete account',
+
+  catWork: 'Work',
+  catStudy: 'Study',
+  catExercise: 'Exercise',
+  catEntertainment: 'Entertainment',
+  catRest: 'Rest',
+  catOthers: 'Others',
+
+  actGeneralWork: 'General work',
+  actGeneralStudy: 'General study',
+  actWalking: 'Walking',
+  actRunning: 'Running',
+  actVideoGame: 'Video game',
+  actSleep: 'Sleep',
+  actShopping: 'Shopping',
+  actHouseCleaning: 'House cleaning',
 };

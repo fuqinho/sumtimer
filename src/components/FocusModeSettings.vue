@@ -4,10 +4,12 @@ import { useFocusModeStore } from '@/stores/focus-mode-store';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
+import { useUtil } from '@/composables/util';
 
 const cacheStore = useCacheStore();
 const focusModeStore = useFocusModeStore();
 const $q = useQuasar();
+const { lcl } = useUtil();
 
 const { categories } = storeToRefs(cacheStore);
 
@@ -139,7 +141,7 @@ init();
                     size="xs"
                   />
                 </span>
-                <span>{{ cat.data.label }}</span>
+                <span>{{ lcl(cat.data.label) }}</span>
               </div>
             </div>
           </q-item>

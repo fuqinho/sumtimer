@@ -36,7 +36,7 @@ const { ongoing } = storeToRefs(ongoingStore);
       ></ongoing-record>
       <ActivityList v-if="uid" :uid="uid" class="q-mt-md" />
     </div>
-    <q-separator class="q-my-sm" />
+    <q-separator class="q-mt-md q-mb-xs" />
     <div class="row justify-end">
       <a href="privacypolicy.html">Privacy policy</a>
       <span class="q-mx-sm">|</span>

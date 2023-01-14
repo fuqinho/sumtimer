@@ -1,8 +1,11 @@
+import { useI18n } from 'vue-i18n';
 import { date } from 'quasar';
 import { startDayOfWeek, startHourOfDay } from '@/common/constants';
 import type { RecordDocumentData } from '@/types/documents';
 
 export function useUtil() {
+  const { t } = useI18n();
+
   function startOfDay(time: Date) {
     let result = date.startOfDate(time, 'day');
     result = date.addToDate(result, { hours: startHourOfDay });
@@ -59,6 +62,10 @@ export function useUtil() {
     return (ms / (60 * 60 * 1000)).toFixed(1);
   }
 
+  function lcl(label: string) {
+    return label.startsWith('lcl$') ? t(label.substring(4)) : label;
+  }
+
   return {
     startOfDay,
     startOfWeek,
@@ -67,5 +74,6 @@ export function useUtil() {
     fitDate,
     computeDuration,
     hourStr,
+    lcl,
   };
 }

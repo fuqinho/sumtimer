@@ -5,6 +5,7 @@ import type { ActivityChange, CachedActivity } from '@/types/documents';
 import { useActivityStore } from '@/stores/activity-store';
 import { useCacheStore } from '@/stores/cache-store';
 import { useQuasar, type QInput, type QSelect } from 'quasar';
+import { useUtil } from '@/composables/util';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -17,6 +18,7 @@ const emit = defineEmits(['onCreated', 'onUpdated']);
 const activityStore = useActivityStore();
 const cacheStore = useCacheStore();
 const $q = useQuasar();
+const { lcl } = useUtil();
 
 // =========================== Refs ============================================
 const { categories, idToActivity } = storeToRefs(cacheStore);
@@ -87,7 +89,7 @@ if (props.act) {
         selectedCategory.value = option;
       }
     }
-    name.value = data.label;
+    name.value = lcl(data.label);
   }
 } else if (props.initialCategory) {
   for (const option of categoryOptions.value) {
@@ -118,7 +120,7 @@ if (props.act) {
               <q-icon name="folder" />
             </q-item-section>
             <q-item-section class="category-name">
-              {{ scope.opt.label }}
+              {{ lcl(scope.opt.label) }}
             </q-item-section>
           </q-item>
         </template>
@@ -131,7 +133,7 @@ if (props.act) {
               :style="{ color: scope.opt.color }"
             />
             <span class="q-pl-sm" :style="{ color: scope.opt.color }">
-              {{ scope.opt.label }}
+              {{ lcl(scope.opt.label) }}
             </span>
           </div>
         </template>

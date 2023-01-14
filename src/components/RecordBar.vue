@@ -7,6 +7,7 @@ import type { OngoingDocumentData, RecordDoc } from '@/types/documents';
 import { defaultActivityName, defaultCategoryColor } from '@/common/constants';
 import { useCacheStore } from '@/stores/cache-store';
 import RecordView from '@/components/RecordView.vue';
+import { useUtil } from '@/composables/util';
 
 const props = defineProps<{
   dayStart: number;
@@ -17,6 +18,7 @@ const props = defineProps<{
 }>();
 
 const cacheStore = useCacheStore();
+const { lcl } = useUtil();
 
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 const editing = ref(false);
@@ -144,7 +146,7 @@ const subs = computed(() => {
     ></div>
 
     <div class="sub"></div>
-    <q-tooltip>{{ activityName }}</q-tooltip>
+    <q-tooltip>{{ lcl(activityName) }}</q-tooltip>
   </div>
 
   <q-dialog v-if="props.doc" v-model="editing">

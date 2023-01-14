@@ -8,6 +8,7 @@ import {
   DeleteCategoryResult,
 } from '@/stores/category-store';
 import ColorPalette from '@/components/ColorPalette.vue';
+import { useUtil } from '@/composables/util';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -18,9 +19,10 @@ const emit = defineEmits(['onAdded', 'onUpdated', 'onDeleted']);
 // =========================== Use stores/composables ==========================
 const categoryStore = useCategoryStore();
 const $q = useQuasar();
+const { lcl } = useUtil();
 
 // =========================== Refs ============================================
-const name = ref(props.cat ? props.cat.data.label : '');
+const name = ref(props.cat ? lcl(props.cat.data.label) : '');
 const nameRef = ref(null as QInput | null);
 const color = ref(props.cat ? props.cat.data.color : defaultCategoryColor);
 

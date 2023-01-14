@@ -12,13 +12,13 @@ const props = defineProps<{
 }>();
 
 // =========================== Use stores/composables ==========================
-const ongoing = computed(() => props.ongoing);
 
 // =========================== Refs ============================================
 const now = ref(Date.now());
 const nowMarkerStyle = ref(null as { left: string } | null);
 
 // =========================== Computed properties =============================
+const ongoing = computed(() => props.ongoing);
 function hasIntersection(s0: number, e0: number, s1: number, e1: number) {
   return s0 < e1 && s1 < e0;
 }

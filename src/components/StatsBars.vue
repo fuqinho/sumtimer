@@ -16,7 +16,7 @@ const props = defineProps<{
 
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();
-const { computeDuration } = useUtil();
+const { computeDuration, lcl } = useUtil();
 
 // =========================== Refs ============================================
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
@@ -160,7 +160,7 @@ function actDurStyle(data: ActivityBarData) {
             class="category-label ellipsis"
             :style="{ color: idToCategory[catData.cid].color }"
           >
-            {{ idToCategory[catData.cid].label }}
+            {{ lcl(idToCategory[catData.cid].label) }}
           </div>
         </div>
 
@@ -184,7 +184,7 @@ function actDurStyle(data: ActivityBarData) {
               class="activity-label ellipsis"
               :style="{ color: idToCategory[catData.cid].color }"
             >
-              {{ idToActivity[actData.aid].label }}
+              {{ lcl(idToActivity[actData.aid].label) }}
             </div>
           </div>
           <div class="bar-container-act col">

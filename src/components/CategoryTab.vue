@@ -2,6 +2,9 @@
 import { computed } from 'vue';
 import type { CachedCategory } from '@/types/documents';
 import { useCategoryStore } from '@/stores/category-store';
+import { useUtil } from '@/composables/util';
+
+const { lcl } = useUtil();
 
 const props = defineProps<{
   cat?: CachedCategory;
@@ -61,7 +64,7 @@ async function moveDown() {
       </q-item-section>
       <q-item-section class="category-name">
         <div class="text-ellipsis">
-          {{ label || $t('allCategories') }}
+          {{ lcl(label) || $t('allCategories') }}
         </div>
       </q-item-section>
       <q-space />

@@ -10,40 +10,43 @@ admin.initializeApp();
 
 const presetCategories = [
   {
-    label: 'Work',
+    label: 'lcl$catWork',
     color: '#ef5350',
     order: 1,
-    activities: [{ label: 'General work' }],
+    activities: [{ label: 'lcl$actGeneralWork' }],
   },
   {
-    label: 'Learning',
-    color: '#29b6f6',
+    label: 'lcl$catStudy',
+    color: '#42a5f5',
     order: 2,
-    activities: [{ label: 'General learning' }],
+    activities: [{ label: 'lcl$actGeneralStudy' }],
   },
   {
-    label: 'Exercise',
-    color: '#9ccc65',
+    label: 'lcl$catExercise',
+    color: '#66bb6a',
     order: 3,
-    activities: [{ label: 'Walking' }, { label: 'Running' }],
+    activities: [{ label: 'lcl$actWalking' }, { label: 'lcl$actRunning' }],
   },
   {
-    label: 'Entertainment',
-    color: '#ffa726',
+    label: 'lcl$catEntertainment',
+    color: '#ffa000',
     order: 4,
-    activities: [{ label: 'Video game' }],
+    activities: [{ label: 'lcl$actVideoGame' }],
   },
   {
-    label: 'Rest',
-    color: '#7e57c2',
+    label: 'lcl$catRest',
+    color: '#9575cd',
     order: 5,
-    activities: [{ label: 'Sleep' }],
+    activities: [{ label: 'lcl$actSleep' }],
   },
   {
-    label: 'Chore',
+    label: 'lcl$catOthers',
     color: '#8d6e63',
     order: 6,
-    activities: [{ label: 'House cleaning' }, { label: 'Errands' }],
+    activities: [
+      { label: 'lcl$actHouseCleaning' },
+      { label: 'lcl$actShopping' },
+    ],
   },
 ];
 

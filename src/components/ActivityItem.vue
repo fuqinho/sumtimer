@@ -10,6 +10,7 @@ import { useOngoingStore } from '@/stores/ongoing-store';
 import { useCacheStore } from '@/stores/cache-store';
 import ActivityForm from '@/components/ActivityForm.vue';
 import HoursLabel from '@/components/HoursLabel.vue';
+import { useUtil } from '@/composables/util';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -22,6 +23,7 @@ const recordStore = useRecordStore();
 const ongoingStore = useOngoingStore();
 const cacheStore = useCacheStore();
 const router = useRouter();
+const { lcl } = useUtil();
 
 // =========================== Refs ============================================
 const editing = ref(false);
@@ -76,14 +78,11 @@ async function deleteActivity() {
       @click="startActivity"
     />
     <q-item-section>
-      <q-item-label
-        caption
-        class="ellipsis"
-        :style="{ color: categoryColor }"
-        >{{ categoryName }}</q-item-label
-      >
+      <q-item-label caption class="ellipsis" :style="{ color: categoryColor }">
+        {{ lcl(categoryName) }}
+      </q-item-label>
       <q-item-label class="activity-name ellipsis">
-        {{ props.act.data.label }}
+        {{ lcl(props.act.data.label) }}
       </q-item-label>
     </q-item-section>
     <q-item-section side>

@@ -13,6 +13,7 @@ import type {
   RecordDocumentData,
 } from '@/types/documents';
 import { useCacheStore } from '@/stores/cache-store';
+import { useUtil } from '@/composables/util';
 
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
@@ -23,6 +24,7 @@ const props = defineProps<{
 const ongoingStore = useOngoingStore();
 const recordsStore = useRecordStore();
 const cacheStore = useCacheStore();
+const { lcl } = useUtil();
 
 // =========================== Refs ============================================
 const {
@@ -77,9 +79,9 @@ onMounted(async () => {
       <q-card-section class="row">
         <div class="column items-start">
           <q-badge :style="{ backgroundColor: categoryColor }">
-            {{ categoryName }}
+            {{ lcl(categoryName) }}
           </q-badge>
-          <div class="text-h6">{{ activityName }}</div>
+          <div class="text-h6">{{ lcl(activityName) }}</div>
         </div>
         <q-space />
         <div class="column items-end">

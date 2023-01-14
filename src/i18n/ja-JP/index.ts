@@ -46,4 +46,20 @@ export default {
   stDeleteAccountBtn: 'アカウントを削除する',
   stDeleteAccountConfirm:
     'アカウントと全てのデータを削除します。確認のため、アカウントのEmailアドレスを入力してください。',
+
+  catWork: '仕事',
+  catStudy: '学習',
+  catExercise: '運動',
+  catEntertainment: '娯楽',
+  catRest: '休養',
+  catOthers: 'その他',
+
+  actGeneralWork: '仕事（一般）',
+  actGeneralStudy: '学習（一般）',
+  actWalking: 'ウォーキング',
+  actRunning: 'ランニング',
+  actVideoGame: 'ゲーム',
+  actSleep: '睡眠',
+  actShopping: '買い物',
+  actHouseCleaning: '掃除',
 };

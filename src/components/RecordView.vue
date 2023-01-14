@@ -18,7 +18,7 @@ const props = defineProps<{
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();
 const recordStore = useRecordStore();
-const { maxDate, minDate } = useUtil();
+const { maxDate, minDate, lcl } = useUtil();
 
 // =========================== Refs ============================================
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
@@ -105,10 +105,10 @@ function onSelectActivity(activityId: string) {
   <q-card class="root" :style="{ backgroundColor: bgColor }">
     <q-card-section>
       <q-badge :style="{ backgroundColor: category.color }">
-        {{ category.label }}
+        {{ lcl(category.label) }}
       </q-badge>
       <div class="row items-center">
-        <div class="activity-label">{{ activity.label }}</div>
+        <div class="activity-label">{{ lcl(activity.label) }}</div>
         <q-btn
           flat
           round
