@@ -10,13 +10,36 @@ export default {
   tabHistory: '履歴',
   tabSettings: '設定',
 
+  category: 'カテゴリー',
+  activity: 'アクティビティ',
+  edit: '編集',
+  delete: '削除',
+  hours: '時間',
+  total: '合計',
+
   allCategories: '全てのカテゴリー',
   addCategory: 'カテゴリーを追加',
   addActivity: 'アクティビティを追加',
 
-  cancelBtn: 'キャンセル',
-  deleteBtn: '削除',
+  categoryName: 'カテゴリー名',
+  activityName: 'アクティビティ名',
 
+  createCategory: 'カテゴリーを新規作成',
+  modifyCategory: 'カテゴリーを編集',
+  createActivity: 'アクティビティを新規作成',
+  modifyActivity: 'アクティビティを編集',
+
+  cancelBtn: 'キャンセル',
+  closeBtn: '閉じる',
+  deleteBtn: '削除',
+  saveBtn: '保存',
+  addBtn: '追加',
+  updateBtn: '更新',
+  deleteRecordsBtn: '記録を削除する',
+
+  memo: 'メモ（やったこと等）',
+
+  // Settings
   stPreferences: 'ユーザー設定',
   stUiLanguage: 'UI言語',
 
@@ -47,6 +70,13 @@ export default {
   stDeleteAccountConfirm:
     'アカウントと全てのデータを削除します。確認のため、アカウントのEmailアドレスを入力してください。',
 
+  // Dialog/Notification messages,
+  msgCategoryNameRequired: 'カテゴリー名は必須です',
+  msgActivityNameRequired: 'アクティビティ名は必須です',
+  msgConfirmActivityRecords:
+    'このアクティビティに関連付いている{num}個の記録も削除してよいですか？',
+
+  // Preset categories / activities
   catWork: '仕事',
   catStudy: '学習',
   catExercise: '運動',

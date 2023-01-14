@@ -128,7 +128,12 @@ onMounted(async () => {
             <div class="time-str">~</div>
           </div>
         </div>
-        <q-input v-model="memo" label="Memo" autogrow @blur="recordMemo" />
+        <q-input
+          v-model="memo"
+          :label="$t('memo')"
+          autogrow
+          @blur="recordMemo"
+        />
       </q-card-section>
       <q-separator dark />
       <q-card-actions align="right">

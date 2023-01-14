@@ -10,13 +10,36 @@ export default {
   tabHistory: 'History',
   tabSettings: 'Settings',
 
+  category: 'Category',
+  activity: 'Activity',
+  edit: 'Edit',
+  delete: 'Delete',
+  hours: 'Hours',
+  total: 'Total',
+
   allCategories: 'All categories',
   addCategory: 'Add category',
   addActivity: 'Add activity',
 
-  cancelBtn: 'Cancel',
-  deleteBtn: 'Delete',
+  categoryName: 'Category name',
+  activityName: 'Activity name',
 
+  createCategory: 'Create category',
+  modifyCategory: 'Edit category',
+  createActivity: 'Create activity',
+  modifyActivity: 'Edit activity',
+
+  cancelBtn: 'Cancel',
+  closeBtn: 'Close',
+  deleteBtn: 'Delete',
+  saveBtn: 'Save',
+  addBtn: 'Add',
+  updateBtn: 'Update',
+  deleteRecordsBtn: 'Delete records',
+
+  memo: "Memo (What's done, etc...)",
+
+  // Settings
   stPreferences: 'Preferences',
   stUiLanguage: 'UI language',
 
@@ -45,6 +68,13 @@ export default {
     'Delete your account from Sumtimer. It also deletes all stored data such as records, activities, and categories permanently.',
   stDeleteAccountBtn: 'Delete account',
 
+  // Dialog/Notification messages,
+  msgCategoryNameRequired: 'Category name is required',
+  msgActivityNameRequired: 'Activity name is required',
+  msgConfirmActivityRecords:
+    'Are you OK to delete {num} records about this activity?',
+
+  // Preset categories / activities
   catWork: 'Work',
   catStudy: 'Study',
   catExercise: 'Exercise',

@@ -98,7 +98,7 @@ async function deleteActivity() {
       <q-item-label v-else class="records-num"> 0 </q-item-label>
     </q-item-section>
     <q-item-section side style="min-width: 56px; padding-left: 6px">
-      <q-item-label caption>Hours</q-item-label>
+      <q-item-label caption>{{ $t('total') }}</q-item-label>
       <HoursLabel :ms="props.act.data.duration" class="hours-label" />
     </q-item-section>
     <q-item-section side style="padding-left: 8px">
@@ -107,10 +107,10 @@ async function deleteActivity() {
           <q-menu>
             <q-list dense>
               <q-item v-close-popup clickable @click="editing = true">
-                <q-item-section>Edit</q-item-section>
+                <q-item-section>{{ $t('edit') }}</q-item-section>
               </q-item>
               <q-item v-close-popup clickable @click="startDeleteActivity">
-                <q-item-section>Delete</q-item-section>
+                <q-item-section>{{ $t('delete') }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -128,15 +128,15 @@ async function deleteActivity() {
       <q-card-section class="row items-center">
         <q-avatar icon="warning" color="white" text-color="red" />
         <span class="q-ml-sm">
-          Are you OK to delete {{ numRecords }} records about this activity?
+          {{ $t('msgConfirmActivityRecords', { num: numRecords }) }}
         </span>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn v-close-popup flat label="Cancel" color="primary" />
+        <q-btn v-close-popup flat :label="$t('cancelBtn')" color="primary" />
         <q-btn
           v-close-popup
           flat
-          label="Delete records"
+          :label="$t('deleteRecordsBtn')"
           color="primary"
           @click="deleteActivity"
         />

@@ -131,17 +131,23 @@ function onSelectActivity(activityId: string) {
       </div>
     </q-card-section>
     <q-card-section>
-      <q-input v-model="memo" label="memo" dense clearable autogrow></q-input>
+      <q-input
+        v-model="memo"
+        :label="$t('memo')"
+        dense
+        clearable
+        autogrow
+      ></q-input>
     </q-card-section>
     <q-card-actions>
       <q-btn flat round icon="delete" color="negative" @click="deleteRecord" />
       <q-space />
-      <q-btn v-if="hasChange" v-close-popup label="Cancel" flat />
-      <q-btn v-else v-close-popup label="Close" flat />
+      <q-btn v-if="hasChange" v-close-popup :label="$t('cancelBtn')" flat />
+      <q-btn v-else v-close-popup :label="$t('closeBtn')" flat />
       <q-btn
         v-if="hasChange"
         v-close-popup
-        label="Save"
+        :label="$t('saveBtn')"
         color="primary"
         @click="save"
       />

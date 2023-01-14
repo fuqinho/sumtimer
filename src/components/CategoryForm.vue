@@ -71,15 +71,15 @@ async function deleteCategory() {
 
 <template>
   <q-card>
-    <q-card-section v-if="props.cat">Modify category</q-card-section>
-    <q-card-section v-else>Create category</q-card-section>
+    <q-card-section v-if="props.cat">{{ $t('modifyCategory') }}</q-card-section>
+    <q-card-section v-else>{{ $t('createCategory') }}</q-card-section>
     <q-separator />
     <q-card-section class="row items-start">
       <q-input
         ref="nameRef"
         v-model="name"
-        label="Category name *"
-        :rules="[(v) => !!v || 'Category name is required']"
+        :label="$t('categoryName') + ' *'"
+        :rules="[(v) => !!v || $t('msgCategoryNameRequired')]"
         clearable
         class="cat-name"
       >
@@ -101,9 +101,14 @@ async function deleteCategory() {
         @click="deleteCategory"
       />
       <q-space />
-      <q-btn v-close-popup label="Cancel" flat></q-btn>
-      <q-btn v-if="props.cat" label="Save" color="primary" @click="update" />
-      <q-btn v-else label="Add" color="primary" @click="add" />
+      <q-btn v-close-popup :label="$t('cancelBtn')" flat></q-btn>
+      <q-btn
+        v-if="props.cat"
+        :label="$t('saveBtn')"
+        color="primary"
+        @click="update"
+      />
+      <q-btn v-else :label="$t('addBtn')" color="primary" @click="add" />
     </q-card-actions>
   </q-card>
 </template>

@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useCacheStore } from '@/stores/cache-store';
+import { useUtil } from '@/composables/util';
 
 const props = defineProps<{
   aid: string;
@@ -12,6 +13,7 @@ interface Emits {
 const emit = defineEmits<Emits>();
 
 const cacheStore = useCacheStore();
+const { lcl } = useUtil();
 
 const { idToCategory, activities } = storeToRefs(cacheStore);
 const acts = computed(() => {
@@ -39,11 +41,11 @@ const acts = computed(() => {
             }"
           ></div>
           <q-item-section v-close-popup @click="emit('onSelect', act.id)">
-            <q-item-label caption :style="{ color: act.catColor }">{{
-              act.catLabel
-            }}</q-item-label>
+            <q-item-label caption :style="{ color: act.catColor }">
+              {{ lcl(act.catLabel) }}
+            </q-item-label>
             <q-item-label class="activity-name ellipsis">
-              {{ act.label }}
+              {{ lcl(act.label) }}
             </q-item-label>
           </q-item-section>
         </q-item>

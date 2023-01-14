@@ -102,15 +102,17 @@ if (props.act) {
 
 <template>
   <q-card :style="{ width: '80%', maxWidth: '400px' }">
-    <q-card-section v-if="!!props.act">Modify activity</q-card-section>
-    <q-card-section v-else>Create activity</q-card-section>
+    <q-card-section v-if="!!props.act">{{
+      $t('modifyActivity')
+    }}</q-card-section>
+    <q-card-section v-else>{{ $t('createActivity') }}</q-card-section>
     <q-separator />
     <q-card-section class="q-pb-none">
       <q-select
         ref="categoryRef"
         v-model="selectedCategory"
         dense
-        label="Category"
+        :label="$t('category')"
         :options="categoryOptions"
         :rules="[(v) => !!v || 'Category is required.']"
       >
@@ -143,22 +145,27 @@ if (props.act) {
       <q-input
         ref="nameRef"
         v-model="name"
-        label="Activity name"
-        :rules="[(v) => !!v || 'Activity name is required.']"
+        :label="$t('activityName') + ' *'"
+        :rules="[(v) => !!v || $t('msgActivityNameRequired')]"
         autofocus
         clearable
       >
       </q-input>
     </q-card-section>
     <q-card-actions align="right">
-      <q-btn v-close-popup label="Cancel" flat></q-btn>
+      <q-btn v-close-popup :label="$t('cancelBtn')" flat></q-btn>
       <q-btn
         v-if="!!props.act"
-        label="Save"
+        :label="$t('saveBtn')"
         color="primary"
         @click="updateActivity"
       ></q-btn>
-      <q-btn v-else label="Add" color="primary" @click="addActivity"></q-btn>
+      <q-btn
+        v-else
+        :label="$t('addBtn')"
+        color="primary"
+        @click="addActivity"
+      ></q-btn>
     </q-card-actions>
   </q-card>
 </template>
