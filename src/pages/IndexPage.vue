@@ -8,9 +8,10 @@ import { useAuthStore } from '@/stores/auth-store';
 import ActivityList from '@/components/ActivityList.vue';
 import OngoingRecord from '@/components/OngoingRecord.vue';
 import WeekBars from '@/components/WeekBars.vue';
+import LandingPane from '@/components/LandingPane.vue';
 
 const authStore = useAuthStore();
-const { uid, isSignedIn } = storeToRefs(authStore);
+const { uid, isSignedIn, willBeSignedIn } = storeToRefs(authStore);
 const { startOfWeek } = useUtil();
 
 const start = ref(startOfWeek(new Date()));
@@ -35,6 +36,9 @@ const { ongoing } = storeToRefs(ongoingStore);
         :data="ongoing"
       ></ongoing-record>
       <ActivityList v-if="uid" :uid="uid" class="q-mt-md" />
+    </div>
+    <div v-if="!isSignedIn && !willBeSignedIn">
+      <LandingPane />
     </div>
     <q-separator class="q-mt-md q-mb-xs" />
     <div class="row justify-end">

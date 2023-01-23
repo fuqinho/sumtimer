@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref(null as User | null);
   const uid = ref('');
   const isSignedIn = ref(false);
+  const willBeSignedIn = ref(localStorage.getItem('hasSignedIn') === 'yes');
   const userDisplayName = computed(() => {
     if (user.value && user.value.displayName) return user.value.displayName;
     return undefined;
@@ -19,10 +20,14 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value && user.value.email;
   });
 
-  function setCurrentUser(currentUser: User | null) {
+  function setCurrentUser(currentUser: User | null, byAuthChanged = false) {
     user.value = currentUser;
     uid.value = currentUser ? currentUser.uid : '';
     isSignedIn.value = !!currentUser;
+    if (byAuthChanged) {
+      willBeSignedIn.value = !!currentUser;
+      localStorage.setItem('hasSignedIn', currentUser ? 'yes' : 'no');
+    }
   }
 
   console.log('Setup authStore end');
@@ -30,6 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     uid,
     isSignedIn,
+    willBeSignedIn,
     userDisplayName,
     userProfilePicUrl,
     userEmail,

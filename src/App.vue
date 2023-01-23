@@ -24,7 +24,7 @@ onMounted(() => {
   }
   unsubscribe = onAuthStateChanged(auth, (user) => {
     console.log('onAuthStateChanged. user:', user);
-    authStore.setCurrentUser(user);
+    authStore.setCurrentUser(user, true);
     if (!user) {
       router.push('/');
     }
