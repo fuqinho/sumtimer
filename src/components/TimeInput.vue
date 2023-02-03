@@ -26,14 +26,14 @@ const timeStr = computed(() => date.formatDate(props.time, 'HH:mm'));
 
 function commitEditedTime() {
   let newTime = date.extractDate(model.value, 'YYYY-MM-DD HH:mm:ss');
-  if (props.startTime && newTime.getTime() < props.startTime.getTime()) {
-    newTime = date.addToDate(newTime, { days: 1 });
-  }
-  if (
-    props.startTime &&
-    newTime.getTime() > props.startTime.getTime() + 24 * 60 * 60 * 1000
-  ) {
-    newTime = date.subtractFromDate(newTime, { days: 1 });
+  const dayInMillis = 24 * 60 * 60 * 1000;
+  if (props.startTime) {
+    while (newTime.getTime() < props.startTime.getTime()) {
+      newTime = date.addToDate(newTime, { days: 1 });
+    }
+    while (newTime.getTime() >= props.startTime.getTime() + dayInMillis) {
+      newTime = date.subtractFromDate(newTime, { days: 1 });
+    }
   }
   emit('onChange', newTime);
 }
