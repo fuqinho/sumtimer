@@ -47,6 +47,8 @@ const { ongoing } = storeToRefs(ongoingStore);
       <span class="q-mx-sm">|</span>
       <a href="tos.html">Terms & conditions</a>
       <span class="q-mx-sm">|</span>
+      <a href="https://github.com/fuqinho/sumtimer">GitHub</a>
+      <span class="q-mx-sm">|</span>
       <span>{{ appVersion }}</span>
     </div>
   </q-page>
