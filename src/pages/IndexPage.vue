@@ -9,6 +9,7 @@ import ActivityList from '@/components/ActivityList.vue';
 import OngoingRecord from '@/components/OngoingRecord.vue';
 import WeekBars from '@/components/WeekBars.vue';
 import LandingPane from '@/components/LandingPane.vue';
+import { appVersion } from '@/common/constants';
 
 const authStore = useAuthStore();
 const { uid, isSignedIn, willBeSignedIn } = storeToRefs(authStore);
@@ -45,6 +46,8 @@ const { ongoing } = storeToRefs(ongoingStore);
       <a href="privacypolicy.html">Privacy policy</a>
       <span class="q-mx-sm">|</span>
       <a href="tos.html">Terms & conditions</a>
+      <span class="q-mx-sm">|</span>
+      <span>{{ appVersion }}</span>
     </div>
   </q-page>
 </template>
