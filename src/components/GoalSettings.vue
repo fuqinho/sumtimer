@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUtil } from '@/composables/util';
 import { useCacheStore } from '@/stores/cache-store';
 import { useCategoryStore } from '@/stores/category-store';
 import { storeToRefs } from 'pinia';
@@ -6,6 +7,7 @@ import { ref, watch } from 'vue';
 
 const cacheStore = useCacheStore();
 const categoryStore = useCategoryStore();
+const { lcl } = useUtil();
 
 const { categories } = storeToRefs(cacheStore);
 
@@ -29,7 +31,7 @@ watch(categories, updateModelValues);
         <q-icon name="folder" :style="{ color: cat.data.color }" />
       </q-item-section>
       <q-item-section side class="cat-label">
-        {{ cat.data.label }}
+        {{ lcl(cat.data.label) }}
       </q-item-section>
       <q-item-section side class="goal-label text-body1">
         {{ cat.data.weekGoal ? cat.data.weekGoal : '' }}

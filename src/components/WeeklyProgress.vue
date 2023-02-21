@@ -19,7 +19,7 @@ const props = defineProps<{
 // =========================== Use stores/composables ==========================
 const cacheStore = useCacheStore();
 const timeStore = useTimeStore();
-const { computeDuration } = useUtil();
+const { computeDuration, lcl } = useUtil();
 
 // =========================== Refs ============================================
 const { categories, idToActivity } = storeToRefs(cacheStore);
@@ -136,7 +136,7 @@ const durations = computed(() => {
         </div>
       </q-circular-progress>
       <div class="cat-label" :style="{ color: cat.data.color }">
-        {{ cat.data.label }}
+        {{ lcl(cat.data.label) }}
       </div>
     </div>
   </div>
