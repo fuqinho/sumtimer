@@ -10,6 +10,7 @@ import WeekBars from '@/components/WeekBars.vue';
 import StatsBars from '@/components/StatsBars.vue';
 import RecordList from '@/components/RecordList.vue';
 import DateLabel from '@/components/DateLabel.vue';
+import WeeklyProgress from '@/components/WeeklyProgress.vue';
 
 const authStore = useAuthStore();
 const recordStore = useRecordStore();
@@ -108,6 +109,12 @@ function onRangeStart(from: { year: number; month: number; day: number }) {
     <WeekBars
       :start="start"
       :records="requestedRecords"
+      :ongoing="ongoing || undefined"
+    />
+    <WeeklyProgress
+      :records="requestedRecords"
+      :start="start"
+      :end="date.addToDate(start, { days: 7 })"
       :ongoing="ongoing || undefined"
     />
     <q-separator class="q-my-md" />

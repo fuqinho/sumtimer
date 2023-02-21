@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { date } from 'quasar';
 import { useUtil } from '@/composables/util';
 import { useRecordStore } from '@/stores/record-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
@@ -10,6 +11,7 @@ import OngoingRecord from '@/components/OngoingRecord.vue';
 import WeekBars from '@/components/WeekBars.vue';
 import LandingPane from '@/components/LandingPane.vue';
 import { appVersion } from '@/common/constants';
+import WeeklyProgress from '@/components/WeeklyProgress.vue';
 
 const authStore = useAuthStore();
 const { uid, isSignedIn, willBeSignedIn } = storeToRefs(authStore);
@@ -26,16 +28,18 @@ const { ongoing } = storeToRefs(ongoingStore);
 <template>
   <q-page class="q-pa-md col items-center justify-evenly">
     <div v-if="isSignedIn">
-      <week-bars
+      <OngoingRecord v-if="ongoing" class="q-mb-md" :data="ongoing" />
+      <WeekBars
         :start="start"
         :records="recentRecords"
         :ongoing="ongoing || undefined"
-      ></week-bars>
-      <ongoing-record
-        v-if="ongoing"
-        class="q-mt-md"
-        :data="ongoing"
-      ></ongoing-record>
+      />
+      <WeeklyProgress
+        :records="recentRecords"
+        :start="start"
+        :end="date.addToDate(start, { days: 7 })"
+        :ongoing="ongoing || undefined"
+      />
       <ActivityList v-if="uid" :uid="uid" class="q-mt-md" />
     </div>
     <div v-if="!isSignedIn && !willBeSignedIn">
