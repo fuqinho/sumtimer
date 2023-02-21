@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { QInput, useQuasar } from 'quasar';
-import type { CachedCategory } from '@/types/documents';
+import type { CachedCategory, CategoryChange } from '@/types/documents';
 import { defaultCategoryColor } from '@/common/constants';
 import {
   useCategoryStore,
@@ -37,16 +37,17 @@ async function add() {
 }
 
 async function update() {
+  console.log(props.cat);
   nameRef.value?.validate();
   if (nameRef.value?.hasError) return;
   if (!props.cat) {
     console.error('CategoryForm.update is called without base document data.');
     return;
   }
-  const newData = { ...props.cat.data };
-  newData.label = name.value;
-  newData.color = color.value;
-  await categoryStore.updateCategory(props.cat.id, newData);
+  const change = {} as CategoryChange;
+  if (name.value !== props.cat.data.label) change.label = name.value;
+  if (color.value !== props.cat.data.color) change.color = color.value;
+  await categoryStore.updateCategory(props.cat.id, change);
   emit('onUpdated');
 }
 
