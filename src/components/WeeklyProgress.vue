@@ -85,7 +85,7 @@ const durations = computed(() => {
     <div
       v-for="cat in trackedCategories"
       :key="cat.id"
-      class="q-pt-md q-mr-lg column items-center"
+      class="q-pt-md column items-center progress"
     >
       <q-circular-progress
         show-value
@@ -111,21 +111,21 @@ const durations = computed(() => {
         </div>
       </q-circular-progress>
       <div class="cat-label" :style="{ color: cat.data.color }">
-        {{ cat.data.label }}
+        {{ lcl(cat.data.label) }}
       </div>
     </div>
     <q-space v-if="trackedCategories.length > 0" />
     <div
       v-for="cat in untrackedCategories"
       :key="cat.id"
-      class="q-pt-md q-mx-sm column items-center"
+      class="q-pt-md column items-center progress"
     >
       <q-circular-progress
         show-value
         :value="100"
         size="56px"
         track-color="grey-3"
-        :thickness="0.2"
+        :thickness="0.1"
         :style="{ color: colors.lighten(cat.data.color, 90) }"
       >
         <div class="column items-center">
@@ -143,6 +143,10 @@ const durations = computed(() => {
 </template>
 
 <style scoped>
+.progress {
+  width: 80px;
+}
+
 .progress-hours {
   padding-top: 4px;
 }
@@ -164,5 +168,7 @@ const durations = computed(() => {
 .cat-label {
   padding-top: 4px;
   font-size: 12px;
+  width: 100%;
+  text-align: center;
 }
 </style>
