@@ -42,10 +42,8 @@ watch(categories, updateModelValues);
           :max="50"
           label
           @change="
-            (val) =>
-              categoryStore.updateCategory(cat.id, {
-                weekGoal: val ? val : 0,
-              })
+            (val: number) =>
+              categoryStore.updateCategory(cat.id, { weekGoal: val })
           "
         />
       </q-item-section>
