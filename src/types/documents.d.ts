@@ -11,12 +11,14 @@ export interface CategoryDocumentData extends DocumentData {
   label: string;
   color: string;
   order: number;
+  weekGoal?: number;
 }
 
 export interface CategoryChange {
   label?: string;
   color?: string;
   order?: number;
+  weekGoal?: number;
 }
 
 export interface TimestampSection {
@@ -79,6 +81,7 @@ export interface CachedCategoryData {
   label: string;
   color: string;
   order: number;
+  weekGoal?: number;
 }
 
 export interface CachedCategory {

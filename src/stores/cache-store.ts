@@ -111,6 +111,7 @@ export const useCacheStore = defineStore('cache', () => {
         label: after.label,
         color: after.color,
         order: after.order,
+        weekGoal: after.weekGoal,
       },
     });
   }
