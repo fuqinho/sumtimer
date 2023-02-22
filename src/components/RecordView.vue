@@ -120,7 +120,7 @@ function onSelectActivity(activityId: string) {
       </div>
     </q-card-section>
     <q-separator />
-    <q-card-section>
+    <q-card-section class="q-pb-sm">
       <div v-for="(sub, i) in subs" :key="i">
         <TimeSectionInput
           :start="sub.start.toDate()"
@@ -130,14 +130,12 @@ function onSelectActivity(activityId: string) {
         />
       </div>
     </q-card-section>
-    <q-card-section>
-      <q-input
-        v-model="memo"
-        :label="$t('memo')"
-        dense
-        clearable
-        autogrow
-      ></q-input>
+    <q-card-section class="q-pt-none">
+      <q-input v-model="memo" :label="$t('memo')" clearable autogrow>
+        <template #prepend>
+          <q-icon name="notes" size="xs" />
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-actions>
       <q-btn flat round icon="delete" color="negative" @click="deleteRecord" />

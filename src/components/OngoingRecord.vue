@@ -128,12 +128,11 @@ onMounted(async () => {
         </div>
       </q-card-section>
       <q-card-section class="q-pt-none q-pb-xs">
-        <q-input
-          v-model="memo"
-          :label="$t('memo')"
-          autogrow
-          @blur="recordMemo"
-        />
+        <q-input v-model="memo" :label="$t('memo')" autogrow @blur="recordMemo">
+          <template #prepend>
+            <q-icon name="notes" size="xs" />
+          </template>
+        </q-input>
       </q-card-section>
       <q-card-actions class="q-py-xs" align="right">
         <q-btn
