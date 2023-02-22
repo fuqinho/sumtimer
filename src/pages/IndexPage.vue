@@ -47,12 +47,14 @@ const { ongoing } = storeToRefs(ongoingStore);
     </div>
     <q-separator class="q-mt-md q-mb-xs" />
     <div class="row justify-end">
-      <a href="privacypolicy.html">Privacy policy</a>
-      <span class="q-mx-sm">|</span>
+      <a href="privacypolicy.html">Privacy</a>
+      <span class="q-mx-xs">|</span>
       <a href="tos.html">Terms & conditions</a>
-      <span class="q-mx-sm">|</span>
+      <span class="q-mx-xs">|</span>
       <a href="https://github.com/fuqinho/sumtimer">GitHub</a>
-      <span class="q-mx-sm">|</span>
+      <span class="q-mx-xs">|</span>
+      <a href="https://twitter.com/fuqinho">@fuqinho</a>
+      <span class="q-mx-xs">|</span>
       <span>{{ appVersion }}</span>
     </div>
   </q-page>
