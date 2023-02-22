@@ -17,12 +17,12 @@ const dayStr = computed(() => {
   const nowYear = new Date().getFullYear();
   const thisYear = props.time.getFullYear();
   if (thisYear === nowYear) {
-    return date.formatDate(props.time, 'MM/DD');
+    return date.formatDate(props.time, 'M/DD');
   } else {
-    return date.formatDate(props.time, 'YYYY/MM/DD');
+    return date.formatDate(props.time, 'YYYY/M/DD');
   }
 });
-const timeStr = computed(() => date.formatDate(props.time, 'HH:mm'));
+const timeStr = computed(() => date.formatDate(props.time, 'H:mm'));
 
 function commitEditedTime() {
   let newTime = date.extractDate(model.value, 'YYYY-MM-DD HH:mm:ss');
@@ -46,11 +46,10 @@ function clearEditedTime() {
 <template>
   <div class="start-time row items-center input-container">
     <div v-if="!props.startTime" class="row items-center day-container">
-      <div class="day-str">{{ dayStr }}</div>
       <q-icon
         name="event"
-        class="cursor-pointer day-icon"
-        size="14px"
+        class="cursor-pointer day-icon q-pr-xs"
+        size="16px"
         color="grey"
       >
         <q-popup-proxy
@@ -79,13 +78,13 @@ function clearEditedTime() {
           </q-date>
         </q-popup-proxy>
       </q-icon>
+      <div class="day-str">{{ dayStr }}</div>
     </div>
     <div class="row items-center time-container">
-      <div class="time-str" color="light-green-10">{{ timeStr }}</div>
       <q-icon
         name="access_time"
         class="cursor-pointer time-icon"
-        size="14px"
+        size="16px"
         color="grey"
       >
         <q-popup-proxy
@@ -119,6 +118,7 @@ function clearEditedTime() {
           </q-time>
         </q-popup-proxy>
       </q-icon>
+      <div class="time-str" color="light-green-10">{{ timeStr }}</div>
     </div>
   </div>
 </template>
@@ -129,7 +129,7 @@ function clearEditedTime() {
 }
 
 .day-str {
-  font-size: 20px;
+  font-size: 16px;
   color: #444;
 }
 
@@ -138,6 +138,7 @@ function clearEditedTime() {
 }
 
 .time-str {
-  font-size: 20px;
+  font-size: 16px;
+  color: #444;
 }
 </style>

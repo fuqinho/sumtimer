@@ -76,7 +76,7 @@ onMounted(async () => {
 <template>
   <div>
     <q-card :style="{ backgroundColor: lightenedCategoryColor }">
-      <q-card-section class="row">
+      <q-card-section class="row q-py-sm">
         <div class="column items-start">
           <q-badge :style="{ backgroundColor: categoryColor }">
             {{ lcl(categoryName) }}
@@ -98,9 +98,7 @@ onMounted(async () => {
           </div>
         </div>
       </q-card-section>
-      <q-separator inset />
-      <q-card-section class="row justify-end"> </q-card-section>
-      <q-card-section class="items-start">
+      <q-card-section class="items-start q-pt-xs q-pb-none">
         <div v-if="props.data.subs">
           <div
             v-for="(sub, i) in props.data.subs"
@@ -111,7 +109,7 @@ onMounted(async () => {
               :time="sub.start.toDate()"
               @on-change="ongoingStore.updateSubStart(i, $event)"
             />
-            <div class="time-str">~</div>
+            <div class="time-str q-pl-sm q-pr-xs">~</div>
             <TimeInput
               :time="sub.end.toDate()"
               :start-time="sub.start.toDate()"
@@ -125,9 +123,11 @@ onMounted(async () => {
               :time="props.data.curStart.toDate()"
               @on-change="ongoingStore.updateCurStart"
             />
-            <div class="time-str">~</div>
+            <div class="time-str q-pl-sm q-pr-xs">~</div>
           </div>
         </div>
+      </q-card-section>
+      <q-card-section class="q-pt-none q-pb-xs">
         <q-input
           v-model="memo"
           :label="$t('memo')"
@@ -135,13 +135,13 @@ onMounted(async () => {
           @blur="recordMemo"
         />
       </q-card-section>
-      <q-separator dark />
-      <q-card-actions align="right">
+      <q-card-actions class="q-py-xs" align="right">
         <q-btn
           flat
           round
           icon="delete"
           color="negative"
+          :style="{ opacity: 0.7 }"
           @click="ongoingStore.reset()"
         />
         <q-space />
@@ -246,6 +246,13 @@ onMounted(async () => {
 
 .history-item {
   max-width: 100%;
+  height: 24px;
+}
+
+.history-item-more {
+  margin-top: -4px;
+  font-size: 12px;
+  height: 16px;
 }
 
 .history-icon {
