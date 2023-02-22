@@ -69,7 +69,6 @@ const durations = computed(() => {
           Math.max(props.ongoing.curStart.toMillis(), start.value.getTime())
       );
     }
-    console.log(add);
     res[props.ongoing.cid] = (res[props.ongoing.cid] || 0) + add;
   }
   return res;
