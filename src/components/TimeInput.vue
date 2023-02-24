@@ -83,7 +83,7 @@ function clearEditedTime() {
     <div class="row items-center time-container">
       <q-icon
         name="access_time"
-        class="cursor-pointer time-icon"
+        class="cursor-pointer time-icon q-pr-xs"
         size="16px"
         color="grey"
       >
