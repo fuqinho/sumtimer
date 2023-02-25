@@ -47,6 +47,7 @@ export default {
   stBlockListUrl: 'Block list (URLs)',
   stBlockListPageTitle: 'Block list (Page titles)',
   stUpdateExtensionSettings: 'Update extension settings',
+  stIsRequired: ' is required.',
 
   stExportImport: 'Export / Import',
   stExportJson: 'Export JSON file',

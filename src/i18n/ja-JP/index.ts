@@ -47,6 +47,7 @@ export default {
   stBlockListUrl: 'ブロックするURL',
   stBlockListPageTitle: 'ブロックするページタイトル',
   stUpdateExtensionSettings: 'Chrome拡張機能に設定を保存する',
+  stIsRequired: 'が必要です。',
 
   stExportImport: 'エクスポート / インポート',
   stExportJson: 'JSONファイルをエクスポート',

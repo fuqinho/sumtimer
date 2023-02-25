@@ -114,7 +114,13 @@ init();
     <q-item>
       <q-item-section>
         <q-item-label>{{ $t('stFocusMode') }}</q-item-label>
-        <q-item-label caption>Chrome extension is required.</q-item-label>
+        <q-item-label caption>
+          <a
+            href="https://chrome.google.com/webstore/detail/sumtimer/afhbmihnjjhhhancocblkbmknbgajbdl"
+            >Chrome extension</a
+          >
+          {{ $t('stIsRequired') }}</q-item-label
+        >
       </q-item-section>
       <q-item-section avatar>
         <q-toggle
