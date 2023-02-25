@@ -2,16 +2,12 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCacheStore } from '@/stores/cache-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
 import TimeDisplay from '@/components/TimeDisplay.vue';
+import SigninButton from '@/components/SigninButton.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -32,10 +28,6 @@ const bgColor = computed(() => {
   }
   return '#757575';
 });
-
-function signInWithGoolge() {
-  signInWithPopup(getAuth(), new GoogleAuthProvider());
-}
 
 function signOutUser() {
   signOut(getAuth());
@@ -98,18 +90,7 @@ function signOutUser() {
             </q-list>
           </q-menu>
         </q-item>
-
-        <q-btn v-else id="btn-signin" color="primary" label="Sign in">
-          <q-menu>
-            <q-list style="min-width: 100px">
-              <q-item v-close-popup clickable>
-                <q-item-section @click="signInWithGoolge">
-                  Sign in with Google
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
+        <SigninButton v-else />
       </q-toolbar>
 
       <q-tabs v-if="isSignedIn" align="left">

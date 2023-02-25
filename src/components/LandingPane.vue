@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import SigninButton from '@/components/SigninButton.vue';
 
 const video1 = ref(false);
+const video2 = ref(false);
+const image3 = ref(false);
+const videoa1 = ref(false);
+const videoa2 = ref(false);
 </script>
 
 <template>
   <div>
-    <h2>Sumtimer</h2>
-    <div class="text-body1">
-      <span class="text-italic">Sumtimer</span> is a simple time tracker to
-      measure and improve your personal time usage.
+    <div class="column items-center">
+      <img class="overview-img" src="images/overview.png" />
+      <div class="overview-text q-py-lg">
+        Sumtimer is a simple time tracker to measure and improve your personal
+        time usage.
+      </div>
+      <SigninButton />
     </div>
 
     <h4>How to use</h4>
@@ -28,9 +36,9 @@ const video1 = ref(false);
               autoplay
               muted
               preload="metadata"
-              class="cursor-pointer"
+              class="cursor-pointer section-video"
             >
-              <source src="videos/intro-add-activity.webm" type="video/webm" />
+              <source src="videos/add-activity.webm" type="video/webm" />
             </video>
           </q-card-section>
         </q-card>
@@ -43,6 +51,17 @@ const video1 = ref(false);
           <q-card-section class="q-pt-none">
             Start recording time by clicking "Play" button on an activity.
           </q-card-section>
+          <q-card-section class="q-pt-none" @click="video2 = true">
+            <video
+              loop
+              autoplay
+              muted
+              preload="metadata"
+              class="cursor-pointer section-video"
+            >
+              <source src="videos/add-record.mp4" type="video/mp4" />
+            </video>
+          </q-card-section>
         </q-card>
       </div>
       <div class="col-12 col-md-4">
@@ -52,6 +71,12 @@ const video1 = ref(false);
           </q-card-section>
           <q-card-section class="q-pt-none">
             You can review past records on a weekly basis.
+          </q-card-section>
+          <q-card-section class="q-pt-none" @click="image3 = true">
+            <img
+              class="cursor-pointer section-img"
+              src="images/review-records.png"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -67,7 +92,17 @@ const video1 = ref(false);
             You can prevent yourself from spending time on specified websites
             (e.g. Youtube, Twitter, etc...) using a companion Chrome extension.
           </q-card-section>
-          <q-card-section class="q-pt-none"></q-card-section>
+          <q-card-section class="q-pt-none" @click="videoa1 = true">
+            <video
+              loop
+              autoplay
+              muted
+              preload="metadata"
+              class="cursor-pointer section-video"
+            >
+              <source src="videos/focus-mode.webm" type="video/webm" />
+            </video>
+          </q-card-section>
         </q-card>
       </div>
       <div class="col-12 col-md-4">
@@ -79,6 +114,17 @@ const video1 = ref(false);
             You can set weekly targets for each category (e.g. 4 hours for
             excercises) and watch progress.
           </q-card-section>
+          <q-card-section class="q-pt-none" @click="videoa2 = true">
+            <video
+              loop
+              autoplay
+              muted
+              preload="metadata"
+              class="cursor-pointer section-video"
+            >
+              <source src="videos/weekly-targets.webm" type="video/webm" />
+            </video>
+          </q-card-section>
         </q-card>
       </div>
     </div>
@@ -86,20 +132,96 @@ const video1 = ref(false);
   </div>
   <q-dialog v-model="video1">
     <div class="video-container">
-      <video loop autoplay muted preload="metadata" controls>
-        <source src="videos/intro-add-activity.webm" type="video/webm" />
+      <video
+        class="section-video"
+        loop
+        autoplay
+        muted
+        preload="metadata"
+        controls
+      >
+        <source src="videos/add-activity.webm" type="video/webm" />
+      </video>
+    </div>
+  </q-dialog>
+  <q-dialog v-model="video2">
+    <div class="video-container">
+      <video
+        class="section-video"
+        loop
+        autoplay
+        muted
+        preload="metadata"
+        controls
+      >
+        <source src="videos/add-record.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </q-dialog>
+  <q-dialog v-model="image3">
+    <div class="image-container">
+      <img class="section-img" src="images/review-records.png" />
+    </div>
+  </q-dialog>
+  <q-dialog v-model="videoa1">
+    <div class="video-container">
+      <video
+        class="section-video"
+        loop
+        autoplay
+        muted
+        preload="metadata"
+        controls
+      >
+        <source src="videos/focus-mode.webm" type="video/webm" />
+      </video>
+    </div>
+  </q-dialog>
+  <q-dialog v-model="videoa2">
+    <div class="video-container">
+      <video
+        class="section-video"
+        loop
+        autoplay
+        muted
+        preload="metadata"
+        controls
+      >
+        <source src="videos/weekly-targets.webm" type="video/webm" />
       </video>
     </div>
   </q-dialog>
 </template>
 
 <style scoped>
-video {
+.overview-img {
+  width: 90%;
+  max-width: 1200px;
+}
+
+.overview-text {
+  width: 90%;
+  font-size: 22px;
+  color: #444;
+  text-align: center;
+}
+
+.section-video {
+  width: 100%;
+  height: 100%;
+}
+
+.section-img {
   width: 100%;
   height: 100%;
 }
 
 .video-container {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.image-container {
   max-width: 80%;
   max-height: 80%;
 }
