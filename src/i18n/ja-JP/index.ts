@@ -92,4 +92,24 @@ export default {
   actSleep: '睡眠',
   actShopping: '買い物',
   actHouseCleaning: '掃除',
+
+  ldAppDesc:
+    'Sumtimerは日々の時間の使い方を計測して改善するためのシンプルな活動時間記録アプリです',
+  ldHowToUse: '使い方',
+  ldOrganizeActs: '1. アクティビティを登録する',
+  ldOrganizeActsDesc:
+    '記録対象にするアクティビティを登録します。全てのアクティビティは運動や勉強といったカテゴリーのいずれかに含めます。',
+  ldRecordActs: '2. アクティビティを記録する',
+  ldRecordActsDesc:
+    'アクティビティのプレイボタンを押すことで活動の記録を始め、停止ボタンで完了します。',
+  ldReviewRecs: '3. 記録を振り返る',
+  ldReviewRecsDesc:
+    '週単位で、各アクティビティや各カテゴリーにかけた時間や目標の達成度を振り返ることができます。',
+  ldAdditionalFeatures: 'その他の機能',
+  ldFocusMode: 'フォーカスモード',
+  ldFocusModeDesc:
+    'SumtimerのChrome extensionを使うことで、例えば"勉強"カテゴリーに属するアクティビティをしてる間はTwitterやYoutubeをブロックすることができます。',
+  ldWeeklyTargets: '週間目標の追跡',
+  ldWeeklyTargetsDesc:
+    'カテゴリー毎に1週間での目標活動時間を設定し、その進捗を確認することができます。',
 };

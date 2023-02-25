@@ -13,22 +13,19 @@ const videoa2 = ref(false);
   <div>
     <div class="column items-center">
       <img class="overview-img" src="images/overview.png" />
-      <div class="overview-text q-py-lg">
-        Sumtimer is a simple time tracker to measure and improve your personal
-        time usage.
-      </div>
+      <div class="overview-text q-py-lg">{{ $t('ldAppDesc') }}</div>
       <SigninButton />
     </div>
 
-    <h4>How to use</h4>
+    <h4>{{ $t('ldHowToUse') }}</h4>
     <div class="row q-col-gutter-sm">
       <div class="col-12 col-md-4">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">1. Organize activities</div>
+            <div class="text-h6">{{ $t('ldOrganizeActs') }}</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            Register the activities for which you want to record time.
+            {{ $t('ldOrganizeActsDesc') }}
           </q-card-section>
           <q-card-section class="q-pt-none" @click="video1 = true">
             <video
@@ -46,10 +43,10 @@ const videoa2 = ref(false);
       <div class="col-12 col-md-4">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">2. Record activity times</div>
+            <div class="text-h6">{{ $t('ldRecordActs') }}</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            Start recording time by clicking "Play" button on an activity.
+            {{ $t('ldRecordActsDesc') }}
           </q-card-section>
           <q-card-section class="q-pt-none" @click="video2 = true">
             <video
@@ -67,10 +64,10 @@ const videoa2 = ref(false);
       <div class="col-12 col-md-4">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">3. Review records</div>
+            <div class="text-h6">{{ $t('ldReviewRecs') }}</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            You can review past records on a weekly basis.
+            {{ $t('ldReviewRecsDesc') }}
           </q-card-section>
           <q-card-section class="q-pt-none" @click="image3 = true">
             <img
@@ -81,16 +78,15 @@ const videoa2 = ref(false);
         </q-card>
       </div>
     </div>
-    <h4>Additional features</h4>
+    <h4>{{ $t('ldAdditionalFeatures') }}</h4>
     <div class="row q-col-gutter-sm">
       <div class="col-12 col-md-4">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">Focus mode</div>
+            <div class="text-h6">{{ $t('ldFocusMode') }}</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            You can prevent yourself from spending time on specified websites
-            (e.g. Youtube, Twitter, etc...) using a companion Chrome extension.
+            {{ $t('ldFocusModeDesc') }}
           </q-card-section>
           <q-card-section class="q-pt-none" @click="videoa1 = true">
             <video
@@ -108,11 +104,10 @@ const videoa2 = ref(false);
       <div class="col-12 col-md-4">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">Weekly targets</div>
+            <div class="text-h6">{{ $t('ldWeeklyTargets') }}</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            You can set weekly targets for each category (e.g. 4 hours for
-            excercises) and watch progress.
+            {{ $t('ldWeeklyTargetsDesc') }}
           </q-card-section>
           <q-card-section class="q-pt-none" @click="videoa2 = true">
             <video

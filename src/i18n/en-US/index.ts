@@ -90,4 +90,24 @@ export default {
   actSleep: 'Sleep',
   actShopping: 'Shopping',
   actHouseCleaning: 'House cleaning',
+
+  ldAppDesc:
+    'Sumtimer is a simple time tracker to measure and improve your personal time usage.',
+  ldHowToUse: 'How to use',
+  ldOrganizeActs: '1. Register activities',
+  ldOrganizeActsDesc:
+    'Register the activities to be recorded. All activities should be included in one of the categories such as Exercise or Study.',
+  ldRecordActs: '2. Record activity times',
+  ldRecordActsDesc:
+    'Pressing the Play button on an activity starts the recording of the activity and the Stop button completes it.',
+  ldReviewRecs: '3. Review records',
+  ldReviewRecsDesc:
+    'On a weekly basis, you can review the amount of time you spent on each activity and each category, as well as the progress of each weekly target.',
+  ldAdditionalFeatures: 'Additional Features',
+  ldFocusMode: 'Focus mode',
+  ldFocusModeDesc:
+    'Using Sumtimer\'s Chrome extension, you can, for example, block Twitter and Youtube while doing activities that belong to the "Study" category.',
+  ldWeeklyTargets: 'Weekly targets',
+  ldWeeklyTargetsDesc:
+    'You can set a target activity time per week for each category and monitor its progress.',
 };
