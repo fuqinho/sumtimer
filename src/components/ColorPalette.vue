@@ -351,8 +351,9 @@ function isActive(color: string) {
 
 <style scoped>
 .color-cell {
+  max-width: 5.25%;
   width: 20px;
-  height: 20px;
+  height: 18px;
   cursor: pointer;
   z-index: 0;
 }
