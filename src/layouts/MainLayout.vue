@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { getAuth, signOut } from 'firebase/auth';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCacheStore } from '@/stores/cache-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
+import { useUtil } from '@/composables/util';
 import TimeDisplay from '@/components/TimeDisplay.vue';
 import SigninButton from '@/components/SigninButton.vue';
 
@@ -13,6 +14,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const ongoingStore = useOngoingStore();
+const { durationStr } = useUtil();
 const { isSignedIn, userProfilePicUrl, userDisplayName, userEmail } =
   storeToRefs(authStore);
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
@@ -27,6 +29,17 @@ const bgColor = computed(() => {
     }
   }
   return '#757575';
+});
+
+const title = computed(() => {
+  if (ongoing.value && elapsedMillis.value > 0) {
+    return durationStr(elapsedMillis.value);
+  } else {
+    return 'Sumtimer';
+  }
+});
+watch(title, () => {
+  document.title = title.value;
 });
 
 function signOutUser() {

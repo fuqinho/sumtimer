@@ -5,6 +5,9 @@ import type { RecordDocumentData } from '@/types/documents';
 
 export function useUtil() {
   const { t } = useI18n();
+  const secInMs = 1000;
+  const minInMs = secInMs * 60;
+  const hourInMs = minInMs * 60;
 
   function startOfDay(time: Date) {
     let result = date.startOfDate(time, 'day');
@@ -59,7 +62,18 @@ export function useUtil() {
   }
 
   function hourStr(ms: number) {
-    return (ms / (60 * 60 * 1000)).toFixed(1);
+    return (ms / hourInMs).toFixed(1);
+  }
+
+  function durationStr(ms: number): string {
+    const hour = Math.floor(ms / hourInMs);
+    const min = Math.floor((ms % hourInMs) / minInMs);
+    const sec = Math.floor((ms % minInMs) / secInMs);
+    if (hour > 0) {
+      return hour + ':' + ('00' + min).slice(-2) + ':' + ('00' + sec).slice(-2);
+    } else {
+      return min + ':' + ('00' + sec).slice(-2);
+    }
   }
 
   function lcl(label: string) {
@@ -74,6 +88,7 @@ export function useUtil() {
     fitDate,
     computeDuration,
     hourStr,
+    durationStr,
     lcl,
   };
 }
