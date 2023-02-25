@@ -58,7 +58,12 @@ function clearEditedTime() {
           transition-hide="scale"
           @hide="clearEditedTime"
         >
-          <q-date v-model="model" mask="YYYY-MM-DD HH:mm:ss" today-btn>
+          <q-date
+            v-model="model"
+            mask="YYYY-MM-DD HH:mm:ss"
+            first-day-of-week="1"
+            today-btn
+          >
             <div class="row items-center justify-end">
               <q-btn
                 v-close-popup
