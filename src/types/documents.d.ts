@@ -110,3 +110,9 @@ export interface CacheDocumentData extends DocumentData {
     [key: string]: CachedActivityData;
   };
 }
+
+export interface ServerConfigData extends DocumentData {
+  latestVersion: number;
+  requiredVersion: number;
+  signupDisabled: boolean;
+}

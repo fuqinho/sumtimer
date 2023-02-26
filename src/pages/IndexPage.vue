@@ -55,7 +55,7 @@ const { ongoing } = storeToRefs(ongoingStore);
       <span class="q-mx-xs">|</span>
       <a href="https://twitter.com/fuqinho">@fuqinho</a>
       <span class="q-mx-xs">|</span>
-      <span>{{ appVersion }}</span>
+      <span>v{{ appVersion }}</span>
     </div>
   </q-page>
 </template>

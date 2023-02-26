@@ -3,22 +3,26 @@ import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { getAuth, signOut } from 'firebase/auth';
+import { appVersion } from '@/common/constants';
 import { useAuthStore } from '@/stores/auth-store';
 import { useCacheStore } from '@/stores/cache-store';
 import { useOngoingStore } from '@/stores/ongoing-store';
 import { useUtil } from '@/composables/util';
 import TimeDisplay from '@/components/TimeDisplay.vue';
 import SigninButton from '@/components/SigninButton.vue';
+import { useServerConfigStore } from '@/stores/server-config-store';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const ongoingStore = useOngoingStore();
+const serverConfigStore = useServerConfigStore();
 const { durationStr } = useUtil();
 const { isSignedIn, userProfilePicUrl, userDisplayName, userEmail } =
   storeToRefs(authStore);
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 const { ongoing, elapsedMillis } = storeToRefs(ongoingStore);
+const { latestVersion, requiredVersion } = storeToRefs(serverConfigStore);
 
 const bgColor = computed(() => {
   if (ongoing.value) {
@@ -45,6 +49,16 @@ watch(title, () => {
 function signOutUser() {
   signOut(getAuth());
 }
+
+function update() {
+  location.reload();
+}
+
+watch(requiredVersion, () => {
+  if (requiredVersion.value && requiredVersion.value > appVersion) {
+    update();
+  }
+});
 </script>
 
 <template>
@@ -61,7 +75,13 @@ function signOutUser() {
           <q-avatar>
             <img src="../assets/sumtimer-logo.svg" />
           </q-avatar>
-          Sumtimer
+          Sumtimer<span class="version">v{{ appVersion }}</span
+          ><span
+            v-if="latestVersion > appVersion"
+            class="update"
+            @click="update"
+            >update</span
+          >
         </q-toolbar-title>
 
         <q-item v-if="ongoing" class="q-py-none">
@@ -128,5 +148,16 @@ function signOutUser() {
   padding: 0;
   margin: 0;
   min-width: 0;
+}
+.version {
+  margin-left: 6px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.update {
+  margin-left: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>
