@@ -35,7 +35,7 @@ const videoa2 = ref(false);
               preload="metadata"
               class="cursor-pointer section-video"
             >
-              <source src="videos/add-activity.webm" type="video/webm" />
+              <source src="videos/add-activity.mp4" type="video/mp4" />
             </video>
           </q-card-section>
         </q-card>
@@ -96,7 +96,7 @@ const videoa2 = ref(false);
               preload="metadata"
               class="cursor-pointer section-video"
             >
-              <source src="videos/focus-mode.webm" type="video/webm" />
+              <source src="videos/focus-mode.mp4" type="video/mp4" />
             </video>
           </q-card-section>
         </q-card>
@@ -117,7 +117,7 @@ const videoa2 = ref(false);
               preload="metadata"
               class="cursor-pointer section-video"
             >
-              <source src="videos/weekly-targets.webm" type="video/webm" />
+              <source src="videos/weekly-targets.mp4" type="video/mp4" />
             </video>
           </q-card-section>
         </q-card>
@@ -135,7 +135,7 @@ const videoa2 = ref(false);
         preload="metadata"
         controls
       >
-        <source src="videos/add-activity.webm" type="video/webm" />
+        <source src="videos/add-activity.mp4" type="video/mp4" />
       </video>
     </div>
   </q-dialog>
@@ -168,7 +168,7 @@ const videoa2 = ref(false);
         preload="metadata"
         controls
       >
-        <source src="videos/focus-mode.webm" type="video/webm" />
+        <source src="videos/focus-mode.mp4" type="video/mp4" />
       </video>
     </div>
   </q-dialog>
@@ -182,7 +182,7 @@ const videoa2 = ref(false);
         preload="metadata"
         controls
       >
-        <source src="videos/weekly-targets.webm" type="video/webm" />
+        <source src="videos/weekly-targets.mp4" type="video/mp4" />
       </video>
     </div>
   </q-dialog>
