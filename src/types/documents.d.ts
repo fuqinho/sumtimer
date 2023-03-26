@@ -33,6 +33,7 @@ export interface OngoingDocumentData extends DocumentData {
   curStart?: Timestamp;
   memo?: string;
   subs?: TimestampSection[];
+  rid?: string;
 }
 
 export interface ActivityDocumentData extends DocumentData {

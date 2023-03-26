@@ -11,6 +11,7 @@ import {
   Timestamp,
   type Unsubscribe,
   updateDoc,
+  collection,
 } from 'firebase/firestore';
 import type { OngoingDocumentData } from '@/types/documents';
 import type { PortableRecord } from '@/types/portable';
@@ -222,11 +223,13 @@ export const useOngoingStore = defineStore('ongoing', () => {
       await finish();
     }
 
+    const newRecordId = doc(collection(getFirestore(), 'records')).id;
     const docData = {
       aid: aid,
       cid: idToActivity.value[aid].cid,
       recStart: Timestamp.now(),
       curStart: Timestamp.now(),
+      rid: newRecordId,
     };
     await setDoc(docRef.value, docData);
     await requestWakeLock();
@@ -265,7 +268,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
     if (ongoing.value.memo) {
       data.memo = ongoing.value.memo;
     }
-    await recordStore.addRecord(data);
+    await recordStore.addRecord(data, ongoing.value.rid);
     await deleteDoc(docRef.value);
   }
 
