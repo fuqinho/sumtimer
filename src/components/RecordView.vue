@@ -23,14 +23,14 @@ const { maxDate, minDate, lcl } = useUtil();
 // =========================== Refs ============================================
 const { idToCategory, idToActivity } = storeToRefs(cacheStore);
 const aid = ref(props.doc.data.aid);
-const subs = ref(
-  props.doc.data.subs || [
-    {
-      start: props.doc.data.start,
-      end: props.doc.data.end,
-    },
-  ]
-);
+const subs = ref([] as { start: Timestamp; end: Timestamp }[]);
+if (props.doc.data.subs) {
+  for (const sub of props.doc.data.subs) {
+    subs.value.push({ start: sub.start, end: sub.end });
+  }
+} else {
+  subs.value.push({ start: props.doc.data.start, end: props.doc.data.end });
+}
 const memo = ref(props.doc.data.memo);
 const editingActivity = ref(false);
 
