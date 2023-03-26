@@ -71,7 +71,7 @@ async function save() {
   for (const sub of subs.value) {
     start = minDate(start, sub.start.toDate());
     end = maxDate(end, sub.end.toDate());
-    duration += end.getTime() - start.getTime();
+    duration += sub.end.toMillis() - sub.start.toMillis();
   }
   change.start = Timestamp.fromDate(start);
   change.end = Timestamp.fromDate(end);
