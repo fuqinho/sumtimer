@@ -4,6 +4,6 @@
   "compilerOptions": {
     "composite": true,
     "lib": [],
-    "types": ["vitest/globals", "node", "jsdom"]
+    "types": ["vitest/globals", "node", "jsdom", "dom-screen-wake-lock"]
   }
 }
