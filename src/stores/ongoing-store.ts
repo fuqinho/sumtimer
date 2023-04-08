@@ -1,5 +1,6 @@
 import { computed, ref, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
+import { useWakeLock } from '@vueuse/core';
 import {
   arrayUnion,
   deleteDoc,
@@ -32,6 +33,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
   const recordStore = useRecordStore();
   const cacheStore = useCacheStore();
   const timeStore = useTimeStore();
+  const { request, release } = useWakeLock();
 
   const { uid } = storeToRefs(authStore);
   const { idToCategory, idToActivity } = storeToRefs(cacheStore);
@@ -72,30 +74,6 @@ export const useOngoingStore = defineStore('ongoing', () => {
     }
     ongoing.value = null;
   }
-
-  let wakeLock = null as WakeLockSentinel | null;
-
-  const requestWakeLock = async () => {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => {
-        console.log('Wake lock was released.');
-      });
-      console.log('Wake lock is active');
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const releaseWakeLock = async () => {
-    if (!wakeLock) return;
-    try {
-      await wakeLock.release();
-      wakeLock = null;
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const docRef = computed(() => doc(getFirestore(), 'ongoings', uid.value));
   const recording = computed(() => !!ongoing.value);
@@ -232,11 +210,11 @@ export const useOngoingStore = defineStore('ongoing', () => {
       rid: newRecordId,
     };
     await setDoc(docRef.value, docData);
-    await requestWakeLock();
+    await request('screen');
   }
 
   async function finish() {
-    await releaseWakeLock();
+    await release();
 
     if (!ongoing.value) return;
 
@@ -291,7 +269,7 @@ export const useOngoingStore = defineStore('ongoing', () => {
   }
 
   async function reset() {
-    await releaseWakeLock();
+    await release();
     if (!ongoing.value) return;
     await deleteDoc(docRef.value);
   }
