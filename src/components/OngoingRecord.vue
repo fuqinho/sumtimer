@@ -56,6 +56,11 @@ async function recordMemo() {
   await ongoingStore.updateMemo(memo.value);
 }
 
+async function finishRec() {
+  await ongoingStore.updateMemo(memo.value);
+  await ongoingStore.finish();
+}
+
 // =========================== Additional setup ================================
 watch(ongoing, (newOngoing) => {
   if (!newOngoing) return;
@@ -160,13 +165,7 @@ onMounted(async () => {
           icon="play_arrow"
           @click="ongoingStore.resume()"
         />
-        <q-btn
-          round
-          color="primary"
-          flat
-          icon="stop"
-          @click="ongoingStore.finish()"
-        />
+        <q-btn round color="primary" flat icon="stop" @click="finishRec" />
       </q-card-actions>
     </q-card>
     <div class="on-right history shadow-1">
