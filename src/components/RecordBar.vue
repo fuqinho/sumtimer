@@ -144,8 +144,6 @@ const subs = computed(() => {
       class="sub"
       :style="subStyles[i]"
     ></div>
-
-    <div class="sub"></div>
     <q-tooltip>{{ lcl(activityName) }}</q-tooltip>
   </div>
 
@@ -163,6 +161,7 @@ const subs = computed(() => {
   background-color: yellow;
   height: 100%;
   cursor: pointer;
+  border-radius: 3px;
 }
 
 .container:hover {
@@ -173,5 +172,6 @@ const subs = computed(() => {
   top: 0;
   position: absolute;
   height: 100%;
+  border-radius: 3px;
 }
 </style>
