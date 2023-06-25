@@ -55,6 +55,10 @@ const lightCategoryColor = computed(
   () => colors.changeAlpha(categoryColor.value + 'ff', -0.8)
 );
 
+const darkCategoryColor = computed(() =>
+  colors.lighten(categoryColor.value + 'ff', -8)
+);
+
 const containerStyle = computed(() => {
   let recStart = 0;
   let recEnd = 1;
@@ -112,6 +116,7 @@ const subStyles = computed(() => {
       left: left * 100 + '%',
       width: width * 100 + '%',
       backgroundColor: categoryColor.value,
+      borderColor: darkCategoryColor.value,
     };
   });
 });
@@ -173,5 +178,7 @@ const subs = computed(() => {
   position: absolute;
   height: 100%;
   border-radius: 3px;
+  border-style: solid;
+  border-width: 1px;
 }
 </style>
