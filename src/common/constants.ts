@@ -1,4 +1,4 @@
-export const appVersion = 4;
+export const appVersion = 5;
 export const startHourOfDay = 5;
 export const startDayOfWeek = 1; // Monday
 export const defaultCategoryColor = '#bdbdbd';
