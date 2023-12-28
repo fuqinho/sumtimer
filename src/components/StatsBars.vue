@@ -123,16 +123,16 @@ function catBarStyle(data: CategoryBarData) {
 
 function catDurStyle(data: CategoryBarData) {
   return {
-    left: (data.weekDuration * 100) / maxDuration.value + '%',
     color: idToCategory.value[data.cid].color,
   };
 }
 
 function actBarStyle(data: ActivityBarData) {
   const ccolor = idToCategory.value[idToActivity.value[data.aid].cid].color;
-  const acolor = colors.lighten(ccolor, 80);
+  const acolor = colors.lighten(ccolor, 60);
   const res = {
     width: (data.weekDuration * 100) / maxDuration.value + '%',
+    left: '100px',
     backgroundColor: acolor,
   };
   return res;
@@ -140,9 +140,8 @@ function actBarStyle(data: ActivityBarData) {
 
 function actDurStyle(data: ActivityBarData) {
   const ccolor = idToCategory.value[idToActivity.value[data.aid].cid].color;
-  const acolor = colors.lighten(ccolor, 80);
+  const acolor = colors.lighten(ccolor, 60);
   return {
-    left: (data.weekDuration * 100) / maxDuration.value + '%',
     color: acolor,
   };
 }
@@ -162,13 +161,13 @@ function actDurStyle(data: ActivityBarData) {
           >
             {{ lcl(idToCategory[catData.cid].label) }}
           </div>
+          <div class="category-dur" :style="catDurStyle(catData)">
+            <HoursLabel :ms="catData.weekDuration" class="q-px-sm" />
+          </div>
         </div>
 
         <div class="bar-container col">
           <div class="category-bar" :style="catBarStyle(catData)"></div>
-          <div class="category-dur" :style="catDurStyle(catData)">
-            <HoursLabel :ms="catData.weekDuration" class="q-px-sm" />
-          </div>
         </div>
         <div class="duration-area"></div>
       </div>
@@ -186,17 +185,17 @@ function actDurStyle(data: ActivityBarData) {
             >
               {{ lcl(idToActivity[actData.aid].label) }}
             </div>
-          </div>
-          <div class="bar-container-act col">
-            <div class="activity-bar" :style="actBarStyle(actData)"></div>
             <div class="activity-dur" :style="actDurStyle(actData)">
               <HoursLabel
                 :ms="actData.weekDuration"
                 :style="{ color: idToCategory[catData.cid].color }"
                 class="q-px-sm"
-                size="xs"
+                size="sm"
               />
             </div>
+          </div>
+          <div class="bar-container-act col">
+            <div class="activity-bar" :style="actBarStyle(actData)"></div>
           </div>
           <div class="duration-area"></div>
         </div>
@@ -211,14 +210,14 @@ function actDurStyle(data: ActivityBarData) {
 }
 
 .act-bar {
-  margin-top: 2px;
+  margin-top: 0px;
 }
 
 .label-area {
   flex-wrap: nowrap;
   width: 25%;
-  max-width: 160px;
-  min-width: 80px;
+  max-width: 320px;
+  min-width: 200px;
 }
 
 .duration-area {
@@ -228,6 +227,7 @@ function actDurStyle(data: ActivityBarData) {
 
 .category-label {
   flex: auto;
+  font-weight: 600;
 }
 
 .activity-indent {
@@ -237,21 +237,19 @@ function actDurStyle(data: ActivityBarData) {
 
 .activity-label {
   flex: auto;
-  font-size: 11px;
-  height: 14px;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .category-dur {
-  position: absolute;
   top: -3px;
-  font-weight: 500;
+  font-weight: 600;
+  height: 24px;
 }
 
 .activity-dur {
-  position: absolute;
   top: -3px;
-  opacity: 0.6;
+  opacity: 0.8;
+  height: 21px;
 }
 
 .bar-container {
@@ -268,6 +266,6 @@ function actDurStyle(data: ActivityBarData) {
   height: 20px;
 }
 .activity-bar {
-  height: 14px;
+  height: 18px;
 }
 </style>
