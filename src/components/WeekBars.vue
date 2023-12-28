@@ -16,6 +16,7 @@ interface RowData {
 // =========================== Properties/Emitters =============================
 const props = defineProps<{
   start: Date;
+  days?: number;
   records: RecordDoc[];
   ongoing?: OngoingDocumentData;
 }>();
@@ -23,7 +24,7 @@ const props = defineProps<{
 // =========================== Use stores/composables ==========================
 const rows = computed(() => {
   const result = [] as RowData[];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < (props.days || 7); i++) {
     const start = date.addToDate(props.start, { days: i });
     //const label = date.formatDate(start, 'M/D(ddd)');
     const label = date.formatDate(start, 'M/D');

@@ -8,6 +8,7 @@ export default {
   tabHome: 'Home',
   tabActivities: 'Activities',
   tabHistory: 'History',
+  tabReports: 'Reports',
   tabSettings: 'Settings',
 
   category: 'Category',
@@ -38,6 +39,9 @@ export default {
   deleteRecordsBtn: 'Delete records',
 
   memo: "Memo (What's done, etc...)",
+  filter: 'Filter',
+  actsToHide: 'Activities to Hide',
+  monthlyReport: 'Monthly Report',
 
   // Settings
   stPreferences: 'Preferences',

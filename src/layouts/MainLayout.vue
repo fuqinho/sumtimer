@@ -130,6 +130,7 @@ watch(requiredVersion, () => {
         <q-route-tab to="/" :label="$t('tabHome')" />
         <q-route-tab to="/activities" :label="$t('tabActivities')" />
         <q-route-tab to="/history" :label="$t('tabHistory')" />
+        <q-route-tab to="/reports" :label="$t('tabReports')" />
         <q-route-tab to="/settings" :label="$t('tabSettings')" />
       </q-tabs>
     </q-header>

@@ -37,7 +37,7 @@ export const useRecordStore = defineStore('records', () => {
   const authStore = useAuthStore();
   const activityStore = useActivityStore();
   const cacheStore = useCacheStore();
-  const { startOfWeek } = useUtil();
+  const { startOfWeek, startOfMonth } = useUtil();
 
   const { uid } = storeToRefs(authStore);
   const recentRecords = ref([] as RecordDoc[]);
@@ -115,20 +115,23 @@ export const useRecordStore = defineStore('records', () => {
     recentRecords.value = [];
   }
 
-  function startWatchRequestedRecords(uid: string, start: Date) {
+  function startWatchRequestedRecords(
+    uid: string,
+    start: Date,
+    end: Date,
+    reverse?: boolean
+  ) {
     stopWatchRequestedRecords();
 
     requestedStartMs = start.getTime();
-    requestedEndMs = date.addToDate(start, { days: 7 }).getTime();
-
-    const end = date.addToDate(start, { days: 8 });
+    requestedEndMs = end.getTime();
 
     const q = query(
       collection(getFirestore(), 'records'),
       where('uid', '==', uid),
       where('end', '>', start),
       where('end', '<', end),
-      orderBy('end', 'desc'),
+      orderBy('end', reverse ? 'asc' : 'desc'),
       limitToLast(300)
     );
     unsubRequested = onSnapshot(q, (snapshot) => {
@@ -285,7 +288,16 @@ export const useRecordStore = defineStore('records', () => {
   function requestRecords(startTime: Date) {
     if (uid.value) {
       const start = startOfWeek(startTime);
-      startWatchRequestedRecords(uid.value, start);
+      const end = date.addToDate(start, { days: 8 });
+      startWatchRequestedRecords(uid.value, start, end);
+    }
+  }
+
+  function requestMonthRecords(startTime: Date) {
+    if (uid.value) {
+      const start = startOfMonth(startTime);
+      const end = date.addToDate(start, { months: 1, days: 1 });
+      startWatchRequestedRecords(uid.value, start, end, true);
     }
   }
 
@@ -349,6 +361,7 @@ export const useRecordStore = defineStore('records', () => {
     getRecentRecordsByActivityId,
     countRecords,
     requestRecords,
+    requestMonthRecords,
     exportRecords,
     importRecords,
   };

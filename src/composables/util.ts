@@ -23,6 +23,12 @@ export function useUtil() {
     return result;
   }
 
+  function startOfMonth(time: Date) {
+    let result = new Date(time.getFullYear(), time.getMonth(), 1);
+    result = date.addToDate(result, { hours: startHourOfDay });
+    return result;
+  }
+
   function maxDate(a: Date, b: Date) {
     return a >= b ? a : b;
   }
@@ -83,6 +89,7 @@ export function useUtil() {
   return {
     startOfDay,
     startOfWeek,
+    startOfMonth,
     maxDate,
     minDate,
     fitDate,

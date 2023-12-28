@@ -4,6 +4,7 @@ import IndexPage from '@/pages/IndexPage.vue';
 import ActivitiesPage from '@/pages/ActivitiesPage.vue';
 import RecordsPage from '@/pages/RecordsPage.vue';
 import HistoryPage from '@/pages/HistoryPage.vue';
+import ReportsPage from '@/pages/ReportsPage.vue';
 import SettingsPage from '@/pages/SettingsPage.vue';
 
 const router = createRouter({
@@ -46,6 +47,10 @@ const router = createRouter({
         {
           path: 'history',
           component: HistoryPage,
+        },
+        {
+          path: 'reports',
+          component: ReportsPage,
         },
         {
           path: 'settings',

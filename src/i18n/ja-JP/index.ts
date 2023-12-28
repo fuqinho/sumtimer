@@ -8,6 +8,7 @@ export default {
   tabHome: 'ホーム',
   tabActivities: 'アクティビティ一覧',
   tabHistory: '履歴',
+  tabReports: 'レポート',
   tabSettings: '設定',
 
   category: 'カテゴリー',
@@ -38,6 +39,9 @@ export default {
   deleteRecordsBtn: '記録を削除する',
 
   memo: 'メモ（やったこと等）',
+  filter: 'フィルター',
+  actsToHide: '非表示にするアクティビティ',
+  monthlyReport: '月次レポート',
 
   // Settings
   stPreferences: 'ユーザー設定',
